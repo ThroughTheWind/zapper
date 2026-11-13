@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zapper: a free, open-source TV remote for Android</title>
+<meta name="description" content="Zapper turns your Android phone into a remote for your Samsung TV over Wi-Fi. Free, open source (GPL-3.0), no account, no ads, no tracking.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Zapper: your phone is the remote">
+<meta property="og:description" content="A free, open-source Android remote for Samsung TVs, with more brands on the way.">
+<meta property="og:url" content="https://throughthewind.github.io/zapper/">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#12131c">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#fbf8ff">
+<link rel="canonical" href="https://throughthewind.github.io/zapper/">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preload" href="fonts/roboto-flex-latin-wght.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="styles.css">
+<script src="main.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav" id="top"><div class="container">
+  <a class="wordmark" href="#top"><span class="mark"><svg class="ms" aria-hidden="true"><use href="icons.svg#settings_remote"/></svg></span>Zapper</a>
+  <nav class="nav-links" aria-label="Main"><a href="#features">Features</a><a href="#demo">Try it</a><a href="#roadmap">Roadmap</a><a href="#tvs">Supported TVs</a><a href="#contribute">Contribute</a></nav>
+  <div class="nav-actions"><a class="wbtn wbtn--outlined wbtn--sm hide-sm" href="https://github.com/ThroughTheWind/zapper"><svg class="ms sm" aria-hidden="true"><use href="icons.svg#code"/></svg>GitHub</a><a class="wbtn wbtn--filled wbtn--sm" href="https://github.com/ThroughTheWind/zapper/releases/latest"><svg class="ms sm" aria-hidden="true"><use href="icons.svg#download"/></svg>Download</a><button class="icon-btn menu" type="button" aria-label="Menu" aria-expanded="false" aria-controls="nav-menu"><svg class="ms" aria-hidden="true"><use href="icons.svg#menu"/></svg></button></div>
+  <nav class="nav-menu" id="nav-menu" aria-label="Main, small screens"><a href="#features">Features</a><a href="#demo">Try it</a><a href="#roadmap">Roadmap</a><a href="#tvs">Supported TVs</a><a href="#contribute">Contribute</a><a href="https://github.com/ThroughTheWind/zapper">Source on GitHub</a></nav>
+</div></header>
+
+<main id="main">
+<section class="hero"><div class="container">
+  <div>
+    <p class="eyebrow">Free Android remote for smart TVs</p>
+    <h1>Your phone is <em>the remote.</em></h1>
+    <p class="lead">Zapper controls your Samsung TV over Wi-Fi. Free, open source, no account and no ads. The everyday remote works today, and typing, app shortcuts and your own layout are on the way.</p>
+    <div class="ctas"><a class="wbtn wbtn--filled wbtn--lg" href="https://github.com/ThroughTheWind/zapper/releases/latest"><svg class="ms sm" aria-hidden="true"><use href="icons.svg#download"/></svg>Download APK</a><a class="wbtn wbtn--outlined wbtn--lg" href="https://github.com/ThroughTheWind/zapper"><svg class="ms sm" aria-hidden="true"><use href="icons.svg#code"/></svg>View source</a></div>
+    <div class="pills"><span class="pill"><svg class="ms" aria-hidden="true"><use href="icons.svg#verified"/></svg>GPL-3.0</span><span class="pill"><svg class="ms" aria-hidden="true"><use href="icons.svg#android"/></svg>Android 8+</span><span class="pill"><svg class="ms" aria-hidden="true"><use href="icons.svg#block"/></svg>No ads, no tracking</span></div>
+  </div>
+  <div class="art"><div class="mock-phone" aria-hidden="true" inert><div class="screen"><div class="notch"><i></i></div><div class="topbar"><div class="tv"><span style="color:var(--on-surface-variant);font:600 11px/16px var(--font-brand)">Samsung · RU7020</span><b>Living room</b></div><span class="chip" style="height:28px;font-size:11px"><span class="dot"></span>Connected</span></div><div class="grid" style="grid-template-rows:repeat(8,60px)"><button class="rk rk--power" style="grid-column:1;grid-row:1" aria-label="Power"><svg class="ms" aria-hidden="true"><use href="icons.svg#power_settings_new"/></svg></button><button class="rk" style="grid-column:2;grid-row:1" aria-label="Source"><svg class="ms" aria-hidden="true"><use href="icons.svg#input"/></svg></button><button class="rk" style="grid-column:3;grid-row:1" aria-label="Menu"><svg class="ms" aria-hidden="true"><use href="icons.svg#menu"/></svg></button><button class="rk" style="grid-column:4;grid-row:1" aria-label="Settings"><svg class="ms" aria-hidden="true"><use href="icons.svg#settings"/></svg></button><div class="dpad" style="grid-column:1 / span 3;grid-row:2 / span 3"><div class="seg up" role="button" aria-label="Up"></div><div class="seg down" role="button" aria-label="Down"></div><div class="seg left" role="button" aria-label="Left"></div><div class="seg right" role="button" aria-label="Right"></div><svg class="ms ic up" aria-hidden="true"><use href="icons.svg#keyboard_arrow_up"/></svg><svg class="ms ic down" aria-hidden="true"><use href="icons.svg#keyboard_arrow_down"/></svg><svg class="ms ic left" aria-hidden="true"><use href="icons.svg#keyboard_arrow_left"/></svg><svg class="ms ic right" aria-hidden="true"><use href="icons.svg#keyboard_arrow_right"/></svg><div class="ring"></div><button class="ok" aria-label="OK">OK</button></div><button class="rk rk--secondary" style="grid-column:4;grid-row:2" aria-label="Home"><svg class="ms" aria-hidden="true"><use href="icons.svg#home"/></svg></button><button class="rk rk--secondary" style="grid-column:4;grid-row:3" aria-label="Back"><svg class="ms" aria-hidden="true"><use href="icons.svg#arrow_back"/></svg></button><button class="rk" style="grid-column:4;grid-row:4" aria-label="Mute"><svg class="ms" aria-hidden="true"><use href="icons.svg#volume_off"/></svg></button><div class="rocker" style="grid-column:1;grid-row:5 / span 3"><button aria-label="Volume up"><svg class="ms" aria-hidden="true"><use href="icons.svg#add"/></svg></button><span class="lbl">VOL</span><button aria-label="Volume down"><svg class="ms" aria-hidden="true"><use href="icons.svg#remove"/></svg></button></div><div class="slot" style="grid-column:2 / span 2;grid-row:5 / span 2">App shortcuts<br>coming in Phase 2</div><button class="rk" style="grid-column:2;grid-row:7" aria-label="Guide"><span class="txt">GUIDE</span></button><button class="rk" style="grid-column:3;grid-row:7" aria-label="Info"><span class="txt">INFO</span></button><div class="rocker" style="grid-column:4;grid-row:5 / span 3"><button aria-label="Channel up"><svg class="ms" aria-hidden="true"><use href="icons.svg#keyboard_arrow_up"/></svg></button><span class="lbl">CH</span><button aria-label="Channel down"><svg class="ms" aria-hidden="true"><use href="icons.svg#keyboard_arrow_down"/></svg></button></div><button class="rk" style="grid-column:1;grid-row:8" aria-label="Rewind"><svg class="ms" aria-hidden="true"><use href="icons.svg#fast_rewind"/></svg></button><button class="rk rk--primary rk--pill" style="grid-column:2 / span 2;grid-row:8" aria-label="Play or pause"><svg class="ms" aria-hidden="true"><use href="icons.svg#play_pause"/></svg></button><button class="rk" style="grid-column:4;grid-row:8" aria-label="Fast-forward"><svg class="ms" aria-hidden="true"><use href="icons.svg#fast_forward"/></svg></button></div><div class="dots" aria-hidden="true"><i class="on"></i><i></i></div></div></div></div>
+</div></section>
+
+<section class="section section--alt" id="demo"><div class="container">
+  <div class="section-head"><p class="eyebrow">Try it</p><h2 class="h2">Press the buttons. Watch the TV.</h2><p class="lead">This is the remote Zapper opens on. Use the D-pad, OK, Back, volume and the other keys. On a keyboard, select the TV and use the arrow keys, Enter, Escape, + and −.</p></div>
+  <div class="demo">
+    <div><div class="mock-tv" id="tv" tabindex="0" role="application" aria-label="Demo TV. Arrow keys move, Enter selects, Escape goes back, plus and minus change the volume."><div class="panel"><div class="tv-ui"><div><div class="row-t">Apps</div><div class="tiles" style="margin-top:3%"><div class="tile" data-r="0" data-c="0" style="background:#8a2b3a">Movies</div><div class="tile" data-r="0" data-c="1" style="background:#7a3f1f">Series</div><div class="tile" data-r="0" data-c="2" style="background:#1f5f7a">Music</div><div class="tile" data-r="0" data-c="3" style="background:#24407a">Videos</div><div class="tile" data-r="0" data-c="4" style="background:#5a3f7a">Photos</div></div></div><div><div class="row-t">Sources</div><div class="tiles" style="margin-top:3%"><div class="tile" data-r="1" data-c="0" style="background:#2f3a52">Live TV</div><div class="tile" data-r="1" data-c="1" style="background:#3a2f52">HDMI 1</div><div class="tile" data-r="1" data-c="2" style="background:#2f5245">HDMI 2</div><div class="tile" data-r="1" data-c="3" style="background:#444">USB</div><div class="tile" data-r="1" data-c="4" style="background:#52412f">Browser</div></div></div></div><div class="tv-app" id="tvapp"></div><div class="tv-osd" id="osd"><svg class="ms" aria-hidden="true"><use href="icons.svg#volume_up"/></svg><span class="bar"><i id="osdbar" style="width:24%"></i></span><span id="osdn">12</span></div><div class="tv-toast" id="toast" aria-live="polite"></div><div class="tv-off">Standby</div></div><div class="stand"></div></div>
+    <p class="demo-hint small"><svg class="ms sm" aria-hidden="true"><use href="icons.svg#touch_app"/></svg>Hold volume, channel or the D-pad to repeat, just like in the app.</p></div>
+    <div class="mock-phone"><div class="screen" role="group" aria-label="Zapper remote"><div class="notch"><i></i></div><div class="topbar"><div class="tv"><span style="color:var(--on-surface-variant);font:600 11px/16px var(--font-brand)">Samsung · RU7020</span><b>Living room</b></div><span class="chip" style="height:28px;font-size:11px"><span class="dot"></span>Connected</span></div><div class="grid" style="grid-template-rows:repeat(8,60px)"><button class="rk rk--power" style="grid-column:1;grid-row:1" data-act="power" aria-label="Power"><svg class="ms" aria-hidden="true"><use href="icons.svg#power_settings_new"/></svg></button><button class="rk" style="grid-column:2;grid-row:1" data-act="source" aria-label="Source"><svg class="ms" aria-hidden="true"><use href="icons.svg#input"/></svg></button><button class="rk" style="grid-column:3;grid-row:1" data-act="menu" aria-label="Menu"><svg class="ms" aria-hidden="true"><use href="icons.svg#menu"/></svg></button><button class="rk" style="grid-column:4;grid-row:1" data-act="settings" aria-label="Settings"><svg class="ms" aria-hidden="true"><use href="icons.svg#settings"/></svg></button><div class="dpad" style="grid-column:1 / span 3;grid-row:2 / span 3"><div class="seg up" role="button" aria-label="Up" data-act="up" tabindex="-1"></div><div class="seg down" role="button" aria-label="Down" data-act="down" tabindex="-1"></div><div class="seg left" role="button" aria-label="Left" data-act="left" tabindex="-1"></div><div class="seg right" role="button" aria-label="Right" data-act="right" tabindex="-1"></div><svg class="ms ic up" aria-hidden="true"><use href="icons.svg#keyboard_arrow_up"/></svg><svg class="ms ic down" aria-hidden="true"><use href="icons.svg#keyboard_arrow_down"/></svg><svg class="ms ic left" aria-hidden="true"><use href="icons.svg#keyboard_arrow_left"/></svg><svg class="ms ic right" aria-hidden="true"><use href="icons.svg#keyboard_arrow_right"/></svg><div class="ring"></div><button class="ok" data-act="ok" aria-label="OK">OK</button></div><button class="rk rk--secondary" style="grid-column:4;grid-row:2" data-act="home" aria-label="Home"><svg class="ms" aria-hidden="true"><use href="icons.svg#home"/></svg></button><button class="rk rk--secondary" style="grid-column:4;grid-row:3" data-act="back" aria-label="Back"><svg class="ms" aria-hidden="true"><use href="icons.svg#arrow_back"/></svg></button><button class="rk" style="grid-column:4;grid-row:4" data-act="mute" aria-label="Mute"><svg class="ms" aria-hidden="true"><use href="icons.svg#volume_off"/></svg></button><div class="rocker" style="grid-column:1;grid-row:5 / span 3"><button data-act="volup" aria-label="Volume up"><svg class="ms" aria-hidden="true"><use href="icons.svg#add"/></svg></button><span class="lbl">VOL</span><button data-act="voldown" aria-label="Volume down"><svg class="ms" aria-hidden="true"><use href="icons.svg#remove"/></svg></button></div><div class="slot" style="grid-column:2 / span 2;grid-row:5 / span 2">App shortcuts<br>coming in Phase 2</div><button class="rk" style="grid-column:2;grid-row:7" data-act="guide" aria-label="Guide"><span class="txt">GUIDE</span></button><button class="rk" style="grid-column:3;grid-row:7" data-act="info" aria-label="Info"><span class="txt">INFO</span></button><div class="rocker" style="grid-column:4;grid-row:5 / span 3"><button data-act="chup" aria-label="Channel up"><svg class="ms" aria-hidden="true"><use href="icons.svg#keyboard_arrow_up"/></svg></button><span class="lbl">CH</span><button data-act="chdown" aria-label="Channel down"><svg class="ms" aria-hidden="true"><use href="icons.svg#keyboard_arrow_down"/></svg></button></div><button class="rk" style="grid-column:1;grid-row:8" data-act="rew" aria-label="Rewind"><svg class="ms" aria-hidden="true"><use href="icons.svg#fast_rewind"/></svg></button><button class="rk rk--primary rk--pill" style="grid-column:2 / span 2;grid-row:8" data-act="play" aria-label="Play or pause"><svg class="ms" aria-hidden="true"><use href="icons.svg#play_pause"/></svg></button><button class="rk" style="grid-column:4;grid-row:8" data-act="ff" aria-label="Fast-forward"><svg class="ms" aria-hidden="true"><use href="icons.svg#fast_forward"/></svg></button></div><div class="dots" aria-hidden="true"><i class="on"></i><i></i></div></div></div>
+  </div>
+</div></section>
+
+<section class="section" id="features"><div class="container">
+  <div class="section-head"><p class="eyebrow">Features</p><h2 class="h2">The remote you use every day, on your phone.</h2><p class="lead">Everything here works in the current release.</p></div>
+  <div class="features">
+    <article class="fcard"><span class="ic p"><svg class="ms" aria-hidden="true"><use href="icons.svg#wifi_find"/></svg></span><h3 class="h3">Finds your TV</h3><p class="body">Zapper looks for Samsung TVs on your Wi-Fi, even on routers that hide them. If it still can't see yours, add it by its address.</p></article>
+    <article class="fcard"><span class="ic"><svg class="ms" aria-hidden="true"><use href="icons.svg#link"/></svg></span><h3 class="h3">Pair once, then forget about it</h3><p class="body">Accept Zapper once on the TV. After that it reconnects by itself when you open the app, when Wi-Fi comes back or when the TV wakes up.</p></article>
+    <article class="fcard"><span class="ic t"><svg class="ms" aria-hidden="true"><use href="icons.svg#volume_up"/></svg></span><h3 class="h3">Volume keys work</h3><p class="body">While Zapper is open, your phone's own volume buttons turn the TV up and down, so you don't have to look.</p></article>
+    <article class="fcard"><span class="ic"><svg class="ms" aria-hidden="true"><use href="icons.svg#mobile_vibrate"/></svg></span><h3 class="h3">Made for your thumb</h3><p class="body">Big keys, a round D-pad you can tap or swipe, hold-to-repeat and a light buzz on every press, so your eyes stay on the screen.</p></article>
+    <article class="fcard"><span class="ic t"><svg class="ms" aria-hidden="true"><use href="icons.svg#settings_remote"/></svg></span><h3 class="h3">All the everyday keys</h3><p class="body">Power, source, menu, volume, channels, play and pause, and a number pad on its own page. Keys your TV can't take are greyed out.</p></article>
+    <article class="fcard"><span class="ic"><svg class="ms" aria-hidden="true"><use href="icons.svg#devices"/></svg></span><h3 class="h3">More than one TV</h3><p class="body">Save every TV in the house, give them names, switch between them, and pick the one Zapper opens on.</p></article>
+    <article class="fcard fcard--wide"><span class="ic p" style="margin:0;flex:none"><svg class="ms" aria-hidden="true"><use href="icons.svg#lock"/></svg></span><div><h3 class="h3">Private by design</h3><p class="body">Zapper talks to your TV over your home network and nothing else. No account, no cloud, no analytics. Pairing keys are encrypted on your phone, and Zapper checks it is talking to the TV you paired. The code is public, so you can check.</p></div></article>
+  </div>
+</div></section>
+
+<!-- Update this section, the Supported TVs cards and the download note whenever a phase or brand ships. -->
+<section class="section section--alt" id="roadmap"><div class="container">
+  <div class="section-head"><p class="eyebrow">Roadmap</p><h2 class="h2">Basics first. The rest is on the way.</h2><p class="lead">Zapper is built in phases: a remote you can rely on every day first, then the extras, then making it yours. Here is where it is.</p></div>
+  <ol class="phases">
+    <li class="phase is-done"><div class="top"><span class="num">Phase 1</span><span class="status status--supported">Done</span></div><h3 class="h3">Basic Samsung remote</h3><p class="small">Find, pair and control a Samsung TV every day. In release 0.1.0, tested on a 2019 Samsung RU7020.</p>
+      <ul><li><svg class="ms" aria-hidden="true"><use href="icons.svg#check_circle"/></svg>Find the TV or add it by address</li><li><svg class="ms" aria-hidden="true"><use href="icons.svg#check_circle"/></svg>Guided, encrypted pairing</li><li><svg class="ms" aria-hidden="true"><use href="icons.svg#check_circle"/></svg>Automatic reconnection and saved TVs</li><li><svg class="ms" aria-hidden="true"><use href="icons.svg#check_circle"/></svg>The default remote and number pad</li><li><svg class="ms" aria-hidden="true"><use href="icons.svg#check_circle"/></svg>Phone volume keys</li></ul></li>
+    <li class="phase"><div class="top"><span class="num">Phase 2</span><span class="status status--progress">Next</span></div><h3 class="h3">Samsung extras</h3><p class="small">The things a plastic remote can't do well.</p>
+      <ul><li><svg class="ms" aria-hidden="true"><use href="icons.svg#keyboard"/></svg>Type on the TV with your phone keyboard</li><li><svg class="ms" aria-hidden="true"><use href="icons.svg#apps"/></svg>App shortcuts that open TV apps in one tap</li><li><svg class="ms" aria-hidden="true"><use href="icons.svg#power_settings_new"/></svg>Turn the TV on, and see whether it is on</li></ul></li>
+    <li class="phase"><div class="top"><span class="num">Phase 3</span><span class="status status--planned">Planned</span></div><h3 class="h3">Make it yours</h3><p class="small">The remote becomes yours to arrange.</p>
+      <ul><li><svg class="ms" aria-hidden="true"><use href="icons.svg#palette"/></svg>Light, dark and true-black themes, colours and haptics</li><li><svg class="ms" aria-hidden="true"><use href="icons.svg#dashboard_customize"/></svg>Move, resize, add and remove buttons</li><li><svg class="ms" aria-hidden="true"><use href="icons.svg#menu_book"/></svg>Pages, a layout per TV, undo and reset</li><li><svg class="ms" aria-hidden="true"><use href="icons.svg#description"/></svg>Export and import layouts</li></ul></li>
+    <li class="phase"><div class="top"><span class="num">Phase 4</span><span class="status status--planned">Planned</span></div><h3 class="h3">Release 1.0</h3><p class="small">Polish, and an open door for other brands.</p>
+      <ul><li><svg class="ms" aria-hidden="true"><use href="icons.svg#accessibility_new"/></svg>Accessibility review</li><li><svg class="ms" aria-hidden="true"><use href="icons.svg#rocket_launch"/></svg>Onboarding and clearer error help</li><li><svg class="ms" aria-hidden="true"><use href="icons.svg#code"/></svg>A guide to adding a TV brand</li></ul></li>
+  </ol>
+  <div class="after"><svg class="ms" aria-hidden="true"><use href="icons.svg#tv"/></svg><div><h3 class="h3">After 1.0</h3><p class="body">More TV brands, one adapter at a time: Android TV and Google TV first, then LG and Roku. Also on the list: a touchpad mode, a home screen widget and a Quick Settings tile.</p></div></div>
+</div></section>
+
+<section class="section" id="tvs"><div class="container">
+  <div class="section-head"><p class="eyebrow">Supported TVs</p><h2 class="h2">Samsung today. Your TV next.</h2><p class="lead">Each TV brand is a small plug-in called an adapter. The app works the same whatever TV is behind it.</p></div>
+  <div class="tv-grid">
+    <div class="tvc"><div class="top"><b>Samsung</b><span class="status status--supported">Supported</span></div><span class="proto">Tizen TVs from 2016. Tested on a 2019 RU7020; tell us how yours does.</span></div>
+    <div class="tvc"><div class="top"><b>Android TV / Google TV</b><span class="status status--planned">First after 1.0</span></div><span class="proto">Sony, TCL, Philips, Hisense, Xiaomi…</span></div>
+    <div class="tvc"><div class="top"><b>LG</b><span class="status status--planned">Planned</span></div><span class="proto">webOS</span></div>
+    <div class="tvc"><div class="top"><b>Roku</b><span class="status status--planned">Planned</span></div><span class="proto">Roku TV and sticks</span></div>
+    <div class="tvc"><div class="top"><b>Vizio</b><span class="status status--wanted">Help wanted</span></div><span class="proto">SmartCast</span></div>
+    <div class="tvc"><div class="top"><b>Hisense</b><span class="status status--wanted">Help wanted</span></div><span class="proto">VIDAA</span></div>
+    <div class="tvc"><div class="top"><b>Panasonic</b><span class="status status--wanted">Help wanted</span></div><span class="proto">Viera</span></div>
+    <a class="tvc tvc--cta" href="https://github.com/ThroughTheWind/zapper/issues/new?template=tv_support.md" style="text-decoration:none"><div class="top"><b>Don't see your TV?</b><span style="color:var(--primary)"><svg class="ms" aria-hidden="true"><use href="icons.svg#add_circle"/></svg></span></div><span class="proto">Request it, or add it yourself.</span></a>
+  </div>
+  <p class="legend small"><span class="status status--supported">Supported</span> works in the current release <span class="status status--planned">Planned</span> on the roadmap after 1.0 <span class="status status--wanted">Help wanted</span> waiting for a contributor</p>
+</div></section>
+
+<section class="section section--alt" id="contribute"><div class="container contrib">
+  <div>
+    <p class="eyebrow">Open source</p><h2 class="h2">Bring your own TV.</h2>
+    <p class="lead">Zapper is GPL-3.0 and built to grow one TV brand at a time. If you can talk to your TV from code, you can add it to Zapper.</p>
+    <ol class="steps-w" style="list-style:none;padding:0">
+      <li class="step-w"><span class="n" aria-hidden="true">1</span><div><h3 class="h3">Fork and run it</h3><p class="body">Debug builds come with a simulated TV at <code class="inline">192.0.2.1</code>, so you can try the app without any hardware.</p></div></li>
+      <li class="step-w"><span class="n" aria-hidden="true">2</span><div><h3 class="h3">Write an adapter</h3><p class="body">Implement <code class="inline">TvAdapter</code> in its own <code class="inline">adapters/</code> module. The Samsung adapter is the reference, and the contributing guide lists the steps.</p></div></li>
+      <li class="step-w"><span class="n" aria-hidden="true">3</span><div><h3 class="h3">Open a pull request</h3><p class="body">Tell us which TV you tested on. Once merged, it ships in the next release.</p></div></li>
+    </ol>
+    <div class="ctas" style="display:flex;flex-wrap:wrap;gap:12px"><a class="wbtn wbtn--filled" href="https://github.com/ThroughTheWind/zapper/blob/main/CONTRIBUTING.md#adding-a-tv-brand"><svg class="ms sm" aria-hidden="true"><use href="icons.svg#menu_book"/></svg>Adding a TV brand</a><a class="wbtn wbtn--outlined" href="https://github.com/ThroughTheWind/zapper/blob/main/CONTRIBUTING.md">How to contribute</a></div>
+  </div>
+  <div class="code"><div class="bar"><svg class="ms sm" aria-hidden="true"><use href="icons.svg#description"/></svg>MyTvAdapter.kt<button class="wbtn wbtn--text" type="button" id="copy"><svg class="ms sm" aria-hidden="true"><use href="icons.svg#content_copy"/></svg><span>Copy</span></button></div><pre id="code-sample"><span class="k">class</span> <span class="f">MyTvAdapter</span> : <span class="f">TvAdapter</span> {
+    <span class="k">override val</span> id = <span class="s">"mytv"</span>
+    <span class="k">override val</span> displayName = <span class="s">"My TV"</span>
+
+    <span class="c">// Find your brand's TVs on the local network</span>
+    <span class="k">override fun</span> <span class="f">discover</span>(): Flow&lt;DiscoveredTv&gt; = …
+
+    <span class="c">// Is this address one of your TVs?</span>
+    <span class="k">override suspend fun</span> <span class="f">probe</span>(host: String): DiscoveredTv? = …
+
+    <span class="c">// Pair, connect and send keys in your TV's protocol</span>
+    <span class="k">override fun</span> <span class="f">createSession</span>(
+        device: TvDevice,
+        credentials: CredentialStore,
+    ): TvSession = …
+}</pre></div>
+</div></section>
+
+<section class="section" id="download"><div class="container"><div class="download"><span class="deco"></span>
+  <div><h2 class="h2">Get Zapper</h2><p class="body">Download the APK from GitHub Releases and install it on your phone. This early release is the everyday remote for Samsung TVs; updates are published there too.</p>
+    <div class="meta-row"><span><svg class="ms" aria-hidden="true"><use href="icons.svg#sell"/></svg><span data-version>v0.1.0</span></span><span><svg class="ms" aria-hidden="true"><use href="icons.svg#android"/></svg>Android 8.0+</span><span><svg class="ms" aria-hidden="true"><use href="icons.svg#tv"/></svg>Samsung TVs from 2016</span><span><svg class="ms" aria-hidden="true"><use href="icons.svg#verified_user"/></svg>Signed release, SHA-256 listed</span></div>
+    <p class="note">Your phone will ask you to allow installs from your browser the first time.</p></div>
+  <div class="acts"><a class="wbtn wbtn--filled wbtn--lg" href="https://github.com/ThroughTheWind/zapper/releases/latest"><svg class="ms sm" aria-hidden="true"><use href="icons.svg#download"/></svg>Download APK</a><a class="wbtn wbtn--outlined" href="https://github.com/ThroughTheWind/zapper/blob/main/CHANGELOG.md">Changelog</a></div>
+</div></div></section>
+</main>
+
+<footer class="footer"><div class="container">
+  <div class="cols">
+    <div><a class="wordmark" href="#top"><span class="mark"><svg class="ms" aria-hidden="true"><use href="icons.svg#settings_remote"/></svg></span>Zapper</a><p class="small" style="margin-top:12px;max-width:34ch">A free, open-source Android remote for smart TVs.</p></div>
+    <div><h2 class="h4">App</h2><ul><li><a href="#features">Features</a></li><li><a href="#roadmap">Roadmap</a></li><li><a href="#tvs">Supported TVs</a></li><li><a href="https://github.com/ThroughTheWind/zapper/releases/latest">Download</a></li></ul></div>
+    <div><h2 class="h4">Project</h2><ul><li><a href="https://github.com/ThroughTheWind/zapper">Source code</a></li><li><a href="https://github.com/ThroughTheWind/zapper/issues/new?template=bug_report.md">Report a bug</a></li><li><a href="https://github.com/ThroughTheWind/zapper/blob/main/CHANGELOG.md">Changelog</a></li><li><a href="https://github.com/ThroughTheWind/zapper/blob/main/docs/ROADMAP.md">Full roadmap</a></li></ul></div>
+    <div><h2 class="h4">Contribute</h2><ul><li><a href="https://github.com/ThroughTheWind/zapper/blob/main/CONTRIBUTING.md">Contributing guide</a></li><li><a href="https://github.com/ThroughTheWind/zapper/blob/main/CONTRIBUTING.md#adding-a-tv-brand">Add a TV brand</a></li><li><a href="https://github.com/ThroughTheWind/zapper/blob/main/LICENSE">GPL-3.0 licence</a></li></ul></div>
+  </div>
+  <p class="small legal">Zapper is an independent project, not affiliated with or endorsed by Samsung, LG, Google, Roku or any TV maker. Brand names are used only to say which TVs Zapper works with.</p>
+</div></footer>
+</body>
+</html>

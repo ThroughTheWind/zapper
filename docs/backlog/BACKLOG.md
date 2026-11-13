@@ -6,7 +6,7 @@
 The board. One row per live work item, grouped by status. Items live in
 [`items/`](items/); finished work moves to [`archive/`](archive/).
 
-<!-- NEXT-ID: WI-020 -->
+<!-- NEXT-ID: WI-022 -->
 <!-- Claim from this marker and bump it on your own branch. `node .ai/rungs.mjs check` refuses a duplicate. -->
 
 ## In progress
@@ -19,7 +19,7 @@ The board. One row per live work item, grouped by status. Items live in
 
 | Id | Title | Type | Branch |
 | --- | --- | --- | --- |
-| — | | | |
+| [WI-021](items/WI-021-landing-page.md) | Publish the landing page on GitHub Pages | docs | `claude/project-thread-238rhr` |
 
 ## Planned
 

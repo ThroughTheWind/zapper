@@ -17,8 +17,9 @@ adapters.
 
 ## Documentation
 
+- Website: <https://throughthewind.github.io/zapper/> ([source](site/README.md))
 - [MVP spec](docs/SPEC.md) and [roadmap](docs/ROADMAP.md)
-- [Design system](docs/design/README.md)
+- [Design system](docs/design/README.md) and the [landing page design system](docs/design/web/README.md)
 - [TV protocol research](docs/research/tv-remote-protocols.md)
 - [Decisions](docs/decisions/README.md) and [backlog](docs/backlog/BACKLOG.md)
 

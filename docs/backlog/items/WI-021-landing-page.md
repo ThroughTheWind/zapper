@@ -1,0 +1,66 @@
+---
+id: WI-021
+title: Publish the landing page on GitHub Pages
+type: docs
+status: review
+branch: claude/project-thread-238rhr
+created: 2026-11-13
+updated: 2026-11-13
+related: [WI-017]
+epic:
+children: []
+---
+
+## Proposal (rationale)
+
+Zapper has no web presence besides the repository. The 0.1.0 release (WI-017) needs a page that
+says what the app does today, where the project is going, and where to download it. The landing
+design system drafted earlier showed customization, app shortcuts and text input as available,
+which Phase 1 does not ship.
+
+## Decision
+
+`accepted` — 2026-11-13, Antoine, by asking to review the landing page together and implement it as
+GitHub Pages, adapted with its design system to the current phase and the planned ones.
+
+## Plan
+
+### Requirements
+
+- A static page at `https://throughthewind.github.io/zapper/`, built from the landing design system.
+- Only what the current release does is shown as working; planned work is labelled with its phase.
+- Downloads point to GitHub Releases; links point to `ThroughTheWind/zapper` and to files that exist.
+- No third-party requests except the GitHub API for the release label (ADR-0003's spirit for the site).
+
+### Impacts
+
+- New `site/`, `.github/workflows/pages.yml`, `docs/design/web/` (the landing design system).
+- Two fast gates in `.ai/gates.toml`: generated tokens and the icon sprite stay in sync.
+- One-time repository setting: Pages source is GitHub Actions.
+
+### Approach
+
+- `site/` deployed by Actions rather than Pages from `docs/`, so the Markdown docs are not published
+  as a Jekyll site beside the page.
+- Icons as an SVG sprite of the used symbols instead of the multi-megabyte icon font.
+- The phone mockup mirrors `DefaultLayouts.standard`, with the app-shortcut slot drawn as a
+  "coming in Phase 2" placeholder.
+
+### Acceptance criteria / tests
+
+- The page renders in light and dark, at 390px and 1280px, with no console errors.
+- The demo works with pointer and keyboard; the arrow keys scroll the page unless the TV has focus.
+- `node .ai/rungs.mjs check` passes, including `site-tokens` and `site-icons`.
+
+### Out of scope
+
+- A custom domain, screenshots of the real app, and translations. Nothing deferred.
+
+## Execution
+
+Branch `claude/project-thread-238rhr` (the session's assigned branch, instead of
+`feature/WI-021-…`).
+
+## Review
+
+Checked with Playwright in Chromium: desktop dark and light, phone dark; demo D-pad, OK and volume.

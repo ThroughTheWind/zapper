@@ -2,7 +2,7 @@
 id: WI-003
 title: Find Samsung TVs on the network and add one by IP
 type: feature
-status: review
+status: done
 branch: feature/WI-003-samsung-discovery
 created: 2026-11-13
 updated: 2026-11-13

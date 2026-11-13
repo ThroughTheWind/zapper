@@ -19,7 +19,7 @@ The board. One row per live work item, grouped by status. Items live in
 
 | Id | Title | Type | Branch |
 | --- | --- | --- | --- |
-| [WI-003](items/WI-003-samsung-discovery.md) | Find Samsung TVs on the network and add one by IP | feature | `feature/WI-003-samsung-discovery` |
+| — | | | |
 
 ## Planned
 

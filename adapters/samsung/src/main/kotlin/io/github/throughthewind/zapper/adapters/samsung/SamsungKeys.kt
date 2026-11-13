@@ -11,6 +11,7 @@ internal fun RemoteKey.samsungCode(): String? =
         RemoteKey.POWER -> "KEY_POWER"
         RemoteKey.HOME -> "KEY_HOME"
         RemoteKey.BACK -> "KEY_RETURN"
+        RemoteKey.EXIT -> "KEY_EXIT"
         RemoteKey.MENU -> "KEY_MENU"
         RemoteKey.SOURCE -> "KEY_SOURCE"
         RemoteKey.SETTINGS -> null
@@ -24,6 +25,8 @@ internal fun RemoteKey.samsungCode(): String? =
         RemoteKey.MUTE -> "KEY_MUTE"
         RemoteKey.CHANNEL_UP -> "KEY_CHUP"
         RemoteKey.CHANNEL_DOWN -> "KEY_CHDOWN"
+        RemoteKey.CHANNEL_LIST -> "KEY_CH_LIST"
+        RemoteKey.PREVIOUS_CHANNEL -> "KEY_PRECH"
         RemoteKey.PLAY -> "KEY_PLAY"
         RemoteKey.PAUSE -> "KEY_PAUSE"
         RemoteKey.PLAY_PAUSE -> null

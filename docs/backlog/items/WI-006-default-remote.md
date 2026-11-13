@@ -2,8 +2,8 @@
 id: WI-006
 title: Build the default remote with the design system's widgets
 type: feature
-status: planned
-branch:
+status: review
+branch: feature/WI-006-default-remote
 created: 2026-11-13
 updated: 2026-11-13
 related: [WI-002, SPEC-F4, SPEC-AC-6, SPEC-AC-7, SPEC-NFR-1, SPEC-NFR-9]
@@ -52,4 +52,24 @@ Phase 1 — Basic Samsung remote ([roadmap](../../ROADMAP.md)).
 
 ## Execution
 
+Branch `feature/WI-006-default-remote`, stacked on WI-005.
+
+- `core/model`: a layout is now pages of widgets (`RemotePage`, `LayoutWidget`) with the design system's types: `LayoutButton`, `DPadWidget` (3x3 or 4x4), `RockerWidget` (volume or channel, 1x3 or 1x2), `NumberPadWidget` (3x4) and `MediaBarWidget` (4x1 or 3x1). Sizes the design does not allow are refused. `RemoteKey` gains `EXIT`, `CHANNEL_LIST` and `PREVIOUS_CHANNEL`, mapped for Samsung from the research key list.
+- `DefaultLayouts.standard` follows the RemoteScreen preview on the 4-column grid: Power, Source, Menu, Settings; the D-pad beside Home, Back, Mute; volume and channel rockers around Guide and Info; the media bar; and a Numbers page with the number pad.
+- Design system: `DPad` (wedge hit areas, OK at 40%, hold repeat, swipe mode at 24 dp per step, five TalkBack buttons), `Rocker`, `NumberPad`, `MediaControls`, and a shared hold-to-repeat helper with the motion tokens' 400/90/45 ms timing.
+- App: `RemoteCanvas` lays pages out on the grid (cells between 64 and 96 dp) in a horizontal pager with page dots. Keys the TV does not support, and every key while offline, render disabled.
+
+Deviations, with the reason:
+
+- The two 2x1 cells for Netflix and YouTube stay empty until app shortcuts ship (WI-009), rather than hold keys the design does not place there. The design's Apps page also waits for WI-009.
+- Holding a key repeats clicks from the phone instead of sending Press then Release. Whether a Samsung TV repeats a held key by itself is not confirmed yet; the spike (WI-001) checks it on the reference TV, and switching is local to the widgets.
+- Samsung has no play/pause toggle key, so the play/pause button alternates Pause and Play, starting with Pause.
+- Compose UI tests were not added: the app module has no UI test setup and none can run here. Recorded as F-003.
+
 ## Review
+
+- Unit tests on the JVM (61, all passing): no two widgets of a default page overlap or leave the grid, the default remote has every key FR-4.1 lists, numbers are on their own page, and widgets refuse sizes the design does not allow.
+- AC-6 (every default button works on the reference TV) and AC-7 (holding Vol+ raises the volume until release): need the reference TV (WI-001). Not checked.
+- "Compose UI tests on the fake adapter: each widget sends the right action; disabled keys send nothing": **not met**, see F-003.
+- NFR-1 (press to wire under 50 ms p95) is not measured yet; it belongs to the spike on the reference TV.
+- The Android modules are verified by CI only (assemble and lint), not run.

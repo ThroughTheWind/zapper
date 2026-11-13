@@ -7,6 +7,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import io.github.throughthewind.zapper.AppContainer
 import io.github.throughthewind.zapper.core.data.ZapperRepository
 import io.github.throughthewind.zapper.core.model.ButtonAction
+import io.github.throughthewind.zapper.core.model.RemoteKey
 import io.github.throughthewind.zapper.core.model.RemoteLayout
 import io.github.throughthewind.zapper.core.model.TvDevice
 import io.github.throughthewind.zapper.core.remote.ConnectionState
@@ -40,7 +41,31 @@ class RemoteViewModel(
 
     val state: StateFlow<ConnectionState> = connection.state
 
-    fun press(action: ButtonAction) = connection.press(action)
+    /** Not known, so the first press of a toggle-less TV pauses: people reach for it mid-show. */
+    private var playing = true
+
+    /** The canvas's view of the connection; a new one per connection state, so keys re-enable. */
+    fun actions(connected: Boolean): RemoteActions =
+        object : RemoteActions {
+            override fun send(key: RemoteKey) {
+                if (key == RemoteKey.PLAY_PAUSE && !connection.supports(RemoteKey.PLAY_PAUSE)) {
+                    // A TV with separate Play and Pause keys: alternate between them.
+                    connection.send(if (playing) RemoteKey.PAUSE else RemoteKey.PLAY)
+                    playing = !playing
+                } else {
+                    connection.send(key)
+                }
+            }
+
+            override fun press(action: ButtonAction) = connection.press(action)
+
+            override fun isEnabled(key: RemoteKey): Boolean =
+                connected &&
+                    (
+                        connection.supports(key) ||
+                            (key == RemoteKey.PLAY_PAUSE && connection.supports(RemoteKey.PLAY) && connection.supports(RemoteKey.PAUSE))
+                    )
+        }
 
     fun retry() {
         connection.device.value?.let(connection::connect)

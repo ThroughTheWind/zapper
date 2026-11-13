@@ -37,7 +37,10 @@ class ZapperRepository internal constructor(
         }
 
     /** The user's layouts, or the standard one until they make their own. */
-    val layouts: Flow<List<RemoteLayout>> = store.data.map { it.layouts.ifEmpty { listOf(DefaultLayouts.standard) } }
+    val layouts: Flow<List<RemoteLayout>> =
+        store.data.map { state ->
+            state.layouts.filter { it.pages.isNotEmpty() }.ifEmpty { listOf(DefaultLayouts.standard) }
+        }
 
     /** Saves [device] as the last used TV, keeping the name the user gave it, if any. */
     suspend fun saveDevice(device: TvDevice) {

@@ -19,7 +19,7 @@ The board. One row per live work item, grouped by status. Items live in
 
 | Id | Title | Type | Branch |
 | --- | --- | --- | --- |
-| — | | | |
+| [WI-017](items/WI-017-signed-release-on-tag.md) | Publish a signed APK to GitHub Releases on each tag | chore | `claude/project-thread-vpshn1` |
 
 ## Planned
 
@@ -40,7 +40,6 @@ The board. One row per live work item, grouped by status. Items live in
 | [WI-014](items/WI-014-layout-undo-reset-per-tv.md) | Undo edits, reset layouts and keep one layout per TV | feature |
 | [WI-015](items/WI-015-layout-import-export.md) | Export and import layouts as files | feature |
 | [WI-016](items/WI-016-accessibility-onboarding-polish.md) | Pass accessibility review and polish onboarding and errors | feature |
-| [WI-017](items/WI-017-signed-release-on-tag.md) | Publish a signed APK to GitHub Releases on each tag | chore |
 | [WI-018](items/WI-018-adapter-guide.md) | Write the guide for adding a TV brand | docs |
 
 ## Proposed

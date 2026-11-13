@@ -45,6 +45,10 @@ jobs:
         run: ./gradlew lint
       - name: Debug APK
         run: ./gradlew :app:assembleDebug
+      # Unsigned here: only the release workflow holds the key. Building it on every change means
+      # R8 shrinking and release lint break a pull request, not a release tag.
+      - name: Release APK (unsigned)
+        run: ./gradlew :app:assembleRelease
       - uses: actions/upload-artifact@v7
         with:
           name: zapper-debug-apk

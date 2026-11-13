@@ -2,7 +2,7 @@
 id: WI-019
 title: Find the TV when the network drops SSDP
 type: feature
-status: review
+status: done
 branch: feature/WI-019-discovery-fallback
 created: 2026-11-13
 updated: 2026-11-13

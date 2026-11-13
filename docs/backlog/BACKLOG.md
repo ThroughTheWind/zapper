@@ -19,7 +19,7 @@ The board. One row per live work item, grouped by status. Items live in
 
 | Id | Title | Type | Branch |
 | --- | --- | --- | --- |
-| [WI-019](items/WI-019-discovery-fallback.md) | Find the TV when the network drops SSDP | feature | `feature/WI-019-discovery-fallback` |
+| — | | | |
 
 ## Planned
 

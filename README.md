@@ -15,6 +15,13 @@ adapters.
 - **Any TV.** Every brand is an adapter behind one contract, and the UI only knows what a TV can
   do, never which brand it is ([ADR-0002](docs/decisions/ADR-0002-brand-adapters.md)).
 
+## Documentation
+
+- [MVP spec](docs/SPEC.md) and [roadmap](docs/ROADMAP.md)
+- [Design system](docs/design/README.md)
+- [TV protocol research](docs/research/tv-remote-protocols.md)
+- [Decisions](docs/decisions/README.md) and [backlog](docs/backlog/BACKLOG.md)
+
 ## Supported TVs
 
 | Brand | Status |

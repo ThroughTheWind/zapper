@@ -1,0 +1,3496 @@
+{
+  "$description": "Zapper design system tokens (W3C DTCG format). Values in dp/sp map 1:1 to Jetpack Compose. Source of truth: regenerate Compose files from this file.",
+  "color": {
+    "$description": "Material 3 color roles generated with material-color-utilities (SchemeVibrant; SchemeMonochrome for graphite). Default theme = indigo. On Android 12+ dynamic color replaces these unless the user picks a seed.",
+    "seeds": {
+      "indigo": {
+        "$type": "color",
+        "$value": "#5B6CFF"
+      },
+      "teal": {
+        "$type": "color",
+        "$value": "#00A3A3"
+      },
+      "amber": {
+        "$type": "color",
+        "$value": "#F2A900"
+      },
+      "rose": {
+        "$type": "color",
+        "$value": "#E8457C"
+      },
+      "green": {
+        "$type": "color",
+        "$value": "#3DBE6A"
+      },
+      "graphite": {
+        "$type": "color",
+        "$value": "#6B7280"
+      }
+    },
+    "schemes": {
+      "indigo": {
+        "light": {
+          "primary": {
+            "$type": "color",
+            "$value": "#283fff"
+          },
+          "onPrimary": {
+            "$type": "color",
+            "$value": "#ffffff"
+          },
+          "primaryContainer": {
+            "$type": "color",
+            "$value": "#dfe0ff"
+          },
+          "onPrimaryContainer": {
+            "$type": "color",
+            "$value": "#0020dd"
+          },
+          "secondary": {
+            "$type": "color",
+            "$value": "#615a7c"
+          },
+          "onSecondary": {
+            "$type": "color",
+            "$value": "#ffffff"
+          },
+          "secondaryContainer": {
+            "$type": "color",
+            "$value": "#e7deff"
+          },
+          "onSecondaryContainer": {
+            "$type": "color",
+            "$value": "#494263"
+          },
+          "tertiary": {
+            "$type": "color",
+            "$value": "#6d5484"
+          },
+          "onTertiary": {
+            "$type": "color",
+            "$value": "#ffffff"
+          },
+          "tertiaryContainer": {
+            "$type": "color",
+            "$value": "#f0dbff"
+          },
+          "onTertiaryContainer": {
+            "$type": "color",
+            "$value": "#543c6b"
+          },
+          "error": {
+            "$type": "color",
+            "$value": "#ba1a1a"
+          },
+          "onError": {
+            "$type": "color",
+            "$value": "#ffffff"
+          },
+          "errorContainer": {
+            "$type": "color",
+            "$value": "#ffdad6"
+          },
+          "onErrorContainer": {
+            "$type": "color",
+            "$value": "#93000a"
+          },
+          "background": {
+            "$type": "color",
+            "$value": "#fbf8ff"
+          },
+          "onBackground": {
+            "$type": "color",
+            "$value": "#1a1b25"
+          },
+          "surface": {
+            "$type": "color",
+            "$value": "#fbf8ff"
+          },
+          "onSurface": {
+            "$type": "color",
+            "$value": "#1a1b25"
+          },
+          "surfaceVariant": {
+            "$type": "color",
+            "$value": "#e2e1f3"
+          },
+          "onSurfaceVariant": {
+            "$type": "color",
+            "$value": "#454654"
+          },
+          "surfaceDim": {
+            "$type": "color",
+            "$value": "#dad8e7"
+          },
+          "surfaceBright": {
+            "$type": "color",
+            "$value": "#fbf8ff"
+          },
+          "surfaceContainerLowest": {
+            "$type": "color",
+            "$value": "#ffffff"
+          },
+          "surfaceContainerLow": {
+            "$type": "color",
+            "$value": "#f4f2ff"
+          },
+          "surfaceContainer": {
+            "$type": "color",
+            "$value": "#eeecfb"
+          },
+          "surfaceContainerHigh": {
+            "$type": "color",
+            "$value": "#e8e7f5"
+          },
+          "surfaceContainerHighest": {
+            "$type": "color",
+            "$value": "#e3e1ef"
+          },
+          "outline": {
+            "$type": "color",
+            "$value": "#767685"
+          },
+          "outlineVariant": {
+            "$type": "color",
+            "$value": "#c6c5d6"
+          },
+          "inverseSurface": {
+            "$type": "color",
+            "$value": "#2f303a"
+          },
+          "inverseOnSurface": {
+            "$type": "color",
+            "$value": "#f1effe"
+          },
+          "inversePrimary": {
+            "$type": "color",
+            "$value": "#bdc2ff"
+          },
+          "scrim": {
+            "$type": "color",
+            "$value": "#000000"
+          },
+          "surfaceTint": {
+            "$type": "color",
+            "$value": "#283fff"
+          },
+          "power": {
+            "$type": "color",
+            "$value": "#b5242f"
+          },
+          "onPower": {
+            "$type": "color",
+            "$value": "#ffffff"
+          },
+          "powerContainer": {
+            "$type": "color",
+            "$value": "#ffdad8"
+          },
+          "onPowerContainer": {
+            "$type": "color",
+            "$value": "#410006"
+          }
+        },
+        "dark": {
+          "primary": {
+            "$type": "color",
+            "$value": "#bdc2ff"
+          },
+          "onPrimary": {
+            "$type": "color",
+            "$value": "#00149e"
+          },
+          "primaryContainer": {
+            "$type": "color",
+            "$value": "#0020dd"
+          },
+          "onPrimaryContainer": {
+            "$type": "color",
+            "$value": "#dfe0ff"
+          },
+          "secondary": {
+            "$type": "color",
+            "$value": "#cbc1e9"
+          },
+          "onSecondary": {
+            "$type": "color",
+            "$value": "#322c4c"
+          },
+          "secondaryContainer": {
+            "$type": "color",
+            "$value": "#494263"
+          },
+          "onSecondaryContainer": {
+            "$type": "color",
+            "$value": "#e7deff"
+          },
+          "tertiary": {
+            "$type": "color",
+            "$value": "#d9bbf2"
+          },
+          "onTertiary": {
+            "$type": "color",
+            "$value": "#3d2653"
+          },
+          "tertiaryContainer": {
+            "$type": "color",
+            "$value": "#543c6b"
+          },
+          "onTertiaryContainer": {
+            "$type": "color",
+            "$value": "#f0dbff"
+          },
+          "error": {
+            "$type": "color",
+            "$value": "#ffb4ab"
+          },
+          "onError": {
+            "$type": "color",
+            "$value": "#690005"
+          },
+          "errorContainer": {
+            "$type": "color",
+            "$value": "#93000a"
+          },
+          "onErrorContainer": {
+            "$type": "color",
+            "$value": "#ffdad6"
+          },
+          "background": {
+            "$type": "color",
+            "$value": "#12131c"
+          },
+          "onBackground": {
+            "$type": "color",
+            "$value": "#e3e1ef"
+          },
+          "surface": {
+            "$type": "color",
+            "$value": "#12131c"
+          },
+          "onSurface": {
+            "$type": "color",
+            "$value": "#e3e1ef"
+          },
+          "surfaceVariant": {
+            "$type": "color",
+            "$value": "#454654"
+          },
+          "onSurfaceVariant": {
+            "$type": "color",
+            "$value": "#c6c5d6"
+          },
+          "surfaceDim": {
+            "$type": "color",
+            "$value": "#12131c"
+          },
+          "surfaceBright": {
+            "$type": "color",
+            "$value": "#383843"
+          },
+          "surfaceContainerLowest": {
+            "$type": "color",
+            "$value": "#0d0d17"
+          },
+          "surfaceContainerLow": {
+            "$type": "color",
+            "$value": "#1a1b25"
+          },
+          "surfaceContainer": {
+            "$type": "color",
+            "$value": "#1e1f29"
+          },
+          "surfaceContainerHigh": {
+            "$type": "color",
+            "$value": "#282934"
+          },
+          "surfaceContainerHighest": {
+            "$type": "color",
+            "$value": "#33343f"
+          },
+          "outline": {
+            "$type": "color",
+            "$value": "#8f8f9f"
+          },
+          "outlineVariant": {
+            "$type": "color",
+            "$value": "#454654"
+          },
+          "inverseSurface": {
+            "$type": "color",
+            "$value": "#e3e1ef"
+          },
+          "inverseOnSurface": {
+            "$type": "color",
+            "$value": "#2f303a"
+          },
+          "inversePrimary": {
+            "$type": "color",
+            "$value": "#283fff"
+          },
+          "scrim": {
+            "$type": "color",
+            "$value": "#000000"
+          },
+          "surfaceTint": {
+            "$type": "color",
+            "$value": "#bdc2ff"
+          },
+          "power": {
+            "$type": "color",
+            "$value": "#ffb3b0"
+          },
+          "onPower": {
+            "$type": "color",
+            "$value": "#68000f"
+          },
+          "powerContainer": {
+            "$type": "color",
+            "$value": "#92011a"
+          },
+          "onPowerContainer": {
+            "$type": "color",
+            "$value": "#ffdad8"
+          }
+        },
+        "oled": {
+          "primary": {
+            "$type": "color",
+            "$value": "#bdc2ff"
+          },
+          "onPrimary": {
+            "$type": "color",
+            "$value": "#00149e"
+          },
+          "primaryContainer": {
+            "$type": "color",
+            "$value": "#0020dd"
+          },
+          "onPrimaryContainer": {
+            "$type": "color",
+            "$value": "#dfe0ff"
+          },
+          "secondary": {
+            "$type": "color",
+            "$value": "#cbc1e9"
+          },
+          "onSecondary": {
+            "$type": "color",
+            "$value": "#322c4c"
+          },
+          "secondaryContainer": {
+            "$type": "color",
+            "$value": "#494263"
+          },
+          "onSecondaryContainer": {
+            "$type": "color",
+            "$value": "#e7deff"
+          },
+          "tertiary": {
+            "$type": "color",
+            "$value": "#d9bbf2"
+          },
+          "onTertiary": {
+            "$type": "color",
+            "$value": "#3d2653"
+          },
+          "tertiaryContainer": {
+            "$type": "color",
+            "$value": "#543c6b"
+          },
+          "onTertiaryContainer": {
+            "$type": "color",
+            "$value": "#f0dbff"
+          },
+          "error": {
+            "$type": "color",
+            "$value": "#ffb4ab"
+          },
+          "onError": {
+            "$type": "color",
+            "$value": "#690005"
+          },
+          "errorContainer": {
+            "$type": "color",
+            "$value": "#93000a"
+          },
+          "onErrorContainer": {
+            "$type": "color",
+            "$value": "#ffdad6"
+          },
+          "background": {
+            "$type": "color",
+            "$value": "#000000"
+          },
+          "onBackground": {
+            "$type": "color",
+            "$value": "#e3e1ef"
+          },
+          "surface": {
+            "$type": "color",
+            "$value": "#000000"
+          },
+          "onSurface": {
+            "$type": "color",
+            "$value": "#e3e1ef"
+          },
+          "surfaceVariant": {
+            "$type": "color",
+            "$value": "#454654"
+          },
+          "onSurfaceVariant": {
+            "$type": "color",
+            "$value": "#c6c5d6"
+          },
+          "surfaceDim": {
+            "$type": "color",
+            "$value": "#000000"
+          },
+          "surfaceBright": {
+            "$type": "color",
+            "$value": "#383843"
+          },
+          "surfaceContainerLowest": {
+            "$type": "color",
+            "$value": "#000000"
+          },
+          "surfaceContainerLow": {
+            "$type": "color",
+            "$value": "#0d0d17"
+          },
+          "surfaceContainer": {
+            "$type": "color",
+            "$value": "#12131c"
+          },
+          "surfaceContainerHigh": {
+            "$type": "color",
+            "$value": "#1a1b25"
+          },
+          "surfaceContainerHighest": {
+            "$type": "color",
+            "$value": "#282934"
+          },
+          "outline": {
+            "$type": "color",
+            "$value": "#8f8f9f"
+          },
+          "outlineVariant": {
+            "$type": "color",
+            "$value": "#454654"
+          },
+          "inverseSurface": {
+            "$type": "color",
+            "$value": "#e3e1ef"
+          },
+          "inverseOnSurface": {
+            "$type": "color",
+            "$value": "#2f303a"
+          },
+          "inversePrimary": {
+            "$type": "color",
+            "$value": "#283fff"
+          },
+          "scrim": {
+            "$type": "color",
+            "$value": "#000000"
+          },
+          "surfaceTint": {
+            "$type": "color",
+            "$value": "#bdc2ff"
+          },
+          "power": {
+            "$type": "color",
+            "$value": "#ffb3b0"
+          },
+          "onPower": {
+            "$type": "color",
+            "$value": "#68000f"
+          },
+          "powerContainer": {
+            "$type": "color",
+            "$value": "#92011a"
+          },
+          "onPowerContainer": {
+            "$type": "color",
+            "$value": "#ffdad8"
+          }
+        }
+      },
+      "teal": {
+        "light": {
+          "primary": {
+            "$type": "color",
+            "$value": "#006a6a"
+          },
+          "onPrimary": {
+            "$type": "color",
+            "$value": "#ffffff"
+          },
+          "primaryContainer": {
+            "$type": "color",
+            "$value": "#00fbfc"
+          },
+          "onPrimaryContainer": {
+            "$type": "color",
+            "$value": "#004f4f"
+          },
+          "secondary": {
+            "$type": "color",
+            "$value": "#3a656e"
+          },
+          "onSecondary": {
+            "$type": "color",
+            "$value": "#ffffff"
+          },
+          "secondaryContainer": {
+            "$type": "color",
+            "$value": "#beeaf5"
+          },
+          "onSecondaryContainer": {
+            "$type": "color",
+            "$value": "#204d56"
+          },
+          "tertiary": {
+            "$type": "color",
+            "$value": "#2a657f"
+          },
+          "onTertiary": {
+            "$type": "color",
+            "$value": "#ffffff"
+          },
+          "tertiaryContainer": {
+            "$type": "color",
+            "$value": "#c1e8ff"
+          },
+          "onTertiaryContainer": {
+            "$type": "color",
+            "$value": "#044d66"
+          },
+          "error": {
+            "$type": "color",
+            "$value": "#ba1a1a"
+          },
+          "onError": {
+            "$type": "color",
+            "$value": "#ffffff"
+          },
+          "errorContainer": {
+            "$type": "color",
+            "$value": "#ffdad6"
+          },
+          "onErrorContainer": {
+            "$type": "color",
+            "$value": "#93000a"
+          },
+          "background": {
+            "$type": "color",
+            "$value": "#eefcfb"
+          },
+          "onBackground": {
+            "$type": "color",
+            "$value": "#111e1e"
+          },
+          "surface": {
+            "$type": "color",
+            "$value": "#eefcfb"
+          },
+          "onSurface": {
+            "$type": "color",
+            "$value": "#111e1e"
+          },
+          "surfaceVariant": {
+            "$type": "color",
+            "$value": "#d3e6e5"
+          },
+          "onSurfaceVariant": {
+            "$type": "color",
+            "$value": "#394a4a"
+          },
+          "surfaceDim": {
+            "$type": "color",
+            "$value": "#cedddc"
+          },
+          "surfaceBright": {
+            "$type": "color",
+            "$value": "#eefcfb"
+          },
+          "surfaceContainerLowest": {
+            "$type": "color",
+            "$value": "#ffffff"
+          },
+          "surfaceContainerLow": {
+            "$type": "color",
+            "$value": "#e8f7f6"
+          },
+          "surfaceContainer": {
+            "$type": "color",
+            "$value": "#e2f1f0"
+          },
+          "surfaceContainerHigh": {
+            "$type": "color",
+            "$value": "#ddebea"
+          },
+          "surfaceContainerHighest": {
+            "$type": "color",
+            "$value": "#d7e5e4"
+          },
+          "outline": {
+            "$type": "color",
+            "$value": "#697a7a"
+          },
+          "outlineVariant": {
+            "$type": "color",
+            "$value": "#b8cac9"
+          },
+          "inverseSurface": {
+            "$type": "color",
+            "$value": "#263332"
+          },
+          "inverseOnSurface": {
+            "$type": "color",
+            "$value": "#e5f4f3"
+          },
+          "inversePrimary": {
+            "$type": "color",
+            "$value": "#00dddd"
+          },
+          "scrim": {
+            "$type": "color",
+            "$value": "#000000"
+          },
+          "surfaceTint": {
+            "$type": "color",
+            "$value": "#006a6a"
+          },
+          "power": {
+            "$type": "color",
+            "$value": "#b5242f"
+          },
+          "onPower": {
+            "$type": "color",
+            "$value": "#ffffff"
+          },
+          "powerContainer": {
+            "$type": "color",
+            "$value": "#ffdad8"
+          },
+          "onPowerContainer": {
+            "$type": "color",
+            "$value": "#410006"
+          }
+        },
+        "dark": {
+          "primary": {
+            "$type": "color",
+            "$value": "#00dddd"
+          },
+          "onPrimary": {
+            "$type": "color",
+            "$value": "#003737"
+          },
+          "primaryContainer": {
+            "$type": "color",
+            "$value": "#004f4f"
+          },
+          "onPrimaryContainer": {
+            "$type": "color",
+            "$value": "#00fbfc"
+          },
+          "secondary": {
+            "$type": "color",
+            "$value": "#a2ced9"
+          },
+          "onSecondary": {
+            "$type": "color",
+            "$value": "#01363f"
+          },
+          "secondaryContainer": {
+            "$type": "color",
+            "$value": "#204d56"
+          },
+          "onSecondaryContainer": {
+            "$type": "color",
+            "$value": "#beeaf5"
+          },
+          "tertiary": {
+            "$type": "color",
+            "$value": "#97ceec"
+          },
+          "onTertiary": {
+            "$type": "color",
+            "$value": "#003548"
+          },
+          "tertiaryContainer": {
+            "$type": "color",
+            "$value": "#044d66"
+          },
+          "onTertiaryContainer": {
+            "$type": "color",
+            "$value": "#c1e8ff"
+          },
+          "error": {
+            "$type": "color",
+            "$value": "#ffb4ab"
+          },
+          "onError": {
+            "$type": "color",
+            "$value": "#690005"
+          },
+          "errorContainer": {
+            "$type": "color",
+            "$value": "#93000a"
+          },
+          "onErrorContainer": {
+            "$type": "color",
+            "$value": "#ffdad6"
+          },
+          "background": {
+            "$type": "color",
+            "$value": "#091515"
+          },
+          "onBackground": {
+            "$type": "color",
+            "$value": "#d7e5e4"
+          },
+          "surface": {
+            "$type": "color",
+            "$value": "#091515"
+          },
+          "onSurface": {
+            "$type": "color",
+            "$value": "#d7e5e4"
+          },
+          "surfaceVariant": {
+            "$type": "color",
+            "$value": "#394a4a"
+          },
+          "onSurfaceVariant": {
+            "$type": "color",
+            "$value": "#b8cac9"
+          },
+          "surfaceDim": {
+            "$type": "color",
+            "$value": "#091515"
+          },
+          "surfaceBright": {
+            "$type": "color",
+            "$value": "#2f3c3b"
+          },
+          "surfaceContainerLowest": {
+            "$type": "color",
+            "$value": "#041010"
+          },
+          "surfaceContainerLow": {
+            "$type": "color",
+            "$value": "#111e1e"
+          },
+          "surfaceContainer": {
+            "$type": "color",
+            "$value": "#152222"
+          },
+          "surfaceContainerHigh": {
+            "$type": "color",
+            "$value": "#1f2c2c"
+          },
+          "surfaceContainerHighest": {
+            "$type": "color",
+            "$value": "#2a3737"
+          },
+          "outline": {
+            "$type": "color",
+            "$value": "#829494"
+          },
+          "outlineVariant": {
+            "$type": "color",
+            "$value": "#394a4a"
+          },
+          "inverseSurface": {
+            "$type": "color",
+            "$value": "#d7e5e4"
+          },
+          "inverseOnSurface": {
+            "$type": "color",
+            "$value": "#263332"
+          },
+          "inversePrimary": {
+            "$type": "color",
+            "$value": "#006a6a"
+          },
+          "scrim": {
+            "$type": "color",
+            "$value": "#000000"
+          },
+          "surfaceTint": {
+            "$type": "color",
+            "$value": "#00dddd"
+          },
+          "power": {
+            "$type": "color",
+            "$value": "#ffb3b0"
+          },
+          "onPower": {
+            "$type": "color",
+            "$value": "#68000f"
+          },
+          "powerContainer": {
+            "$type": "color",
+            "$value": "#92011a"
+          },
+          "onPowerContainer": {
+            "$type": "color",
+            "$value": "#ffdad8"
+          }
+        },
+        "oled": {
+          "primary": {
+            "$type": "color",
+            "$value": "#00dddd"
+          },
+          "onPrimary": {
+            "$type": "color",
+            "$value": "#003737"
+          },
+          "primaryContainer": {
+            "$type": "color",
+            "$value": "#004f4f"
+          },
+          "onPrimaryContainer": {
+            "$type": "color",
+            "$value": "#00fbfc"
+          },
+          "secondary": {
+            "$type": "color",
+            "$value": "#a2ced9"
+          },
+          "onSecondary": {
+            "$type": "color",
+            "$value": "#01363f"
+          },
+          "secondaryContainer": {
+            "$type": "color",
+            "$value": "#204d56"
+          },
+          "onSecondaryContainer": {
+            "$type": "color",
+            "$value": "#beeaf5"
+          },
+          "tertiary": {
+            "$type": "color",
+            "$value": "#97ceec"
+          },
+          "onTertiary": {
+            "$type": "color",
+            "$value": "#003548"
+          },
+          "tertiaryContainer": {
+            "$type": "color",
+            "$value": "#044d66"
+          },
+          "onTertiaryContainer": {
+            "$type": "color",
+            "$value": "#c1e8ff"
+          },
+          "error": {
+            "$type": "color",
+            "$value": "#ffb4ab"
+          },
+          "onError": {
+            "$type": "color",
+            "$value": "#690005"
+          },
+          "errorContainer": {
+            "$type": "color",
+            "$value": "#93000a"
+          },
+          "onErrorContainer": {
+            "$type": "color",
+            "$value": "#ffdad6"
+          },
+          "background": {
+            "$type": "color",
+            "$value": "#000000"
+          },
+          "onBackground": {
+            "$type": "color",
+            "$value": "#d7e5e4"
+          },
+          "surface": {
+            "$type": "color",
+            "$value": "#000000"
+          },
+          "onSurface": {
+            "$type": "color",
+            "$value": "#d7e5e4"
+          },
+          "surfaceVariant": {
+            "$type": "color",
+            "$value": "#394a4a"
+          },
+          "onSurfaceVariant": {
+            "$type": "color",
+            "$value": "#b8cac9"
+          },
+          "surfaceDim": {
+            "$type": "color",
+            "$value": "#000000"
+          },
+          "surfaceBright": {
+            "$type": "color",
+            "$value": "#2f3c3b"
+          },
+          "surfaceContainerLowest": {
+            "$type": "color",
+            "$value": "#000000"
+          },
+          "surfaceContainerLow": {
+            "$type": "color",
+            "$value": "#041010"
+          },
+          "surfaceContainer": {
+            "$type": "color",
+            "$value": "#091515"
+          },
+          "surfaceContainerHigh": {
+            "$type": "color",
+            "$value": "#111e1e"
+          },
+          "surfaceContainerHighest": {
+            "$type": "color",
+            "$value": "#1f2c2c"
+          },
+          "outline": {
+            "$type": "color",
+            "$value": "#829494"
+          },
+          "outlineVariant": {
+            "$type": "color",
+            "$value": "#394a4a"
+          },
+          "inverseSurface": {
+            "$type": "color",
+            "$value": "#d7e5e4"
+          },
+          "inverseOnSurface": {
+            "$type": "color",
+            "$value": "#263332"
+          },
+          "inversePrimary": {
+            "$type": "color",
+            "$value": "#006a6a"
+          },
+          "scrim": {
+            "$type": "color",
+            "$value": "#000000"
+          },
+          "surfaceTint": {
+            "$type": "color",
+            "$value": "#00dddd"
+          },
+          "power": {
+            "$type": "color",
+            "$value": "#ffb3b0"
+          },
+          "onPower": {
+            "$type": "color",
+            "$value": "#68000f"
+          },
+          "powerContainer": {
+            "$type": "color",
+            "$value": "#92011a"
+          },
+          "onPowerContainer": {
+            "$type": "color",
+            "$value": "#ffdad8"
+          }
+        }
+      },
+      "amber": {
+        "light": {
+          "primary": {
+            "$type": "color",
+            "$value": "#7f5700"
+          },
+          "onPrimary": {
+            "$type": "color",
+            "$value": "#ffffff"
+          },
+          "primaryContainer": {
+            "$type": "color",
+            "$value": "#ffdead"
+          },
+          "onPrimaryContainer": {
+            "$type": "color",
+            "$value": "#604100"
+          },
+          "secondary": {
+            "$type": "color",
+            "$value": "#6f5c2e"
+          },
+          "onSecondary": {
+            "$type": "color",
+            "$value": "#ffffff"
+          },
+          "secondaryContainer": {
+            "$type": "color",
+            "$value": "#fae0a6"
+          },
+          "onSecondaryContainer": {
+            "$type": "color",
+            "$value": "#564519"
+          },
+          "tertiary": {
+            "$type": "color",
+            "$value": "#6c5e1c"
+          },
+          "onTertiary": {
+            "$type": "color",
+            "$value": "#ffffff"
+          },
+          "tertiaryContainer": {
+            "$type": "color",
+            "$value": "#f6e292"
+          },
+          "onTertiaryContainer": {
+            "$type": "color",
+            "$value": "#534603"
+          },
+          "error": {
+            "$type": "color",
+            "$value": "#ba1a1a"
+          },
+          "onError": {
+            "$type": "color",
+            "$value": "#ffffff"
+          },
+          "errorContainer": {
+            "$type": "color",
+            "$value": "#ffdad6"
+          },
+          "onErrorContainer": {
+            "$type": "color",
+            "$value": "#93000a"
+          },
+          "background": {
+            "$type": "color",
+            "$value": "#fff8f3"
+          },
+          "onBackground": {
+            "$type": "color",
+            "$value": "#231a0d"
+          },
+          "surface": {
+            "$type": "color",
+            "$value": "#fff8f3"
+          },
+          "onSurface": {
+            "$type": "color",
+            "$value": "#231a0d"
+          },
+          "surfaceVariant": {
+            "$type": "color",
+            "$value": "#f4e0c5"
+          },
+          "onSurfaceVariant": {
+            "$type": "color",
+            "$value": "#524532"
+          },
+          "surfaceDim": {
+            "$type": "color",
+            "$value": "#e9d8c2"
+          },
+          "surfaceBright": {
+            "$type": "color",
+            "$value": "#fff8f3"
+          },
+          "surfaceContainerLowest": {
+            "$type": "color",
+            "$value": "#ffffff"
+          },
+          "surfaceContainerLow": {
+            "$type": "color",
+            "$value": "#fff2e2"
+          },
+          "surfaceContainer": {
+            "$type": "color",
+            "$value": "#fdebd5"
+          },
+          "surfaceContainerHigh": {
+            "$type": "color",
+            "$value": "#f7e6d0"
+          },
+          "surfaceContainerHighest": {
+            "$type": "color",
+            "$value": "#f1e0ca"
+          },
+          "outline": {
+            "$type": "color",
+            "$value": "#84755f"
+          },
+          "outlineVariant": {
+            "$type": "color",
+            "$value": "#d7c4aa"
+          },
+          "inverseSurface": {
+            "$type": "color",
+            "$value": "#392f20"
+          },
+          "inverseOnSurface": {
+            "$type": "color",
+            "$value": "#ffeeda"
+          },
+          "inversePrimary": {
+            "$type": "color",
+            "$value": "#ffba3b"
+          },
+          "scrim": {
+            "$type": "color",
+            "$value": "#000000"
+          },
+          "surfaceTint": {
+            "$type": "color",
+            "$value": "#7f5700"
+          },
+          "power": {
+            "$type": "color",
+            "$value": "#b5242f"
+          },
+          "onPower": {
+            "$type": "color",
+            "$value": "#ffffff"
+          },
+          "powerContainer": {
+            "$type": "color",
+            "$value": "#ffdad8"
+          },
+          "onPowerContainer": {
+            "$type": "color",
+            "$value": "#410006"
+          }
+        },
+        "dark": {
+          "primary": {
+            "$type": "color",
+            "$value": "#ffba3b"
+          },
+          "onPrimary": {
+            "$type": "color",
+            "$value": "#432c00"
+          },
+          "primaryContainer": {
+            "$type": "color",
+            "$value": "#604100"
+          },
+          "onPrimaryContainer": {
+            "$type": "color",
+            "$value": "#ffdead"
+          },
+          "secondary": {
+            "$type": "color",
+            "$value": "#ddc48c"
+          },
+          "onSecondary": {
+            "$type": "color",
+            "$value": "#3d2e04"
+          },
+          "secondaryContainer": {
+            "$type": "color",
+            "$value": "#564519"
+          },
+          "onSecondaryContainer": {
+            "$type": "color",
+            "$value": "#fae0a6"
+          },
+          "tertiary": {
+            "$type": "color",
+            "$value": "#d9c679"
+          },
+          "onTertiary": {
+            "$type": "color",
+            "$value": "#393000"
+          },
+          "tertiaryContainer": {
+            "$type": "color",
+            "$value": "#534603"
+          },
+          "onTertiaryContainer": {
+            "$type": "color",
+            "$value": "#f6e292"
+          },
+          "error": {
+            "$type": "color",
+            "$value": "#ffb4ab"
+          },
+          "onError": {
+            "$type": "color",
+            "$value": "#690005"
+          },
+          "errorContainer": {
+            "$type": "color",
+            "$value": "#93000a"
+          },
+          "onErrorContainer": {
+            "$type": "color",
+            "$value": "#ffdad6"
+          },
+          "background": {
+            "$type": "color",
+            "$value": "#1a1206"
+          },
+          "onBackground": {
+            "$type": "color",
+            "$value": "#f1e0ca"
+          },
+          "surface": {
+            "$type": "color",
+            "$value": "#1a1206"
+          },
+          "onSurface": {
+            "$type": "color",
+            "$value": "#f1e0ca"
+          },
+          "surfaceVariant": {
+            "$type": "color",
+            "$value": "#524532"
+          },
+          "onSurfaceVariant": {
+            "$type": "color",
+            "$value": "#d7c4aa"
+          },
+          "surfaceDim": {
+            "$type": "color",
+            "$value": "#1a1206"
+          },
+          "surfaceBright": {
+            "$type": "color",
+            "$value": "#423828"
+          },
+          "surfaceContainerLowest": {
+            "$type": "color",
+            "$value": "#140d03"
+          },
+          "surfaceContainerLow": {
+            "$type": "color",
+            "$value": "#231a0d"
+          },
+          "surfaceContainer": {
+            "$type": "color",
+            "$value": "#271e11"
+          },
+          "surfaceContainerHigh": {
+            "$type": "color",
+            "$value": "#32281a"
+          },
+          "surfaceContainerHighest": {
+            "$type": "color",
+            "$value": "#3d3324"
+          },
+          "outline": {
+            "$type": "color",
+            "$value": "#9f8e77"
+          },
+          "outlineVariant": {
+            "$type": "color",
+            "$value": "#524532"
+          },
+          "inverseSurface": {
+            "$type": "color",
+            "$value": "#f1e0ca"
+          },
+          "inverseOnSurface": {
+            "$type": "color",
+            "$value": "#392f20"
+          },
+          "inversePrimary": {
+            "$type": "color",
+            "$value": "#7f5700"
+          },
+          "scrim": {
+            "$type": "color",
+            "$value": "#000000"
+          },
+          "surfaceTint": {
+            "$type": "color",
+            "$value": "#ffba3b"
+          },
+          "power": {
+            "$type": "color",
+            "$value": "#ffb3b0"
+          },
+          "onPower": {
+            "$type": "color",
+            "$value": "#68000f"
+          },
+          "powerContainer": {
+            "$type": "color",
+            "$value": "#92011a"
+          },
+          "onPowerContainer": {
+            "$type": "color",
+            "$value": "#ffdad8"
+          }
+        },
+        "oled": {
+          "primary": {
+            "$type": "color",
+            "$value": "#ffba3b"
+          },
+          "onPrimary": {
+            "$type": "color",
+            "$value": "#432c00"
+          },
+          "primaryContainer": {
+            "$type": "color",
+            "$value": "#604100"
+          },
+          "onPrimaryContainer": {
+            "$type": "color",
+            "$value": "#ffdead"
+          },
+          "secondary": {
+            "$type": "color",
+            "$value": "#ddc48c"
+          },
+          "onSecondary": {
+            "$type": "color",
+            "$value": "#3d2e04"
+          },
+          "secondaryContainer": {
+            "$type": "color",
+            "$value": "#564519"
+          },
+          "onSecondaryContainer": {
+            "$type": "color",
+            "$value": "#fae0a6"
+          },
+          "tertiary": {
+            "$type": "color",
+            "$value": "#d9c679"
+          },
+          "onTertiary": {
+            "$type": "color",
+            "$value": "#393000"
+          },
+          "tertiaryContainer": {
+            "$type": "color",
+            "$value": "#534603"
+          },
+          "onTertiaryContainer": {
+            "$type": "color",
+            "$value": "#f6e292"
+          },
+          "error": {
+            "$type": "color",
+            "$value": "#ffb4ab"
+          },
+          "onError": {
+            "$type": "color",
+            "$value": "#690005"
+          },
+          "errorContainer": {
+            "$type": "color",
+            "$value": "#93000a"
+          },
+          "onErrorContainer": {
+            "$type": "color",
+            "$value": "#ffdad6"
+          },
+          "background": {
+            "$type": "color",
+            "$value": "#000000"
+          },
+          "onBackground": {
+            "$type": "color",
+            "$value": "#f1e0ca"
+          },
+          "surface": {
+            "$type": "color",
+            "$value": "#000000"
+          },
+          "onSurface": {
+            "$type": "color",
+            "$value": "#f1e0ca"
+          },
+          "surfaceVariant": {
+            "$type": "color",
+            "$value": "#524532"
+          },
+          "onSurfaceVariant": {
+            "$type": "color",
+            "$value": "#d7c4aa"
+          },
+          "surfaceDim": {
+            "$type": "color",
+            "$value": "#000000"
+          },
+          "surfaceBright": {
+            "$type": "color",
+            "$value": "#423828"
+          },
+          "surfaceContainerLowest": {
+            "$type": "color",
+            "$value": "#000000"
+          },
+          "surfaceContainerLow": {
+            "$type": "color",
+            "$value": "#140d03"
+          },
+          "surfaceContainer": {
+            "$type": "color",
+            "$value": "#1a1206"
+          },
+          "surfaceContainerHigh": {
+            "$type": "color",
+            "$value": "#231a0d"
+          },
+          "surfaceContainerHighest": {
+            "$type": "color",
+            "$value": "#32281a"
+          },
+          "outline": {
+            "$type": "color",
+            "$value": "#9f8e77"
+          },
+          "outlineVariant": {
+            "$type": "color",
+            "$value": "#524532"
+          },
+          "inverseSurface": {
+            "$type": "color",
+            "$value": "#f1e0ca"
+          },
+          "inverseOnSurface": {
+            "$type": "color",
+            "$value": "#392f20"
+          },
+          "inversePrimary": {
+            "$type": "color",
+            "$value": "#7f5700"
+          },
+          "scrim": {
+            "$type": "color",
+            "$value": "#000000"
+          },
+          "surfaceTint": {
+            "$type": "color",
+            "$value": "#ffba3b"
+          },
+          "power": {
+            "$type": "color",
+            "$value": "#ffb3b0"
+          },
+          "onPower": {
+            "$type": "color",
+            "$value": "#68000f"
+          },
+          "powerContainer": {
+            "$type": "color",
+            "$value": "#92011a"
+          },
+          "onPowerContainer": {
+            "$type": "color",
+            "$value": "#ffdad8"
+          }
+        }
+      },
+      "rose": {
+        "light": {
+          "primary": {
+            "$type": "color",
+            "$value": "#bb0057"
+          },
+          "onPrimary": {
+            "$type": "color",
+            "$value": "#ffffff"
+          },
+          "primaryContainer": {
+            "$type": "color",
+            "$value": "#ffd9e0"
+          },
+          "onPrimaryContainer": {
+            "$type": "color",
+            "$value": "#8f0041"
+          },
+          "secondary": {
+            "$type": "color",
+            "$value": "#82524e"
+          },
+          "onSecondary": {
+            "$type": "color",
+            "$value": "#ffffff"
+          },
+          "secondaryContainer": {
+            "$type": "color",
+            "$value": "#ffdad7"
+          },
+          "onSecondaryContainer": {
+            "$type": "color",
+            "$value": "#663b38"
+          },
+          "tertiary": {
+            "$type": "color",
+            "$value": "#8a4f37"
+          },
+          "onTertiary": {
+            "$type": "color",
+            "$value": "#ffffff"
+          },
+          "tertiaryContainer": {
+            "$type": "color",
+            "$value": "#ffdbce"
+          },
+          "onTertiaryContainer": {
+            "$type": "color",
+            "$value": "#6e3822"
+          },
+          "error": {
+            "$type": "color",
+            "$value": "#ba1a1a"
+          },
+          "onError": {
+            "$type": "color",
+            "$value": "#ffffff"
+          },
+          "errorContainer": {
+            "$type": "color",
+            "$value": "#ffdad6"
+          },
+          "onErrorContainer": {
+            "$type": "color",
+            "$value": "#93000a"
+          },
+          "background": {
+            "$type": "color",
+            "$value": "#fff8f7"
+          },
+          "onBackground": {
+            "$type": "color",
+            "$value": "#26181b"
+          },
+          "surface": {
+            "$type": "color",
+            "$value": "#fff8f7"
+          },
+          "onSurface": {
+            "$type": "color",
+            "$value": "#26181b"
+          },
+          "surfaceVariant": {
+            "$type": "color",
+            "$value": "#fadbe0"
+          },
+          "onSurfaceVariant": {
+            "$type": "color",
+            "$value": "#564145"
+          },
+          "surfaceDim": {
+            "$type": "color",
+            "$value": "#eed4d8"
+          },
+          "surfaceBright": {
+            "$type": "color",
+            "$value": "#fff8f7"
+          },
+          "surfaceContainerLowest": {
+            "$type": "color",
+            "$value": "#ffffff"
+          },
+          "surfaceContainerLow": {
+            "$type": "color",
+            "$value": "#fff0f2"
+          },
+          "surfaceContainer": {
+            "$type": "color",
+            "$value": "#ffe8ec"
+          },
+          "surfaceContainerHigh": {
+            "$type": "color",
+            "$value": "#fce2e6"
+          },
+          "surfaceContainerHighest": {
+            "$type": "color",
+            "$value": "#f6dce0"
+          },
+          "outline": {
+            "$type": "color",
+            "$value": "#8a7175"
+          },
+          "outlineVariant": {
+            "$type": "color",
+            "$value": "#ddbfc4"
+          },
+          "inverseSurface": {
+            "$type": "color",
+            "$value": "#3c2c2f"
+          },
+          "inverseOnSurface": {
+            "$type": "color",
+            "$value": "#ffecef"
+          },
+          "inversePrimary": {
+            "$type": "color",
+            "$value": "#ffb1c2"
+          },
+          "scrim": {
+            "$type": "color",
+            "$value": "#000000"
+          },
+          "surfaceTint": {
+            "$type": "color",
+            "$value": "#bb0057"
+          },
+          "power": {
+            "$type": "color",
+            "$value": "#b5242f"
+          },
+          "onPower": {
+            "$type": "color",
+            "$value": "#ffffff"
+          },
+          "powerContainer": {
+            "$type": "color",
+            "$value": "#ffdad8"
+          },
+          "onPowerContainer": {
+            "$type": "color",
+            "$value": "#410006"
+          }
+        },
+        "dark": {
+          "primary": {
+            "$type": "color",
+            "$value": "#ffb1c2"
+          },
+          "onPrimary": {
+            "$type": "color",
+            "$value": "#66002c"
+          },
+          "primaryContainer": {
+            "$type": "color",
+            "$value": "#8f0041"
+          },
+          "onPrimaryContainer": {
+            "$type": "color",
+            "$value": "#ffd9e0"
+          },
+          "secondary": {
+            "$type": "color",
+            "$value": "#f5b7b2"
+          },
+          "onSecondary": {
+            "$type": "color",
+            "$value": "#4c2523"
+          },
+          "secondaryContainer": {
+            "$type": "color",
+            "$value": "#663b38"
+          },
+          "onSecondaryContainer": {
+            "$type": "color",
+            "$value": "#ffdad7"
+          },
+          "tertiary": {
+            "$type": "color",
+            "$value": "#ffb59a"
+          },
+          "onTertiary": {
+            "$type": "color",
+            "$value": "#52220e"
+          },
+          "tertiaryContainer": {
+            "$type": "color",
+            "$value": "#6e3822"
+          },
+          "onTertiaryContainer": {
+            "$type": "color",
+            "$value": "#ffdbce"
+          },
+          "error": {
+            "$type": "color",
+            "$value": "#ffb4ab"
+          },
+          "onError": {
+            "$type": "color",
+            "$value": "#690005"
+          },
+          "errorContainer": {
+            "$type": "color",
+            "$value": "#93000a"
+          },
+          "onErrorContainer": {
+            "$type": "color",
+            "$value": "#ffdad6"
+          },
+          "background": {
+            "$type": "color",
+            "$value": "#1d1013"
+          },
+          "onBackground": {
+            "$type": "color",
+            "$value": "#f6dce0"
+          },
+          "surface": {
+            "$type": "color",
+            "$value": "#1d1013"
+          },
+          "onSurface": {
+            "$type": "color",
+            "$value": "#f6dce0"
+          },
+          "surfaceVariant": {
+            "$type": "color",
+            "$value": "#564145"
+          },
+          "onSurfaceVariant": {
+            "$type": "color",
+            "$value": "#ddbfc4"
+          },
+          "surfaceDim": {
+            "$type": "color",
+            "$value": "#1d1013"
+          },
+          "surfaceBright": {
+            "$type": "color",
+            "$value": "#463538"
+          },
+          "surfaceContainerLowest": {
+            "$type": "color",
+            "$value": "#170b0e"
+          },
+          "surfaceContainerLow": {
+            "$type": "color",
+            "$value": "#26181b"
+          },
+          "surfaceContainer": {
+            "$type": "color",
+            "$value": "#2a1c1f"
+          },
+          "surfaceContainerHigh": {
+            "$type": "color",
+            "$value": "#352629"
+          },
+          "surfaceContainerHighest": {
+            "$type": "color",
+            "$value": "#413034"
+          },
+          "outline": {
+            "$type": "color",
+            "$value": "#a58a8f"
+          },
+          "outlineVariant": {
+            "$type": "color",
+            "$value": "#564145"
+          },
+          "inverseSurface": {
+            "$type": "color",
+            "$value": "#f6dce0"
+          },
+          "inverseOnSurface": {
+            "$type": "color",
+            "$value": "#3c2c2f"
+          },
+          "inversePrimary": {
+            "$type": "color",
+            "$value": "#bb0057"
+          },
+          "scrim": {
+            "$type": "color",
+            "$value": "#000000"
+          },
+          "surfaceTint": {
+            "$type": "color",
+            "$value": "#ffb1c2"
+          },
+          "power": {
+            "$type": "color",
+            "$value": "#ffb3b0"
+          },
+          "onPower": {
+            "$type": "color",
+            "$value": "#68000f"
+          },
+          "powerContainer": {
+            "$type": "color",
+            "$value": "#92011a"
+          },
+          "onPowerContainer": {
+            "$type": "color",
+            "$value": "#ffdad8"
+          }
+        },
+        "oled": {
+          "primary": {
+            "$type": "color",
+            "$value": "#ffb1c2"
+          },
+          "onPrimary": {
+            "$type": "color",
+            "$value": "#66002c"
+          },
+          "primaryContainer": {
+            "$type": "color",
+            "$value": "#8f0041"
+          },
+          "onPrimaryContainer": {
+            "$type": "color",
+            "$value": "#ffd9e0"
+          },
+          "secondary": {
+            "$type": "color",
+            "$value": "#f5b7b2"
+          },
+          "onSecondary": {
+            "$type": "color",
+            "$value": "#4c2523"
+          },
+          "secondaryContainer": {
+            "$type": "color",
+            "$value": "#663b38"
+          },
+          "onSecondaryContainer": {
+            "$type": "color",
+            "$value": "#ffdad7"
+          },
+          "tertiary": {
+            "$type": "color",
+            "$value": "#ffb59a"
+          },
+          "onTertiary": {
+            "$type": "color",
+            "$value": "#52220e"
+          },
+          "tertiaryContainer": {
+            "$type": "color",
+            "$value": "#6e3822"
+          },
+          "onTertiaryContainer": {
+            "$type": "color",
+            "$value": "#ffdbce"
+          },
+          "error": {
+            "$type": "color",
+            "$value": "#ffb4ab"
+          },
+          "onError": {
+            "$type": "color",
+            "$value": "#690005"
+          },
+          "errorContainer": {
+            "$type": "color",
+            "$value": "#93000a"
+          },
+          "onErrorContainer": {
+            "$type": "color",
+            "$value": "#ffdad6"
+          },
+          "background": {
+            "$type": "color",
+            "$value": "#000000"
+          },
+          "onBackground": {
+            "$type": "color",
+            "$value": "#f6dce0"
+          },
+          "surface": {
+            "$type": "color",
+            "$value": "#000000"
+          },
+          "onSurface": {
+            "$type": "color",
+            "$value": "#f6dce0"
+          },
+          "surfaceVariant": {
+            "$type": "color",
+            "$value": "#564145"
+          },
+          "onSurfaceVariant": {
+            "$type": "color",
+            "$value": "#ddbfc4"
+          },
+          "surfaceDim": {
+            "$type": "color",
+            "$value": "#000000"
+          },
+          "surfaceBright": {
+            "$type": "color",
+            "$value": "#463538"
+          },
+          "surfaceContainerLowest": {
+            "$type": "color",
+            "$value": "#000000"
+          },
+          "surfaceContainerLow": {
+            "$type": "color",
+            "$value": "#170b0e"
+          },
+          "surfaceContainer": {
+            "$type": "color",
+            "$value": "#1d1013"
+          },
+          "surfaceContainerHigh": {
+            "$type": "color",
+            "$value": "#26181b"
+          },
+          "surfaceContainerHighest": {
+            "$type": "color",
+            "$value": "#352629"
+          },
+          "outline": {
+            "$type": "color",
+            "$value": "#a58a8f"
+          },
+          "outlineVariant": {
+            "$type": "color",
+            "$value": "#564145"
+          },
+          "inverseSurface": {
+            "$type": "color",
+            "$value": "#f6dce0"
+          },
+          "inverseOnSurface": {
+            "$type": "color",
+            "$value": "#3c2c2f"
+          },
+          "inversePrimary": {
+            "$type": "color",
+            "$value": "#bb0057"
+          },
+          "scrim": {
+            "$type": "color",
+            "$value": "#000000"
+          },
+          "surfaceTint": {
+            "$type": "color",
+            "$value": "#ffb1c2"
+          },
+          "power": {
+            "$type": "color",
+            "$value": "#ffb3b0"
+          },
+          "onPower": {
+            "$type": "color",
+            "$value": "#68000f"
+          },
+          "powerContainer": {
+            "$type": "color",
+            "$value": "#92011a"
+          },
+          "onPowerContainer": {
+            "$type": "color",
+            "$value": "#ffdad8"
+          }
+        }
+      },
+      "green": {
+        "light": {
+          "primary": {
+            "$type": "color",
+            "$value": "#006d34"
+          },
+          "onPrimary": {
+            "$type": "color",
+            "$value": "#ffffff"
+          },
+          "primaryContainer": {
+            "$type": "color",
+            "$value": "#62ff95"
+          },
+          "onPrimaryContainer": {
+            "$type": "color",
+            "$value": "#005226"
+          },
+          "secondary": {
+            "$type": "color",
+            "$value": "#3f6655"
+          },
+          "onSecondary": {
+            "$type": "color",
+            "$value": "#ffffff"
+          },
+          "secondaryContainer": {
+            "$type": "color",
+            "$value": "#c0ecd6"
+          },
+          "onSecondaryContainer": {
+            "$type": "color",
+            "$value": "#274e3e"
+          },
+          "tertiary": {
+            "$type": "color",
+            "$value": "#1f695e"
+          },
+          "onTertiary": {
+            "$type": "color",
+            "$value": "#ffffff"
+          },
+          "tertiaryContainer": {
+            "$type": "color",
+            "$value": "#aaf0e1"
+          },
+          "onTertiaryContainer": {
+            "$type": "color",
+            "$value": "#005046"
+          },
+          "error": {
+            "$type": "color",
+            "$value": "#ba1a1a"
+          },
+          "onError": {
+            "$type": "color",
+            "$value": "#ffffff"
+          },
+          "errorContainer": {
+            "$type": "color",
+            "$value": "#ffdad6"
+          },
+          "onErrorContainer": {
+            "$type": "color",
+            "$value": "#93000a"
+          },
+          "background": {
+            "$type": "color",
+            "$value": "#f1fcef"
+          },
+          "onBackground": {
+            "$type": "color",
+            "$value": "#141e16"
+          },
+          "surface": {
+            "$type": "color",
+            "$value": "#f1fcef"
+          },
+          "onSurface": {
+            "$type": "color",
+            "$value": "#141e16"
+          },
+          "surfaceVariant": {
+            "$type": "color",
+            "$value": "#d8e6d6"
+          },
+          "onSurfaceVariant": {
+            "$type": "color",
+            "$value": "#3d4a3e"
+          },
+          "surfaceDim": {
+            "$type": "color",
+            "$value": "#d2ddd0"
+          },
+          "surfaceBright": {
+            "$type": "color",
+            "$value": "#f1fcef"
+          },
+          "surfaceContainerLowest": {
+            "$type": "color",
+            "$value": "#ffffff"
+          },
+          "surfaceContainerLow": {
+            "$type": "color",
+            "$value": "#ecf7e9"
+          },
+          "surfaceContainer": {
+            "$type": "color",
+            "$value": "#e6f1e3"
+          },
+          "surfaceContainerHigh": {
+            "$type": "color",
+            "$value": "#e0ebde"
+          },
+          "surfaceContainerHighest": {
+            "$type": "color",
+            "$value": "#dbe6d8"
+          },
+          "outline": {
+            "$type": "color",
+            "$value": "#6d7b6d"
+          },
+          "outlineVariant": {
+            "$type": "color",
+            "$value": "#bccabb"
+          },
+          "inverseSurface": {
+            "$type": "color",
+            "$value": "#29332a"
+          },
+          "inverseOnSurface": {
+            "$type": "color",
+            "$value": "#e9f4e6"
+          },
+          "inversePrimary": {
+            "$type": "color",
+            "$value": "#00e474"
+          },
+          "scrim": {
+            "$type": "color",
+            "$value": "#000000"
+          },
+          "surfaceTint": {
+            "$type": "color",
+            "$value": "#006d34"
+          },
+          "power": {
+            "$type": "color",
+            "$value": "#b5242f"
+          },
+          "onPower": {
+            "$type": "color",
+            "$value": "#ffffff"
+          },
+          "powerContainer": {
+            "$type": "color",
+            "$value": "#ffdad8"
+          },
+          "onPowerContainer": {
+            "$type": "color",
+            "$value": "#410006"
+          }
+        },
+        "dark": {
+          "primary": {
+            "$type": "color",
+            "$value": "#00e474"
+          },
+          "onPrimary": {
+            "$type": "color",
+            "$value": "#003918"
+          },
+          "primaryContainer": {
+            "$type": "color",
+            "$value": "#005226"
+          },
+          "onPrimaryContainer": {
+            "$type": "color",
+            "$value": "#62ff95"
+          },
+          "secondary": {
+            "$type": "color",
+            "$value": "#a5d0ba"
+          },
+          "onSecondary": {
+            "$type": "color",
+            "$value": "#0d3728"
+          },
+          "secondaryContainer": {
+            "$type": "color",
+            "$value": "#274e3e"
+          },
+          "onSecondaryContainer": {
+            "$type": "color",
+            "$value": "#c0ecd6"
+          },
+          "tertiary": {
+            "$type": "color",
+            "$value": "#8ed4c6"
+          },
+          "onTertiary": {
+            "$type": "color",
+            "$value": "#003730"
+          },
+          "tertiaryContainer": {
+            "$type": "color",
+            "$value": "#005046"
+          },
+          "onTertiaryContainer": {
+            "$type": "color",
+            "$value": "#aaf0e1"
+          },
+          "error": {
+            "$type": "color",
+            "$value": "#ffb4ab"
+          },
+          "onError": {
+            "$type": "color",
+            "$value": "#690005"
+          },
+          "errorContainer": {
+            "$type": "color",
+            "$value": "#93000a"
+          },
+          "onErrorContainer": {
+            "$type": "color",
+            "$value": "#ffdad6"
+          },
+          "background": {
+            "$type": "color",
+            "$value": "#0c150e"
+          },
+          "onBackground": {
+            "$type": "color",
+            "$value": "#dbe6d8"
+          },
+          "surface": {
+            "$type": "color",
+            "$value": "#0c150e"
+          },
+          "onSurface": {
+            "$type": "color",
+            "$value": "#dbe6d8"
+          },
+          "surfaceVariant": {
+            "$type": "color",
+            "$value": "#3d4a3e"
+          },
+          "onSurfaceVariant": {
+            "$type": "color",
+            "$value": "#bccabb"
+          },
+          "surfaceDim": {
+            "$type": "color",
+            "$value": "#0c150e"
+          },
+          "surfaceBright": {
+            "$type": "color",
+            "$value": "#323c32"
+          },
+          "surfaceContainerLowest": {
+            "$type": "color",
+            "$value": "#071009"
+          },
+          "surfaceContainerLow": {
+            "$type": "color",
+            "$value": "#141e16"
+          },
+          "surfaceContainer": {
+            "$type": "color",
+            "$value": "#18221a"
+          },
+          "surfaceContainerHigh": {
+            "$type": "color",
+            "$value": "#232c24"
+          },
+          "surfaceContainerHighest": {
+            "$type": "color",
+            "$value": "#2d372e"
+          },
+          "outline": {
+            "$type": "color",
+            "$value": "#879486"
+          },
+          "outlineVariant": {
+            "$type": "color",
+            "$value": "#3d4a3e"
+          },
+          "inverseSurface": {
+            "$type": "color",
+            "$value": "#dbe6d8"
+          },
+          "inverseOnSurface": {
+            "$type": "color",
+            "$value": "#29332a"
+          },
+          "inversePrimary": {
+            "$type": "color",
+            "$value": "#006d34"
+          },
+          "scrim": {
+            "$type": "color",
+            "$value": "#000000"
+          },
+          "surfaceTint": {
+            "$type": "color",
+            "$value": "#00e474"
+          },
+          "power": {
+            "$type": "color",
+            "$value": "#ffb3b0"
+          },
+          "onPower": {
+            "$type": "color",
+            "$value": "#68000f"
+          },
+          "powerContainer": {
+            "$type": "color",
+            "$value": "#92011a"
+          },
+          "onPowerContainer": {
+            "$type": "color",
+            "$value": "#ffdad8"
+          }
+        },
+        "oled": {
+          "primary": {
+            "$type": "color",
+            "$value": "#00e474"
+          },
+          "onPrimary": {
+            "$type": "color",
+            "$value": "#003918"
+          },
+          "primaryContainer": {
+            "$type": "color",
+            "$value": "#005226"
+          },
+          "onPrimaryContainer": {
+            "$type": "color",
+            "$value": "#62ff95"
+          },
+          "secondary": {
+            "$type": "color",
+            "$value": "#a5d0ba"
+          },
+          "onSecondary": {
+            "$type": "color",
+            "$value": "#0d3728"
+          },
+          "secondaryContainer": {
+            "$type": "color",
+            "$value": "#274e3e"
+          },
+          "onSecondaryContainer": {
+            "$type": "color",
+            "$value": "#c0ecd6"
+          },
+          "tertiary": {
+            "$type": "color",
+            "$value": "#8ed4c6"
+          },
+          "onTertiary": {
+            "$type": "color",
+            "$value": "#003730"
+          },
+          "tertiaryContainer": {
+            "$type": "color",
+            "$value": "#005046"
+          },
+          "onTertiaryContainer": {
+            "$type": "color",
+            "$value": "#aaf0e1"
+          },
+          "error": {
+            "$type": "color",
+            "$value": "#ffb4ab"
+          },
+          "onError": {
+            "$type": "color",
+            "$value": "#690005"
+          },
+          "errorContainer": {
+            "$type": "color",
+            "$value": "#93000a"
+          },
+          "onErrorContainer": {
+            "$type": "color",
+            "$value": "#ffdad6"
+          },
+          "background": {
+            "$type": "color",
+            "$value": "#000000"
+          },
+          "onBackground": {
+            "$type": "color",
+            "$value": "#dbe6d8"
+          },
+          "surface": {
+            "$type": "color",
+            "$value": "#000000"
+          },
+          "onSurface": {
+            "$type": "color",
+            "$value": "#dbe6d8"
+          },
+          "surfaceVariant": {
+            "$type": "color",
+            "$value": "#3d4a3e"
+          },
+          "onSurfaceVariant": {
+            "$type": "color",
+            "$value": "#bccabb"
+          },
+          "surfaceDim": {
+            "$type": "color",
+            "$value": "#000000"
+          },
+          "surfaceBright": {
+            "$type": "color",
+            "$value": "#323c32"
+          },
+          "surfaceContainerLowest": {
+            "$type": "color",
+            "$value": "#000000"
+          },
+          "surfaceContainerLow": {
+            "$type": "color",
+            "$value": "#071009"
+          },
+          "surfaceContainer": {
+            "$type": "color",
+            "$value": "#0c150e"
+          },
+          "surfaceContainerHigh": {
+            "$type": "color",
+            "$value": "#141e16"
+          },
+          "surfaceContainerHighest": {
+            "$type": "color",
+            "$value": "#232c24"
+          },
+          "outline": {
+            "$type": "color",
+            "$value": "#879486"
+          },
+          "outlineVariant": {
+            "$type": "color",
+            "$value": "#3d4a3e"
+          },
+          "inverseSurface": {
+            "$type": "color",
+            "$value": "#dbe6d8"
+          },
+          "inverseOnSurface": {
+            "$type": "color",
+            "$value": "#29332a"
+          },
+          "inversePrimary": {
+            "$type": "color",
+            "$value": "#006d34"
+          },
+          "scrim": {
+            "$type": "color",
+            "$value": "#000000"
+          },
+          "surfaceTint": {
+            "$type": "color",
+            "$value": "#00e474"
+          },
+          "power": {
+            "$type": "color",
+            "$value": "#ffb3b0"
+          },
+          "onPower": {
+            "$type": "color",
+            "$value": "#68000f"
+          },
+          "powerContainer": {
+            "$type": "color",
+            "$value": "#92011a"
+          },
+          "onPowerContainer": {
+            "$type": "color",
+            "$value": "#ffdad8"
+          }
+        }
+      },
+      "graphite": {
+        "light": {
+          "primary": {
+            "$type": "color",
+            "$value": "#000000"
+          },
+          "onPrimary": {
+            "$type": "color",
+            "$value": "#e2e2e2"
+          },
+          "primaryContainer": {
+            "$type": "color",
+            "$value": "#3b3b3b"
+          },
+          "onPrimaryContainer": {
+            "$type": "color",
+            "$value": "#ffffff"
+          },
+          "secondary": {
+            "$type": "color",
+            "$value": "#5e5e5e"
+          },
+          "onSecondary": {
+            "$type": "color",
+            "$value": "#ffffff"
+          },
+          "secondaryContainer": {
+            "$type": "color",
+            "$value": "#d4d4d4"
+          },
+          "onSecondaryContainer": {
+            "$type": "color",
+            "$value": "#1b1b1b"
+          },
+          "tertiary": {
+            "$type": "color",
+            "$value": "#3b3b3b"
+          },
+          "onTertiary": {
+            "$type": "color",
+            "$value": "#e2e2e2"
+          },
+          "tertiaryContainer": {
+            "$type": "color",
+            "$value": "#747474"
+          },
+          "onTertiaryContainer": {
+            "$type": "color",
+            "$value": "#ffffff"
+          },
+          "error": {
+            "$type": "color",
+            "$value": "#ba1a1a"
+          },
+          "onError": {
+            "$type": "color",
+            "$value": "#ffffff"
+          },
+          "errorContainer": {
+            "$type": "color",
+            "$value": "#ffdad6"
+          },
+          "onErrorContainer": {
+            "$type": "color",
+            "$value": "#410002"
+          },
+          "background": {
+            "$type": "color",
+            "$value": "#f9f9f9"
+          },
+          "onBackground": {
+            "$type": "color",
+            "$value": "#1b1b1b"
+          },
+          "surface": {
+            "$type": "color",
+            "$value": "#f9f9f9"
+          },
+          "onSurface": {
+            "$type": "color",
+            "$value": "#1b1b1b"
+          },
+          "surfaceVariant": {
+            "$type": "color",
+            "$value": "#e2e2e2"
+          },
+          "onSurfaceVariant": {
+            "$type": "color",
+            "$value": "#474747"
+          },
+          "surfaceDim": {
+            "$type": "color",
+            "$value": "#dadada"
+          },
+          "surfaceBright": {
+            "$type": "color",
+            "$value": "#f9f9f9"
+          },
+          "surfaceContainerLowest": {
+            "$type": "color",
+            "$value": "#ffffff"
+          },
+          "surfaceContainerLow": {
+            "$type": "color",
+            "$value": "#f3f3f3"
+          },
+          "surfaceContainer": {
+            "$type": "color",
+            "$value": "#eeeeee"
+          },
+          "surfaceContainerHigh": {
+            "$type": "color",
+            "$value": "#e8e8e8"
+          },
+          "surfaceContainerHighest": {
+            "$type": "color",
+            "$value": "#e2e2e2"
+          },
+          "outline": {
+            "$type": "color",
+            "$value": "#777777"
+          },
+          "outlineVariant": {
+            "$type": "color",
+            "$value": "#c6c6c6"
+          },
+          "inverseSurface": {
+            "$type": "color",
+            "$value": "#303030"
+          },
+          "inverseOnSurface": {
+            "$type": "color",
+            "$value": "#f1f1f1"
+          },
+          "inversePrimary": {
+            "$type": "color",
+            "$value": "#c6c6c6"
+          },
+          "scrim": {
+            "$type": "color",
+            "$value": "#000000"
+          },
+          "surfaceTint": {
+            "$type": "color",
+            "$value": "#5e5e5e"
+          },
+          "power": {
+            "$type": "color",
+            "$value": "#b5242f"
+          },
+          "onPower": {
+            "$type": "color",
+            "$value": "#ffffff"
+          },
+          "powerContainer": {
+            "$type": "color",
+            "$value": "#ffdad8"
+          },
+          "onPowerContainer": {
+            "$type": "color",
+            "$value": "#410006"
+          }
+        },
+        "dark": {
+          "primary": {
+            "$type": "color",
+            "$value": "#ffffff"
+          },
+          "onPrimary": {
+            "$type": "color",
+            "$value": "#1b1b1b"
+          },
+          "primaryContainer": {
+            "$type": "color",
+            "$value": "#d4d4d4"
+          },
+          "onPrimaryContainer": {
+            "$type": "color",
+            "$value": "#000000"
+          },
+          "secondary": {
+            "$type": "color",
+            "$value": "#c6c6c6"
+          },
+          "onSecondary": {
+            "$type": "color",
+            "$value": "#1b1b1b"
+          },
+          "secondaryContainer": {
+            "$type": "color",
+            "$value": "#474747"
+          },
+          "onSecondaryContainer": {
+            "$type": "color",
+            "$value": "#e2e2e2"
+          },
+          "tertiary": {
+            "$type": "color",
+            "$value": "#e2e2e2"
+          },
+          "onTertiary": {
+            "$type": "color",
+            "$value": "#1b1b1b"
+          },
+          "tertiaryContainer": {
+            "$type": "color",
+            "$value": "#919191"
+          },
+          "onTertiaryContainer": {
+            "$type": "color",
+            "$value": "#000000"
+          },
+          "error": {
+            "$type": "color",
+            "$value": "#ffb4ab"
+          },
+          "onError": {
+            "$type": "color",
+            "$value": "#690005"
+          },
+          "errorContainer": {
+            "$type": "color",
+            "$value": "#93000a"
+          },
+          "onErrorContainer": {
+            "$type": "color",
+            "$value": "#ffdad6"
+          },
+          "background": {
+            "$type": "color",
+            "$value": "#131313"
+          },
+          "onBackground": {
+            "$type": "color",
+            "$value": "#e2e2e2"
+          },
+          "surface": {
+            "$type": "color",
+            "$value": "#131313"
+          },
+          "onSurface": {
+            "$type": "color",
+            "$value": "#e2e2e2"
+          },
+          "surfaceVariant": {
+            "$type": "color",
+            "$value": "#474747"
+          },
+          "onSurfaceVariant": {
+            "$type": "color",
+            "$value": "#c6c6c6"
+          },
+          "surfaceDim": {
+            "$type": "color",
+            "$value": "#131313"
+          },
+          "surfaceBright": {
+            "$type": "color",
+            "$value": "#393939"
+          },
+          "surfaceContainerLowest": {
+            "$type": "color",
+            "$value": "#0e0e0e"
+          },
+          "surfaceContainerLow": {
+            "$type": "color",
+            "$value": "#1b1b1b"
+          },
+          "surfaceContainer": {
+            "$type": "color",
+            "$value": "#1f1f1f"
+          },
+          "surfaceContainerHigh": {
+            "$type": "color",
+            "$value": "#2a2a2a"
+          },
+          "surfaceContainerHighest": {
+            "$type": "color",
+            "$value": "#353535"
+          },
+          "outline": {
+            "$type": "color",
+            "$value": "#919191"
+          },
+          "outlineVariant": {
+            "$type": "color",
+            "$value": "#474747"
+          },
+          "inverseSurface": {
+            "$type": "color",
+            "$value": "#e2e2e2"
+          },
+          "inverseOnSurface": {
+            "$type": "color",
+            "$value": "#303030"
+          },
+          "inversePrimary": {
+            "$type": "color",
+            "$value": "#5e5e5e"
+          },
+          "scrim": {
+            "$type": "color",
+            "$value": "#000000"
+          },
+          "surfaceTint": {
+            "$type": "color",
+            "$value": "#c6c6c6"
+          },
+          "power": {
+            "$type": "color",
+            "$value": "#ffb3b0"
+          },
+          "onPower": {
+            "$type": "color",
+            "$value": "#68000f"
+          },
+          "powerContainer": {
+            "$type": "color",
+            "$value": "#92011a"
+          },
+          "onPowerContainer": {
+            "$type": "color",
+            "$value": "#ffdad8"
+          }
+        },
+        "oled": {
+          "primary": {
+            "$type": "color",
+            "$value": "#ffffff"
+          },
+          "onPrimary": {
+            "$type": "color",
+            "$value": "#1b1b1b"
+          },
+          "primaryContainer": {
+            "$type": "color",
+            "$value": "#d4d4d4"
+          },
+          "onPrimaryContainer": {
+            "$type": "color",
+            "$value": "#000000"
+          },
+          "secondary": {
+            "$type": "color",
+            "$value": "#c6c6c6"
+          },
+          "onSecondary": {
+            "$type": "color",
+            "$value": "#1b1b1b"
+          },
+          "secondaryContainer": {
+            "$type": "color",
+            "$value": "#474747"
+          },
+          "onSecondaryContainer": {
+            "$type": "color",
+            "$value": "#e2e2e2"
+          },
+          "tertiary": {
+            "$type": "color",
+            "$value": "#e2e2e2"
+          },
+          "onTertiary": {
+            "$type": "color",
+            "$value": "#1b1b1b"
+          },
+          "tertiaryContainer": {
+            "$type": "color",
+            "$value": "#919191"
+          },
+          "onTertiaryContainer": {
+            "$type": "color",
+            "$value": "#000000"
+          },
+          "error": {
+            "$type": "color",
+            "$value": "#ffb4ab"
+          },
+          "onError": {
+            "$type": "color",
+            "$value": "#690005"
+          },
+          "errorContainer": {
+            "$type": "color",
+            "$value": "#93000a"
+          },
+          "onErrorContainer": {
+            "$type": "color",
+            "$value": "#ffdad6"
+          },
+          "background": {
+            "$type": "color",
+            "$value": "#000000"
+          },
+          "onBackground": {
+            "$type": "color",
+            "$value": "#e2e2e2"
+          },
+          "surface": {
+            "$type": "color",
+            "$value": "#000000"
+          },
+          "onSurface": {
+            "$type": "color",
+            "$value": "#e2e2e2"
+          },
+          "surfaceVariant": {
+            "$type": "color",
+            "$value": "#474747"
+          },
+          "onSurfaceVariant": {
+            "$type": "color",
+            "$value": "#c6c6c6"
+          },
+          "surfaceDim": {
+            "$type": "color",
+            "$value": "#000000"
+          },
+          "surfaceBright": {
+            "$type": "color",
+            "$value": "#393939"
+          },
+          "surfaceContainerLowest": {
+            "$type": "color",
+            "$value": "#000000"
+          },
+          "surfaceContainerLow": {
+            "$type": "color",
+            "$value": "#0e0e0e"
+          },
+          "surfaceContainer": {
+            "$type": "color",
+            "$value": "#131313"
+          },
+          "surfaceContainerHigh": {
+            "$type": "color",
+            "$value": "#1b1b1b"
+          },
+          "surfaceContainerHighest": {
+            "$type": "color",
+            "$value": "#2a2a2a"
+          },
+          "outline": {
+            "$type": "color",
+            "$value": "#919191"
+          },
+          "outlineVariant": {
+            "$type": "color",
+            "$value": "#474747"
+          },
+          "inverseSurface": {
+            "$type": "color",
+            "$value": "#e2e2e2"
+          },
+          "inverseOnSurface": {
+            "$type": "color",
+            "$value": "#303030"
+          },
+          "inversePrimary": {
+            "$type": "color",
+            "$value": "#5e5e5e"
+          },
+          "scrim": {
+            "$type": "color",
+            "$value": "#000000"
+          },
+          "surfaceTint": {
+            "$type": "color",
+            "$value": "#c6c6c6"
+          },
+          "power": {
+            "$type": "color",
+            "$value": "#ffb3b0"
+          },
+          "onPower": {
+            "$type": "color",
+            "$value": "#68000f"
+          },
+          "powerContainer": {
+            "$type": "color",
+            "$value": "#92011a"
+          },
+          "onPowerContainer": {
+            "$type": "color",
+            "$value": "#ffdad8"
+          }
+        }
+      }
+    },
+    "stateLayer": {
+      "$description": "Opacity of onX color drawn over a container for interaction states (M3).",
+      "hover": {
+        "$type": "number",
+        "$value": 0.08
+      },
+      "focus": {
+        "$type": "number",
+        "$value": 0.1
+      },
+      "pressed": {
+        "$type": "number",
+        "$value": 0.1
+      },
+      "dragged": {
+        "$type": "number",
+        "$value": 0.16
+      },
+      "disabledContent": {
+        "$type": "number",
+        "$value": 0.38
+      },
+      "disabledContainer": {
+        "$type": "number",
+        "$value": 0.12
+      }
+    }
+  },
+  "typography": {
+    "$description": "Roboto Flex (OFL, Google Fonts downloadable font), FontFamily.Default fallback. Key labels use tabular figures (tnum).",
+    "fontFamily": {
+      "brand": {
+        "$type": "fontFamily",
+        "$value": [
+          "Roboto Flex",
+          "Roboto",
+          "sans-serif"
+        ]
+      }
+    },
+    "scale": {
+      "displayLarge": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{typography.fontFamily.brand}",
+          "fontSize": "57sp",
+          "lineHeight": "64sp",
+          "fontWeight": 400,
+          "letterSpacing": "-0.25sp"
+        }
+      },
+      "displayMedium": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{typography.fontFamily.brand}",
+          "fontSize": "45sp",
+          "lineHeight": "52sp",
+          "fontWeight": 400,
+          "letterSpacing": "0sp"
+        }
+      },
+      "displaySmall": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{typography.fontFamily.brand}",
+          "fontSize": "36sp",
+          "lineHeight": "44sp",
+          "fontWeight": 400,
+          "letterSpacing": "0sp"
+        }
+      },
+      "headlineLarge": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{typography.fontFamily.brand}",
+          "fontSize": "32sp",
+          "lineHeight": "40sp",
+          "fontWeight": 500,
+          "letterSpacing": "0sp"
+        }
+      },
+      "headlineMedium": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{typography.fontFamily.brand}",
+          "fontSize": "28sp",
+          "lineHeight": "36sp",
+          "fontWeight": 500,
+          "letterSpacing": "0sp"
+        }
+      },
+      "headlineSmall": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{typography.fontFamily.brand}",
+          "fontSize": "24sp",
+          "lineHeight": "32sp",
+          "fontWeight": 500,
+          "letterSpacing": "0sp"
+        }
+      },
+      "titleLarge": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{typography.fontFamily.brand}",
+          "fontSize": "22sp",
+          "lineHeight": "28sp",
+          "fontWeight": 500,
+          "letterSpacing": "0sp"
+        }
+      },
+      "titleMedium": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{typography.fontFamily.brand}",
+          "fontSize": "16sp",
+          "lineHeight": "24sp",
+          "fontWeight": 600,
+          "letterSpacing": "0.15sp"
+        }
+      },
+      "titleSmall": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{typography.fontFamily.brand}",
+          "fontSize": "14sp",
+          "lineHeight": "20sp",
+          "fontWeight": 600,
+          "letterSpacing": "0.1sp"
+        }
+      },
+      "bodyLarge": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{typography.fontFamily.brand}",
+          "fontSize": "16sp",
+          "lineHeight": "24sp",
+          "fontWeight": 400,
+          "letterSpacing": "0.5sp"
+        }
+      },
+      "bodyMedium": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{typography.fontFamily.brand}",
+          "fontSize": "14sp",
+          "lineHeight": "20sp",
+          "fontWeight": 400,
+          "letterSpacing": "0.25sp"
+        }
+      },
+      "bodySmall": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{typography.fontFamily.brand}",
+          "fontSize": "12sp",
+          "lineHeight": "16sp",
+          "fontWeight": 400,
+          "letterSpacing": "0.4sp"
+        }
+      },
+      "labelLarge": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{typography.fontFamily.brand}",
+          "fontSize": "14sp",
+          "lineHeight": "20sp",
+          "fontWeight": 600,
+          "letterSpacing": "0.1sp"
+        }
+      },
+      "labelMedium": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{typography.fontFamily.brand}",
+          "fontSize": "12sp",
+          "lineHeight": "16sp",
+          "fontWeight": 600,
+          "letterSpacing": "0.5sp"
+        }
+      },
+      "labelSmall": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{typography.fontFamily.brand}",
+          "fontSize": "11sp",
+          "lineHeight": "16sp",
+          "fontWeight": 600,
+          "letterSpacing": "0.5sp"
+        }
+      },
+      "keyNumeral": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{typography.fontFamily.brand}",
+          "fontSize": "28sp",
+          "lineHeight": "32sp",
+          "fontWeight": 500,
+          "letterSpacing": "0sp"
+        }
+      },
+      "keyLabel": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{typography.fontFamily.brand}",
+          "fontSize": "13sp",
+          "lineHeight": "16sp",
+          "fontWeight": 700,
+          "letterSpacing": "0.8sp"
+        }
+      },
+      "keyLabelSmall": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{typography.fontFamily.brand}",
+          "fontSize": "11sp",
+          "lineHeight": "14sp",
+          "fontWeight": 700,
+          "letterSpacing": "0.8sp"
+        }
+      }
+    }
+  },
+  "spacing": {
+    "none": {
+      "$type": "dimension",
+      "$value": "0dp"
+    },
+    "xxs": {
+      "$type": "dimension",
+      "$value": "2dp"
+    },
+    "xs": {
+      "$type": "dimension",
+      "$value": "4dp"
+    },
+    "sm": {
+      "$type": "dimension",
+      "$value": "8dp"
+    },
+    "md": {
+      "$type": "dimension",
+      "$value": "12dp"
+    },
+    "lg": {
+      "$type": "dimension",
+      "$value": "16dp"
+    },
+    "xl": {
+      "$type": "dimension",
+      "$value": "20dp"
+    },
+    "xxl": {
+      "$type": "dimension",
+      "$value": "24dp"
+    },
+    "xxxl": {
+      "$type": "dimension",
+      "$value": "32dp"
+    },
+    "huge": {
+      "$type": "dimension",
+      "$value": "48dp"
+    },
+    "giant": {
+      "$type": "dimension",
+      "$value": "64dp"
+    }
+  },
+  "shape": {
+    "$description": "Corner radii. Remote keys use keyRounded by default; user can switch key style.",
+    "none": {
+      "$type": "dimension",
+      "$value": "0dp"
+    },
+    "extraSmall": {
+      "$type": "dimension",
+      "$value": "4dp"
+    },
+    "small": {
+      "$type": "dimension",
+      "$value": "8dp"
+    },
+    "medium": {
+      "$type": "dimension",
+      "$value": "12dp"
+    },
+    "large": {
+      "$type": "dimension",
+      "$value": "16dp"
+    },
+    "largeIncreased": {
+      "$type": "dimension",
+      "$value": "20dp"
+    },
+    "extraLarge": {
+      "$type": "dimension",
+      "$value": "28dp"
+    },
+    "extraLargeIncreased": {
+      "$type": "dimension",
+      "$value": "32dp"
+    },
+    "extraExtraLarge": {
+      "$type": "dimension",
+      "$value": "48dp"
+    },
+    "full": {
+      "$type": "dimension",
+      "$value": "50%"
+    },
+    "keyStyle": {
+      "rounded": {
+        "$type": "dimension",
+        "$value": "20dp"
+      },
+      "squircle": {
+        "$type": "dimension",
+        "$value": "30%",
+        "$description": "Use a continuous-corner (superellipse) shape; 30% approximates it."
+      },
+      "circle": {
+        "$type": "dimension",
+        "$value": "50%"
+      },
+      "square": {
+        "$type": "dimension",
+        "$value": "8dp"
+      }
+    }
+  },
+  "elevation": {
+    "level0": {
+      "$type": "dimension",
+      "$value": "0dp"
+    },
+    "level1": {
+      "$type": "dimension",
+      "$value": "1dp"
+    },
+    "level2": {
+      "$type": "dimension",
+      "$value": "3dp"
+    },
+    "level3": {
+      "$type": "dimension",
+      "$value": "6dp"
+    },
+    "level4": {
+      "$type": "dimension",
+      "$value": "8dp"
+    },
+    "level5": {
+      "$type": "dimension",
+      "$value": "12dp"
+    }
+  },
+  "layout": {
+    "$description": "Remote canvas grid. cellSize = (screenWidth - 2*margin - (columns-1)*gutter) / columns, clamped to [minCell,maxCell].",
+    "columns": {
+      "$type": "number",
+      "$value": 4
+    },
+    "columnsLarge": {
+      "$type": "number",
+      "$value": 6,
+      "$description": "width >= 600dp (foldables, tablets)"
+    },
+    "margin": {
+      "$type": "dimension",
+      "$value": "16dp"
+    },
+    "gutter": {
+      "$type": "dimension",
+      "$value": "12dp"
+    },
+    "minCell": {
+      "$type": "dimension",
+      "$value": "64dp"
+    },
+    "maxCell": {
+      "$type": "dimension",
+      "$value": "96dp"
+    },
+    "minTouchTarget": {
+      "$type": "dimension",
+      "$value": "56dp"
+    },
+    "dpadSpan": {
+      "$type": "number",
+      "$value": 3
+    },
+    "rockerSpan": {
+      "$type": "string",
+      "$value": "1x3"
+    },
+    "topBarHeight": {
+      "$type": "dimension",
+      "$value": "64dp"
+    },
+    "bottomSheetPeek": {
+      "$type": "dimension",
+      "$value": "56dp"
+    }
+  },
+  "motion": {
+    "$description": "M3 Expressive spring tokens (Compose spring(dampingRatio, stiffness)). Durations are fallbacks for non-spring animations.",
+    "spring": {
+      "fastSpatial": {
+        "$type": "spring",
+        "$value": {
+          "dampingRatio": 0.6,
+          "stiffness": 800
+        }
+      },
+      "defaultSpatial": {
+        "$type": "spring",
+        "$value": {
+          "dampingRatio": 0.8,
+          "stiffness": 380
+        }
+      },
+      "slowSpatial": {
+        "$type": "spring",
+        "$value": {
+          "dampingRatio": 0.8,
+          "stiffness": 200
+        }
+      },
+      "fastEffects": {
+        "$type": "spring",
+        "$value": {
+          "dampingRatio": 1,
+          "stiffness": 3800
+        }
+      },
+      "defaultEffects": {
+        "$type": "spring",
+        "$value": {
+          "dampingRatio": 1,
+          "stiffness": 1600
+        }
+      },
+      "slowEffects": {
+        "$type": "spring",
+        "$value": {
+          "dampingRatio": 1,
+          "stiffness": 800
+        }
+      }
+    },
+    "duration": {
+      "short": {
+        "$type": "duration",
+        "$value": "100ms"
+      },
+      "medium": {
+        "$type": "duration",
+        "$value": "250ms"
+      },
+      "long": {
+        "$type": "duration",
+        "$value": "400ms"
+      }
+    },
+    "pressScale": {
+      "$type": "number",
+      "$value": 0.92
+    },
+    "editWiggleDegrees": {
+      "$type": "number",
+      "$value": 1.5
+    },
+    "repeat": {
+      "initialDelay": {
+        "$type": "duration",
+        "$value": "400ms"
+      },
+      "interval": {
+        "$type": "duration",
+        "$value": "90ms"
+      },
+      "accelerateAfter": {
+        "$type": "duration",
+        "$value": "1500ms"
+      },
+      "fastInterval": {
+        "$type": "duration",
+        "$value": "45ms"
+      }
+    }
+  },
+  "haptics": {
+    "$description": "Semantic haptic events -> android.view.HapticFeedbackConstants. User setting: off | light | strong (strong adds Vibrator primitives on API 31+).",
+    "keyPress": {
+      "$type": "string",
+      "$value": "VIRTUAL_KEY"
+    },
+    "keyRelease": {
+      "$type": "string",
+      "$value": "VIRTUAL_KEY_RELEASE (API 27+), else none"
+    },
+    "repeatTick": {
+      "$type": "string",
+      "$value": "CLOCK_TICK"
+    },
+    "dpadSwipeStep": {
+      "$type": "string",
+      "$value": "SEGMENT_FREQUENT_TICK (API 34+), else CLOCK_TICK"
+    },
+    "longPress": {
+      "$type": "string",
+      "$value": "LONG_PRESS"
+    },
+    "dragStart": {
+      "$type": "string",
+      "$value": "GESTURE_START (API 30+), else LONG_PRESS"
+    },
+    "dragSnap": {
+      "$type": "string",
+      "$value": "SEGMENT_TICK (API 34+), else CLOCK_TICK"
+    },
+    "dragDrop": {
+      "$type": "string",
+      "$value": "GESTURE_END (API 30+), else VIRTUAL_KEY"
+    },
+    "success": {
+      "$type": "string",
+      "$value": "CONFIRM (API 30+)"
+    },
+    "failure": {
+      "$type": "string",
+      "$value": "REJECT (API 30+)"
+    }
+  }
+}

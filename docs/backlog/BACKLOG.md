@@ -6,7 +6,7 @@
 The board. One row per live work item, grouped by status. Items live in
 [`items/`](items/); finished work moves to [`archive/`](archive/).
 
-<!-- NEXT-ID: WI-001 -->
+<!-- NEXT-ID: WI-019 -->
 <!-- Claim from this marker and bump it on your own branch. `node .ai/rungs.mjs check` refuses a duplicate. -->
 
 ## In progress
@@ -25,13 +25,29 @@ The board. One row per live work item, grouped by status. Items live in
 
 | Id | Title | Type |
 | --- | --- | --- |
-| — | | |
+| [WI-001](items/WI-001-samsung-reference-tv-spike.md) | Prove the Samsung path on the reference TV | spike |
+| [WI-002](items/WI-002-adapter-contract-v2.md) | Evolve the adapter contract and add a fake TV adapter | feature |
+| [WI-003](items/WI-003-samsung-discovery.md) | Find Samsung TVs on the network and add one by IP | feature |
+| [WI-004](items/WI-004-pairing-and-credentials.md) | Guide pairing and keep credentials safe | feature |
+| [WI-005](items/WI-005-connection-management.md) | Reconnect automatically and manage saved TVs | feature |
+| [WI-006](items/WI-006-default-remote.md) | Build the default remote with the design system's widgets | feature |
+| [WI-007](items/WI-007-hardware-volume-keys.md) | Control TV volume with the phone's volume keys | feature |
 
 ## Accepted
 
 | Id | Title | Type |
 | --- | --- | --- |
-| — | | |
+| [WI-008](items/WI-008-text-input.md) | Type into the TV from the phone keyboard | feature |
+| [WI-009](items/WI-009-app-shortcuts.md) | Launch TV apps from shortcut buttons | feature |
+| [WI-010](items/WI-010-power-on.md) | Turn the TV on and show its power state | feature |
+| [WI-011](items/WI-011-appearance-and-feedback-settings.md) | Let users pick theme, colors, key style and haptics | feature |
+| [WI-012](items/WI-012-layout-edit-mode.md) | Edit the remote: move, resize, add and remove buttons | feature |
+| [WI-013](items/WI-013-layout-pages.md) | Add, rename and reorder remote pages | feature |
+| [WI-014](items/WI-014-layout-undo-reset-per-tv.md) | Undo edits, reset layouts and keep one layout per TV | feature |
+| [WI-015](items/WI-015-layout-import-export.md) | Export and import layouts as files | feature |
+| [WI-016](items/WI-016-accessibility-onboarding-polish.md) | Pass accessibility review and polish onboarding and errors | feature |
+| [WI-017](items/WI-017-signed-release-on-tag.md) | Publish a signed APK to GitHub Releases on each tag | chore |
+| [WI-018](items/WI-018-adapter-guide.md) | Write the guide for adding a TV brand | docs |
 
 ## Proposed
 

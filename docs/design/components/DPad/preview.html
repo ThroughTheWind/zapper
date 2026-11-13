@@ -1,0 +1,18 @@
+<!-- @dsCard group="Navigation" height=300 subtitle="3x3 directional pad with OK" -->
+<div class="demo-row" style="align-items:center">
+  <div class="demo">
+    <div class="dpad" role="group" aria-label="Directional pad">
+      <div class="seg up" role="button" aria-label="Up"></div><div class="seg down" role="button" aria-label="Down"></div>
+      <div class="seg left" role="button" aria-label="Left"></div><div class="seg right is-pressed" role="button" aria-label="Right"></div>
+      <span class="ms ic up">keyboard_arrow_up</span><span class="ms ic down">keyboard_arrow_down</span>
+      <span class="ms ic left">keyboard_arrow_left</span><span class="ms ic right">keyboard_arrow_right</span>
+      <div class="ring"></div>
+      <button class="ok">OK</button>
+    </div>
+    <span class="cap">Right pressed</span>
+  </div>
+  <div class="demo" style="max-width:300px;gap:12px;align-items:flex-start">
+    <span class="cap">Interaction</span>
+    <span class="body-medium" style="color:var(--on-surface-variant)">Tap a wedge to move one step; hold to repeat. Swipe anywhere on the pad to move in that direction, one step per 24px, with a DpadSwipeStep haptic per step. Tap the centre for OK. Long-press OK is configurable (default: none).</span>
+  </div>
+</div>

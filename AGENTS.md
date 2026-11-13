@@ -104,6 +104,10 @@ Optional — uncomment if you want it. Not shipped active because it is a prefer
 | --- | --- |
 | Rules for one part of the tree | [`.ai/rules/`](.ai/rules/README.md) |
 | A multi-step procedure | the skills in this repo — invoke by name |
+| What the app must do | [`docs/SPEC.md`](docs/SPEC.md) |
+| What to build next | [`docs/ROADMAP.md`](docs/ROADMAP.md) and [`docs/backlog/`](docs/backlog/BACKLOG.md) |
+| How a screen looks | [`docs/design/`](docs/design/README.md): build each component as its README under `docs/design/components/` specifies |
+| TV protocols | [`docs/research/tv-remote-protocols.md`](docs/research/tv-remote-protocols.md) |
 | Why a decision was made | [`docs/decisions/`](docs/decisions/README.md) |
 | Adding a TV brand | [`CONTRIBUTING.md`](CONTRIBUTING.md#adding-a-tv-brand) and [`.ai/rules/adapters.md`](.ai/rules/adapters.md) |
 

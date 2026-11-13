@@ -1,0 +1,14 @@
+<!-- @dsCard group="Keys" height=380 subtitle="3x4 number pad with tabular numerals" -->
+<div class="demo-row">
+  <div class="grid" style="grid-template-columns:repeat(3,72px);padding:0" id="np"></div>
+  <div class="demo" style="max-width:260px;align-items:flex-start;gap:12px"><span class="cap">Notes</span>
+    <span class="body-medium" style="color:var(--on-surface-variant)">Digits use <b>key-numeral</b> with tabular figures. Bottom row: channel list, 0, previous channel. Lives on its own "Numbers" page by default.</span></div>
+  <script>
+    const np=document.getElementById('np');
+    ['1','2','3','4','5','6','7','8','9',{i:'list',l:'Channel list'},'0',{i:'history',l:'Previous channel'}].forEach(k=>{
+      const b=document.createElement('button');b.className='rk';
+      if(typeof k==='string'){b.innerHTML='<span class="num">'+k+'</span>';b.setAttribute('aria-label',k);}
+      else{b.classList.add('rk--ghost');b.innerHTML='<span class="ms">'+k.i+'</span>';b.setAttribute('aria-label',k.l);}
+      np.appendChild(b);});
+  </script>
+</div>

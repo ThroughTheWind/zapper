@@ -36,6 +36,7 @@ fun RemoteScreen(
     val device by viewModel.device.collectAsStateWithLifecycle()
     val saved by viewModel.savedDevices.collectAsStateWithLifecycle()
     val defaultId by viewModel.defaultDeviceId.collectAsStateWithLifecycle()
+    val volumeKeys by viewModel.hardwareVolumeKeys.collectAsStateWithLifecycle()
     var switcher by rememberSaveable { mutableStateOf(false) }
     val offline = state is ConnectionState.Failed || state == ConnectionState.Disconnected
 
@@ -82,6 +83,8 @@ fun RemoteScreen(
                 switcher = false
                 onAddTv()
             },
+            volumeKeys = volumeKeys,
+            onVolumeKeysChange = viewModel::setHardwareVolumeKeys,
             onDismiss = { switcher = false },
         )
     }

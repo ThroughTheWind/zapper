@@ -41,6 +41,13 @@ class RemoteViewModel(
 
     val state: StateFlow<ConnectionState> = connection.state
 
+    val hardwareVolumeKeys: StateFlow<Boolean> =
+        repository.hardwareVolumeKeys.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), true)
+
+    fun setHardwareVolumeKeys(enabled: Boolean) {
+        viewModelScope.launch { repository.setHardwareVolumeKeys(enabled) }
+    }
+
     /** Not known, so the first press of a toggle-less TV pauses: people reach for it mid-show. */
     private var playing = true
 

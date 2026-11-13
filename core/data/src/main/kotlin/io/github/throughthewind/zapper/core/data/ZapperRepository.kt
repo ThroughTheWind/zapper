@@ -87,6 +87,12 @@ class ZapperRepository internal constructor(
         }
     }
 
+    val hardwareVolumeKeys: Flow<Boolean> = store.data.map { it.hardwareVolumeKeys }
+
+    suspend fun setHardwareVolumeKeys(enabled: Boolean) {
+        store.updateData { it.copy(hardwareVolumeKeys = enabled) }
+    }
+
     suspend fun saveLayout(layout: RemoteLayout) {
         store.updateData { state -> state.copy(layouts = state.layouts.filterNot { it.id == layout.id } + layout) }
     }

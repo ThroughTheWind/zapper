@@ -26,7 +26,6 @@ The board. One row per live work item, grouped by status. Items live in
 | Id | Title | Type |
 | --- | --- | --- |
 | [WI-001](items/WI-001-samsung-reference-tv-spike.md) | Prove the Samsung path on the reference TV | spike |
-| [WI-007](items/WI-007-hardware-volume-keys.md) | Control TV volume with the phone's volume keys | feature |
 
 ## Accepted
 

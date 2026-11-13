@@ -10,6 +10,8 @@ import io.github.throughthewind.zapper.core.remote.TvConnection
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class ZapperApplication : Application() {
@@ -43,6 +45,9 @@ class AppContainer(
         )
 
     val multicastLock = MulticastLock(application)
+
+    /** Read on every key event, so kept hot rather than read from disk each time. */
+    val hardwareVolumeKeys = repository.hardwareVolumeKeys.stateIn(scope, SharingStarted.Eagerly, true)
 
     val connection = TvConnection(adapters, repository, scope, onConnected = repository::saveDevice)
 

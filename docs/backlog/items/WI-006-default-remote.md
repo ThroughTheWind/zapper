@@ -2,7 +2,7 @@
 id: WI-006
 title: Build the default remote with the design system's widgets
 type: feature
-status: review
+status: done
 branch: feature/WI-006-default-remote
 created: 2026-11-13
 updated: 2026-11-13

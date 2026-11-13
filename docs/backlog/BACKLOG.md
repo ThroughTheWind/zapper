@@ -19,7 +19,7 @@ The board. One row per live work item, grouped by status. Items live in
 
 | Id | Title | Type | Branch |
 | --- | --- | --- | --- |
-| [WI-006](items/WI-006-default-remote.md) | Build the default remote with the design system's widgets | feature | `feature/WI-006-default-remote` |
+| — | | | |
 
 ## Planned
 

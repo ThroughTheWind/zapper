@@ -45,6 +45,20 @@ class FakeTvAdapter(
     /** Every key any session sent, as `KEY:ACTION`, oldest first. */
     val received: MutableList<String> = CopyOnWriteArrayList()
 
+    /** False simulates a TV that is off or off the network: connecting fails with Unreachable. */
+    @Volatile var online: Boolean = true
+
+    /** How many times a session tried to connect. */
+    @Volatile var connectAttempts: Int = 0
+        private set
+
+    private val sessions = CopyOnWriteArrayList<FakeSession>()
+
+    /** Simulates the network dropping: every connected session fails with ConnectionLost. */
+    fun dropConnections() {
+        sessions.forEach { it.drop() }
+    }
+
     private val tv =
         DiscoveredTv(
             adapterId = ID,
@@ -83,7 +97,7 @@ class FakeTvAdapter(
     override fun createSession(
         device: TvDevice,
         credentials: CredentialStore,
-    ): TvSession = FakeSession(device, credentials)
+    ): TvSession = FakeSession(device, credentials).also { sessions += it }
 
     private inner class FakeSession(
         override val device: TvDevice,
@@ -95,8 +109,18 @@ class FakeTvAdapter(
         private val _state = MutableStateFlow<ConnectionState>(ConnectionState.Disconnected)
         override val state: StateFlow<ConnectionState> = _state.asStateFlow()
 
+        fun drop() {
+            if (_state.value == ConnectionState.Connected) _state.value = ConnectionState.Failed(TvError.ConnectionLost())
+        }
+
         override suspend fun connect() {
+            connectAttempts++
             _state.value = ConnectionState.Connecting
+            if (!online) {
+                val error = TvError.Unreachable()
+                _state.value = ConnectionState.Failed(error)
+                throw TvException(error)
+            }
             if (credentials.token(device.id) == null && device.host == PIN_HOST) {
                 val accepted = CompletableDeferred<Unit>()
                 val request =

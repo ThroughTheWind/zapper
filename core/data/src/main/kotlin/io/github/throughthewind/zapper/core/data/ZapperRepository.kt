@@ -27,12 +27,60 @@ class ZapperRepository internal constructor(
 
     val lastDevice: Flow<TvDevice?> = store.data.map { state -> state.devices.firstOrNull { it.id == state.lastDeviceId } }
 
+    val defaultDeviceId: Flow<String?> = store.data.map { it.defaultDeviceId }
+
+    /** The TV to connect to when the app opens: the default if set, else the last used (FR-3.1). */
+    val startDevice: Flow<TvDevice?> =
+        store.data.map { state ->
+            val id = state.defaultDeviceId ?: state.lastDeviceId
+            state.devices.firstOrNull { it.id == id }
+        }
+
     /** The user's layouts, or the standard one until they make their own. */
     val layouts: Flow<List<RemoteLayout>> = store.data.map { it.layouts.ifEmpty { listOf(DefaultLayouts.standard) } }
 
+    /** Saves [device] as the last used TV, keeping the name the user gave it, if any. */
     suspend fun saveDevice(device: TvDevice) {
         store.updateData { state ->
-            state.copy(devices = state.devices.filterNot { it.id == device.id } + device, lastDeviceId = device.id)
+            val existing = state.devices.firstOrNull { it.id == device.id }
+            val saved = existing?.let { device.copy(name = it.name) } ?: device
+            state.copy(
+                devices =
+                    state.devices.map {
+                        if (it.id ==
+                            device.id
+                        ) {
+                            saved
+                        } else {
+                            it
+                        }
+                    } + listOfNotNull(saved.takeIf { existing == null }),
+                lastDeviceId = device.id,
+            )
+        }
+    }
+
+    suspend fun renameDevice(
+        id: String,
+        name: String,
+    ) {
+        store.updateData { state -> state.copy(devices = state.devices.map { if (it.id == id) it.copy(name = name) else it }) }
+    }
+
+    /** Makes [id] the TV the app opens on; null goes back to the last used. */
+    suspend fun setDefaultDevice(id: String?) {
+        store.updateData { it.copy(defaultDeviceId = id) }
+    }
+
+    /** Forgets a TV and its pairing secrets; the next connection to it pairs from scratch. */
+    suspend fun forgetDevice(id: String) {
+        store.updateData { state ->
+            state.copy(
+                devices = state.devices.filterNot { it.id == id },
+                lastDeviceId = state.lastDeviceId.takeUnless { it == id },
+                defaultDeviceId = state.defaultDeviceId.takeUnless { it == id },
+                secrets = state.secrets - id,
+            )
         }
     }
 

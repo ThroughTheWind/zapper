@@ -18,6 +18,8 @@ import java.io.OutputStream
 internal data class StoredState(
     val devices: List<TvDevice> = emptyList(),
     val lastDeviceId: String? = null,
+    /** The TV the app opens on, when the user picked one; otherwise the last used (SPEC FR-3.3). */
+    val defaultDeviceId: String? = null,
     val layouts: List<RemoteLayout> = emptyList(),
     /**
      * Pairing secrets (tokens, certificate pins) per TV id and name, each sealed by [SecretCipher]

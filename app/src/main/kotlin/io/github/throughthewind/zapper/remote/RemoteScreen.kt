@@ -1,5 +1,6 @@
 package io.github.throughthewind.zapper.remote
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,13 +13,17 @@ import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import io.github.throughthewind.zapper.core.designsystem.components.ConnectionChipState
+import io.github.throughthewind.zapper.core.designsystem.components.ConnectionStatusChip
 import io.github.throughthewind.zapper.core.designsystem.components.KeyEmphasis
 import io.github.throughthewind.zapper.core.model.ButtonAction
 import io.github.throughthewind.zapper.core.model.LayoutButton
@@ -30,11 +35,17 @@ import io.github.throughthewind.zapper.core.designsystem.components.RemoteKey as
 @Composable
 fun RemoteScreen(
     viewModel: RemoteViewModel,
-    onChangeTv: () -> Unit,
+    brandName: (String) -> String,
+    onAddTv: () -> Unit,
+    onNoTvLeft: () -> Unit,
 ) {
     val layout by viewModel.layout.collectAsStateWithLifecycle()
     val state by viewModel.state.collectAsStateWithLifecycle()
     val device by viewModel.device.collectAsStateWithLifecycle()
+    val saved by viewModel.savedDevices.collectAsStateWithLifecycle()
+    val defaultId by viewModel.defaultDeviceId.collectAsStateWithLifecycle()
+    var switcher by rememberSaveable { mutableStateOf(false) }
+    val offline = state is ConnectionState.Failed || state == ConnectionState.Disconnected
 
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -42,7 +53,11 @@ fun RemoteScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Column(Modifier.weight(1f)) {
+                Column(
+                    Modifier
+                        .weight(1f)
+                        .clickable(onClickLabel = "Choose a TV") { switcher = true },
+                ) {
                     device?.model?.let {
                         Text(
                             it,
@@ -51,19 +66,38 @@ fun RemoteScreen(
                         )
                     }
                     Text(device?.name ?: "No TV", style = MaterialTheme.typography.titleLarge)
-                    Text(state.describe(), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
-                if (state is ConnectionState.Failed) TextButton(onClick = viewModel::retry) { Text("Retry") }
-                TextButton(onClick = onChangeTv) { Text("Change TV") }
+                ConnectionStatusChip(state = state.chip(), onRetry = viewModel::retry)
             }
-            layout?.let { RemoteGrid(it, onPress = viewModel::press) }
+            layout?.let { RemoteGrid(it, enabled = !offline, onPress = viewModel::press) }
         }
+    }
+
+    if (switcher) {
+        TvSwitcher(
+            devices = saved,
+            activeId = device?.id,
+            activeStatus = state.chip().label(),
+            defaultId = defaultId,
+            brandName = brandName,
+            onSelect = {
+                switcher = false
+                viewModel.switchTo(it)
+            },
+            onAction = { tv, action -> viewModel.act(tv, action, onCurrentForgotten = onNoTvLeft) },
+            onAddTv = {
+                switcher = false
+                onAddTv()
+            },
+            onDismiss = { switcher = false },
+        )
     }
 }
 
 @Composable
 private fun RemoteGrid(
     layout: RemoteLayout,
+    enabled: Boolean,
     onPress: (ButtonAction) -> Unit,
 ) {
     val rows = layout.buttons.groupBy { it.row }
@@ -80,6 +114,7 @@ private fun RemoteGrid(
                                 onPress = { onPress(button.action) },
                                 emphasis = button.emphasis(),
                                 repeatOnHold = button.repeats(),
+                                enabled = enabled,
                                 modifier = Modifier.fillMaxSize(),
                             ) { Text(button.title(), style = MaterialTheme.typography.labelLarge) }
                         }
@@ -118,11 +153,16 @@ private val repeatingKeys =
 
 private fun LayoutButton.repeats(): Boolean = (action as? ButtonAction.Key)?.key in repeatingKeys
 
-private fun ConnectionState.describe(): String =
+private fun ConnectionState.chip(): ConnectionChipState =
     when (this) {
-        ConnectionState.Disconnected -> "Not connected"
-        ConnectionState.Connecting -> "Connecting…"
-        is ConnectionState.AwaitingPairing -> "Accept the connection on your TV"
-        ConnectionState.Connected -> "Connected"
-        is ConnectionState.Failed -> error.message
+        ConnectionState.Connected -> ConnectionChipState.Connected
+        ConnectionState.Connecting, is ConnectionState.AwaitingPairing -> ConnectionChipState.Connecting
+        ConnectionState.Disconnected, is ConnectionState.Failed -> ConnectionChipState.Offline
+    }
+
+private fun ConnectionChipState.label(): String =
+    when (this) {
+        ConnectionChipState.Connected -> "Connected"
+        ConnectionChipState.Connecting -> "Connecting"
+        ConnectionChipState.Offline -> "Not found"
     }

@@ -9,6 +9,10 @@ All notable changes to Zapper are listed here. The format follows
 ### Added
 
 - Finds Samsung TVs on the Wi-Fi automatically, or by IP address, with tips when nothing is found.
+- Reconnects by itself when the app opens, when Wi-Fi returns or when the TV comes back, and
+  lets go of the TV when the app is in the background. A status chip shows the connection.
+- Saved TVs: switch between them, rename, forget, see their details, and pick the one the app
+  opens on.
 - Guided pairing: the app shows what to accept on the TV, explains a refusal or a timeout, and
   pairs again by itself when the TV forgets the phone.
 - Pairing secrets are encrypted with a key kept in the Android Keystore, and the TV's certificate

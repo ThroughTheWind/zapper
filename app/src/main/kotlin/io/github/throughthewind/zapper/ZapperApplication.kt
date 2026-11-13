@@ -2,13 +2,15 @@ package io.github.throughthewind.zapper
 
 import android.app.Application
 import io.github.throughthewind.zapper.adapters.samsung.SamsungAdapter
-import io.github.throughthewind.zapper.connection.ConnectionController
 import io.github.throughthewind.zapper.connection.MulticastLock
+import io.github.throughthewind.zapper.connection.NetworkMonitor
 import io.github.throughthewind.zapper.core.data.ZapperRepository
 import io.github.throughthewind.zapper.core.remote.AdapterRegistry
+import io.github.throughthewind.zapper.core.remote.TvConnection
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 
 class ZapperApplication : Application() {
     lateinit var container: AppContainer
@@ -17,6 +19,7 @@ class ZapperApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         container = AppContainer(this)
+        container.networkMonitor.start()
     }
 }
 
@@ -41,5 +44,8 @@ class AppContainer(
 
     val multicastLock = MulticastLock(application)
 
-    val connection = ConnectionController(adapters, repository, scope)
+    val connection = TvConnection(adapters, repository, scope, onConnected = repository::saveDevice)
+
+    // The callback arrives on a binder thread; the connection lives on the main thread.
+    val networkMonitor = NetworkMonitor(application) { scope.launch { connection.networkAvailable() } }
 }

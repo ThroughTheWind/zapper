@@ -10,6 +10,8 @@ import io.github.throughthewind.zapper.core.remote.PairingRequest
 import io.github.throughthewind.zapper.core.remote.TvError
 import io.github.throughthewind.zapper.core.remote.TvException
 import io.github.throughthewind.zapper.core.remote.TvSession
+import io.github.throughthewind.zapper.core.remote.saveToken
+import io.github.throughthewind.zapper.core.remote.token
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -43,11 +45,13 @@ internal class SamsungSession(
         if (_state.value == ConnectionState.Connected) return
         _state.value = ConnectionState.Connecting
         val token = credentials.token(device.id)
+        val trust = if (scheme == "wss") PinningTrustManager(credentials.read(device.id, CERT_PIN)) else null
+        val wsClient = if (trust != null) TvTls.pinning(client, device.host, trust) else client
         val connected = CompletableDeferred<String?>()
         val url = SamsungProtocol.channelUrl(scheme, device.host, port, appName, token)
 
         socket =
-            client.newWebSocket(
+            wsClient.newWebSocket(
                 Request.Builder().url(url).build(),
                 object : WebSocketListener() {
                     override fun onOpen(
@@ -90,7 +94,8 @@ internal class SamsungSession(
                         t: Throwable,
                         response: Response?,
                     ) {
-                        if (!connected.completeExceptionally(TvException(TvError.Unreachable(), t))) {
+                        val error = if (trust?.mismatch == true) TvError.CertificateChanged else TvError.Unreachable()
+                        if (!connected.completeExceptionally(TvException(error, t))) {
                             socket = null
                             _state.value = ConnectionState.Failed(TvError.ConnectionLost())
                         }
@@ -112,6 +117,8 @@ internal class SamsungSession(
         try {
             val newToken = withTimeout(pairingTimeoutMs) { connected.await() }
             if (newToken != null && newToken != token) credentials.saveToken(device.id, newToken)
+            val seen = trust?.seen
+            if (seen != null && credentials.read(device.id, CERT_PIN) == null) credentials.write(device.id, CERT_PIN, seen)
             _state.value = ConnectionState.Connected
         } catch (e: Exception) {
             socket?.cancel()
@@ -154,5 +161,6 @@ internal class SamsungSession(
 
     private companion object {
         const val NORMAL_CLOSURE = 1000
+        const val CERT_PIN = "certPin"
     }
 }

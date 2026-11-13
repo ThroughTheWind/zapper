@@ -58,14 +58,38 @@ data class DiscoveredTv(
         )
 }
 
-/** Where adapters keep pairing secrets, so the TV does not ask to pair again on every connect. */
+/**
+ * Where adapters keep pairing secrets (tokens, certificate pins), so the TV does not ask to pair
+ * again on every connect. The app's implementation encrypts them at rest (SPEC FR-2.3).
+ */
 interface CredentialStore {
-    suspend fun token(deviceId: String): String?
-
-    suspend fun saveToken(
+    suspend fun read(
         deviceId: String,
-        token: String,
+        name: String,
+    ): String?
+
+    suspend fun write(
+        deviceId: String,
+        name: String,
+        value: String,
     )
 
+    /** Forgets one secret of [deviceId]. */
+    suspend fun remove(
+        deviceId: String,
+        name: String,
+    )
+
+    /** Forgets every secret of [deviceId]; the next connection pairs from scratch. */
     suspend fun clear(deviceId: String)
 }
+
+/** The secret name of the pairing token every adapter that has one stores. */
+const val TOKEN = "token"
+
+suspend fun CredentialStore.token(deviceId: String): String? = read(deviceId, TOKEN)
+
+suspend fun CredentialStore.saveToken(
+    deviceId: String,
+    token: String,
+) = write(deviceId, TOKEN, token)

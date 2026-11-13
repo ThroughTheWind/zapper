@@ -65,7 +65,7 @@ class SamsungAdapter internal constructor(
         return SamsungSession(
             device = device,
             credentials = credentials,
-            client = if (legacy) httpClient else TvTls.trustingTvCertificate(httpClient, device.host),
+            client = httpClient,
             appName = appName,
             scheme = if (legacy) "ws" else "wss",
             port = if (legacy) SamsungDeviceInfo.INFO_PORT else SamsungProtocol.SECURE_PORT,

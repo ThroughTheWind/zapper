@@ -4,11 +4,13 @@ import io.github.throughthewind.zapper.core.model.KeyAction
 import io.github.throughthewind.zapper.core.model.RemoteKey
 import io.github.throughthewind.zapper.core.model.TvDevice
 import io.github.throughthewind.zapper.core.remote.ConnectionState
-import io.github.throughthewind.zapper.core.remote.CredentialStore
+import io.github.throughthewind.zapper.core.remote.InMemoryCredentialStore
 import io.github.throughthewind.zapper.core.remote.TvError
 import io.github.throughthewind.zapper.core.remote.TvException
 import io.github.throughthewind.zapper.core.remote.TvSession
 import io.github.throughthewind.zapper.core.remote.TvSessionContract
+import io.github.throughthewind.zapper.core.remote.saveToken
+import io.github.throughthewind.zapper.core.remote.token
 import kotlinx.coroutines.runBlocking
 import mockwebserver3.MockResponse
 import mockwebserver3.MockWebServer
@@ -31,7 +33,7 @@ class SamsungSessionTest : TvSessionContract() {
     private val server = MockWebServer()
     private val received = LinkedBlockingQueue<String>()
     private val receivedList = CopyOnWriteArrayList<String>()
-    private val credentials = InMemoryCredentials()
+    private val credentials = InMemoryCredentialStore()
 
     @BeforeEach
     fun start() = server.start()
@@ -149,23 +151,6 @@ class SamsungSessionTest : TvSessionContract() {
             val error = assertFailsWith<TvException> { session.connect() }
             assertTrue(error.error is TvError.Unreachable)
         }
-
-    private class InMemoryCredentials : CredentialStore {
-        private val tokens = java.util.concurrent.ConcurrentHashMap<String, String>()
-
-        override suspend fun token(deviceId: String) = tokens[deviceId]
-
-        override suspend fun saveToken(
-            deviceId: String,
-            token: String,
-        ) {
-            tokens[deviceId] = token
-        }
-
-        override suspend fun clear(deviceId: String) {
-            tokens.remove(deviceId)
-        }
-    }
 
     private companion object {
         const val CONNECT_WITH_TOKEN = """{"event":"ms.channel.connect","data":{"token":"55555"}}"""

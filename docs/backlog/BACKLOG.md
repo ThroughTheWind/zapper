@@ -26,7 +26,6 @@ The board. One row per live work item, grouped by status. Items live in
 | Id | Title | Type |
 | --- | --- | --- |
 | [WI-001](items/WI-001-samsung-reference-tv-spike.md) | Prove the Samsung path on the reference TV | spike |
-| [WI-004](items/WI-004-pairing-and-credentials.md) | Guide pairing and keep credentials safe | feature |
 | [WI-005](items/WI-005-connection-management.md) | Reconnect automatically and manage saved TVs | feature |
 | [WI-006](items/WI-006-default-remote.md) | Build the default remote with the design system's widgets | feature |
 | [WI-007](items/WI-007-hardware-volume-keys.md) | Control TV volume with the phone's volume keys | feature |

@@ -1,0 +1,34 @@
+<!-- @dsCard height=300 -->
+<div class="cv">
+  <style>
+    .cv{position:relative;width:960px;height:300px;background:var(--surface);overflow:hidden;font-family:var(--font-brand)}
+    .cv svg{position:absolute;left:480px;top:0}
+    .cv .k{rx:var(--key-rounded);ry:var(--key-rounded)}
+    .cv .p{fill:var(--primary)} .cv .g{fill:var(--surface)} .cv .t{fill:var(--tertiary-container)} .cv .s{fill:var(--secondary-container)}
+    .cv .w{fill:var(--power-container)} .cv .h{fill:var(--surface-container-highest)}
+    .cv .name{position:absolute;left:32px;bottom:64px;max-width:440px;margin:0;font-weight:700;font-size:120px;line-height:.95;letter-spacing:-2px;color:var(--on-surface)}
+    .cv .tag{position:absolute;left:34px;bottom:24px;max-width:440px;margin:0;font-size:14px;line-height:20px;color:var(--on-surface-variant)}
+  </style>
+  <!-- blocks: primary disc 192 (3x3 cells, D-pad) with surface OK cut-out 72; tertiary-container + secondary-container rocker pills 56x192; secondary-container 2x1 tile; primary 2x1 pill; one power-container key; surface-container-highest keys -->
+  <!-- arrangement: the remote grid itself, 56px cells on a 68px pitch (cell + grid-gutter 12), widgets merged across cells as in RemoteScreen -->
+  <!-- pattern row: geometric, modular, dense UI -> tiles cut by the radius tokens, some merged two-wide; this system IS a grid of keys users rearrange -->
+  <!-- steps/radii: grid-gutter 12, key-rounded 20, radius-full for pills and discs (rx = half the short side) -->
+  <svg width="480" height="300" viewBox="0 0 480 300" aria-hidden="true">
+    <circle class="p" cx="108" cy="110" r="96"/>
+    <circle class="g" cx="108" cy="110" r="34"/>
+    <rect class="t" x="216" y="14" width="56" height="192" rx="28"/>
+    <rect class="s k" x="284" y="14" width="124" height="56"/>
+    <rect class="w k" x="284" y="82" width="56" height="56"/>
+    <rect class="h k" x="352" y="82" width="56" height="56"/>
+    <rect class="p" x="284" y="150" width="124" height="56" rx="28"/>
+    <rect class="s" x="420" y="14" width="56" height="192" rx="28"/>
+    <rect class="h k" x="12" y="218" width="56" height="56"/>
+    <rect class="h k" x="80" y="218" width="56" height="56"/>
+    <rect class="h k" x="148" y="218" width="56" height="56"/>
+    <rect class="t k" x="216" y="218" width="124" height="56"/>
+    <rect class="h k" x="352" y="218" width="56" height="56"/>
+    <rect class="h k" x="420" y="218" width="56" height="56"/>
+  </svg>
+  <h1 class="name">Zapper</h1>
+  <p class="tag">A free, open-source remote for every smart TV.</p>
+</div>

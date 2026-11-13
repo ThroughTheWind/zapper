@@ -8,21 +8,20 @@ Keep it short. This document is read at the start of every session, and a long o
 
 ## Current objective
 
-Stand up the repository: stack, scaffold, CI. The MVP spec, design system and Samsung protocol research run in parallel and land as their own documents.
+Phase 1 of the [roadmap](../docs/ROADMAP.md): a basic Samsung remote with a fixed default layout, built from the [design system](../docs/design/README.md). Customization is Phase 3.
 
 ## In progress
 
-Nothing beyond the scaffold.
+Nothing in progress. Phase 1 items WI-001 to WI-007 are `planned`.
 
 ## Resume from
 
-Turn the MVP spec into work items in `docs/backlog/` with `/work-item`, starting with Samsung discovery and pairing.
+WI-001: Antoine runs the CI debug APK against the reference TV and the results go into the item. WI-002 (adapter contract v2) can start in parallel.
 
 ## Up next
 
-1. Samsung discovery (SSDP or mDNS) and a TV picker, replacing the IP field on the scaffold screen.
-2. The layout editor on top of `RemoteLayout`.
-3. Apply the design system in `core/designsystem`.
+1. WI-003 to WI-005 (discovery, pairing, connection) once WI-002 is merged.
+2. WI-006 default remote, then WI-007 hardware volume keys.
 
 ## Active constraints — do not reopen
 
@@ -37,6 +36,7 @@ Turn the MVP spec into work items in `docs/backlog/` with `/work-item`, starting
 - Brands are adapters behind capabilities, fixed by [ADR-0002](../docs/decisions/ADR-0002-brand-adapters.md).
 - GPL-3.0, no proprietary dependencies, local network only, fixed by [ADR-0003](../docs/decisions/ADR-0003-gpl-no-proprietary-dependencies.md).
 - The app is named Zapper, package `io.github.throughthewind.zapper`. English only, no crash reporting, distributed through GitHub Releases.
+- Delivery order is basics first, customization later ([roadmap](../docs/ROADMAP.md)), decided by Antoine on 2026-11-13. Every screen follows the design system's component specs in `docs/design/components/`.
 - rungs is development tooling installed into this repo. It is not a runtime dependency and is not shipped in the app.
 
 ## Working assumptions

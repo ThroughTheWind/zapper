@@ -48,11 +48,11 @@ Phase 1 — Basic Samsung remote ([roadmap](../../ROADMAP.md)).
 
 Branch `feature/WI-007-hardware-volume-keys`, stacked on WI-006.
 
-- `MainActivity.dispatchKeyEvent` sends Vol ± for `KEYCODE_VOLUME_UP/DOWN` while a TV is connected and the switch is on, and swallows the up events too so the phone's volume panel never shows. In every other case the keys reach Android unchanged.
+- `MainActivity.onKeyDown`/`onKeyUp` send Vol ± for `KEYCODE_VOLUME_UP/DOWN` while a TV is connected and the switch is on, and swallows the up events too so the phone's volume panel never shows. In every other case the keys reach Android unchanged.
 - `core/data`: `hardwareVolumeKeys`, on by default. The app container keeps it as a hot `StateFlow`, because it is read on every key event.
 - The switch sits at the bottom of the TV sheet, the only sheet until the settings screen (WI-011) takes it over.
 
-Deviation, with the reason: a held volume key repeats at Android's own key-repeat rate (one step per repeated key event) rather than the rocker's 400/90/45 ms timing. Re-timing would mean ignoring the system's repeats and running a second timer for the same key; the system rate is close and is what users expect from those keys.
+Deviation, with the reason: the keys are handled in `onKeyDown`/`onKeyUp`, not `dispatchKeyEvent` as planned, because lint rejects overriding `dispatchKeyEvent` on `ComponentActivity` (RestrictedApi). Also, a held volume key repeats at Android's own key-repeat rate (one step per repeated key event) rather than the rocker's 400/90/45 ms timing. Re-timing would mean ignoring the system's repeats and running a second timer for the same key; the system rate is close and is what users expect from those keys.
 
 ## Review
 

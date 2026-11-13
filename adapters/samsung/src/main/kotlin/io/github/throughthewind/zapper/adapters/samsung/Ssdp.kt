@@ -25,18 +25,18 @@ internal class Ssdp(
         val headers: Map<String, String>,
     )
 
-    /** Searches for [searchTarget] until the collector stops. Each response is emitted as it arrives. */
-    fun search(searchTarget: String): Flow<Response> =
+    /** Searches for every target in [searchTargets] until the collector stops, emitting each response as it arrives. */
+    fun search(searchTargets: List<String>): Flow<Response> =
         flow {
             DatagramSocket().use { socket ->
                 socket.soTimeout = SOCKET_TIMEOUT_MS
-                val request = mSearch(searchTarget).toByteArray(Charsets.US_ASCII)
+                val requests = searchTargets.map { mSearch(it).toByteArray(Charsets.US_ASCII) }
                 var lastSent = 0L
                 val buffer = ByteArray(4096)
                 while (currentCoroutineContext().isActive) {
                     val now = System.currentTimeMillis()
                     if (now - lastSent >= resendEveryMs) {
-                        socket.send(DatagramPacket(request, request.size, group))
+                        requests.forEach { socket.send(DatagramPacket(it, it.size, group)) }
                         lastSent = now
                     }
                     val packet = DatagramPacket(buffer, buffer.size)

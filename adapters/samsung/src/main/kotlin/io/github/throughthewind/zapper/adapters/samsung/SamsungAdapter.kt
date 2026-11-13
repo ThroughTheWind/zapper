@@ -7,9 +7,10 @@ import io.github.throughthewind.zapper.core.remote.TvAdapter
 import io.github.throughthewind.zapper.core.remote.TvSession
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -19,8 +20,9 @@ import java.util.concurrent.TimeUnit
 class SamsungAdapter internal constructor(
     private val httpClient: OkHttpClient,
     private val appName: String,
-    private val ssdpSearch: (String) -> Flow<Ssdp.Response>,
+    private val ssdpSearch: (List<String>) -> Flow<Ssdp.Response>,
     private val infoPort: Int,
+    private val subnetHosts: () -> Flow<String> = { SubnetScan(infoPort).hosts() },
 ) : TvAdapter {
     constructor(
         httpClient: OkHttpClient = OkHttpClient(),
@@ -38,13 +40,18 @@ class SamsungAdapter internal constructor(
             .callTimeout(PROBE_TIMEOUT_MS * 2, TimeUnit.MILLISECONDS)
             .build()
 
-    /** SSDP for Samsung's remote control receiver, confirmed by the TV's info endpoint (SPEC FR-1.2). */
+    /**
+     * SSDP for the search targets a Samsung TV answers, plus a sweep of the phone's subnet for the
+     * TV's info port, for networks that drop multicast. Every candidate is confirmed by the TV's
+     * info endpoint (SPEC FR-1.2), once per host.
+     */
     override fun discover(): Flow<DiscoveredTv> {
         val asked = mutableSetOf<String>()
-        return ssdpSearch(SEARCH_TARGET)
-            .filter { asked.add(it.host) }
-            .mapNotNull { probe(it.host) }
-            .distinctUntilChangedBy { it.identity }
+        val seen = mutableSetOf<String>()
+        return merge(ssdpSearch(SEARCH_TARGETS).map { it.host }, subnetHosts())
+            .filter { synchronized(asked) { asked.add(it) } }
+            .mapNotNull { probe(it) }
+            .filter { synchronized(seen) { seen.add(it.identity) } }
     }
 
     override suspend fun probe(host: String): DiscoveredTv? =
@@ -74,7 +81,14 @@ class SamsungAdapter internal constructor(
 
     companion object {
         const val ID = "samsung"
-        internal const val SEARCH_TARGET = "urn:samsung.com:device:RemoteControlReceiver:1"
+
+        /** Samsung's own receiver first; some firmware only answers DIAL or the UPnP renderer (research §2.1). */
+        internal val SEARCH_TARGETS =
+            listOf(
+                "urn:samsung.com:device:RemoteControlReceiver:1",
+                "urn:dial-multiscreen-org:service:dial:1",
+                "urn:schemas-upnp-org:device:MediaRenderer:1",
+            )
         private const val PROBE_TIMEOUT_MS = 2_000L
     }
 }

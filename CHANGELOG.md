@@ -8,6 +8,8 @@ All notable changes to Zapper are listed here. The format follows
 
 ### Added
 
+- Discovery also sweeps the phone's Wi-Fi subnet, so the TV is found on routers that block
+  multicast.
 - Finds Samsung TVs on the Wi-Fi automatically, or by IP address, with tips when nothing is found.
 - The phone's volume keys change the TV volume while a TV is connected; a switch in the TV sheet
   turns this off.

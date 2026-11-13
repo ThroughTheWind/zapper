@@ -21,6 +21,8 @@ internal data class StoredState(
     /** The TV the app opens on, when the user picked one; otherwise the last used (SPEC FR-3.3). */
     val defaultDeviceId: String? = null,
     val layouts: List<RemoteLayout> = emptyList(),
+    /** The phone's volume keys change the TV volume while the remote is open (SPEC FR-4.4). */
+    val hardwareVolumeKeys: Boolean = true,
     /**
      * Pairing secrets (tokens, certificate pins) per TV id and name, each sealed by [SecretCipher]
      * and Base64-encoded. Plain `tokens` from scaffold builds are no longer read: those users pair

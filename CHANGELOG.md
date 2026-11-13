@@ -9,6 +9,8 @@ All notable changes to Zapper are listed here. The format follows
 ### Added
 
 - Finds Samsung TVs on the Wi-Fi automatically, or by IP address, with tips when nothing is found.
+- The phone's volume keys change the TV volume while a TV is connected; a switch in the TV sheet
+  turns this off.
 - The default remote: power, source, menu, a round D-pad you can hold or swipe, volume and
   channel rockers, media controls, and a number pad on its own page. Keys a TV does not support
   are greyed out.

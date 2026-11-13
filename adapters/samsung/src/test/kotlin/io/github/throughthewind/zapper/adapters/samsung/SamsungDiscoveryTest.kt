@@ -48,6 +48,13 @@ class SamsungDiscoveryTest {
     }
 
     @Test
+    fun `a name with HTML entities is decoded`() {
+        val body = ru7020.replace("[TV] Samsung 7 Series (75)", "[TV] Living room &amp; kitchen")
+
+        assertEquals("Living room & kitchen", SamsungDeviceInfo.parse("192.168.1.20", body)!!.name)
+    }
+
+    @Test
     fun `an answer that is not a Samsung TV is ignored`() {
         assertNull(SamsungDeviceInfo.parse("192.168.1.30", """{"device":{"OS":"webOS","type":"LG"}}"""))
         assertNull(SamsungDeviceInfo.parse("192.168.1.30", "<html>router</html>"))

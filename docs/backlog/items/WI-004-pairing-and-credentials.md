@@ -2,8 +2,8 @@
 id: WI-004
 title: Guide pairing and keep credentials safe
 type: feature
-status: planned
-branch:
+status: review
+branch: feature/WI-004-pairing-and-credentials
 created: 2026-11-13
 updated: 2026-11-13
 related: [WI-002, SPEC-F2, SPEC-AC-3, SPEC-AC-5, SPEC-NFR-6, F-001]
@@ -52,4 +52,20 @@ Phase 1 — Basic Samsung remote ([roadmap](../../ROADMAP.md)).
 
 ## Execution
 
+Branch `feature/WI-004-pairing-and-credentials`, stacked on WI-003.
+
+- `core/remote`: `CredentialStore` holds named secrets per TV (`read`, `write`, `remove`, `clear`), with `token`/`saveToken` helpers; `TvError.CertificateChanged`; `connectOrRepair` and `forgetAndConnect` hold the re-pair policy so it is tested on the JVM rather than inside the app; `InMemoryCredentialStore` test fixture.
+- `core/data`: `KeystoreCipher` (AES-256-GCM, key in the Android Keystore, IV prepended); `ZapperRepository` stores each secret sealed and Base64-encoded under `secrets`. A secret that no longer decrypts reads as absent, so the TV pairs again. The old plain `tokens` field is no longer read. `allowBackup` was already false, so sealed secrets never leave the phone without their key.
+- `adapters/samsung`: `PinningTrustManager` records the leaf certificate's SHA-256 on first use and refuses any other afterwards. The pin is saved only after the TV accepts the connection. Legacy `ws://` TVs have no certificate to pin.
+- `adapters/fake`: a second simulated TV at `192.0.2.2` that asks for the code `1234`, so the PIN step can be used.
+- Design system: `PairingHero`, `PairingSteps`, `PinEntry` and `PairingOutcome` in `components/PairingProgress.kt`.
+- App: `PairingScreen` (connecting, approve on TV, code entry, paired with a `Success` haptic then the remote after 1 s, refused or timed out with a `Failure` haptic and "Try again"). Choosing a TV now goes through it. A saved TV that asks to pair again reopens it with the reason above the hero.
+
+Deviation, with the reason: a rejected token re-pairs automatically, but a **changed certificate does not**. A different certificate can mean a different machine answering at the TV's address, so the flow explains it and waits for the user to tap "Pair again". Only the token is dropped on a rejected token; the certificate pin is kept, so the new pairing still has to reach the same TV.
+
 ## Review
+
+- Unit tests, run locally on the JVM modules (51 tests, all passing): first pairing pins the certificate, the same certificate is accepted again, a different certificate fails with `CertificateChanged` and keeps the old pin (`SamsungPinningTest`, real TLS through MockWebServer); a rejected token is forgotten and pairing runs again while other secrets stay, a changed certificate is not re-trusted, `forgetAndConnect` pairs from scratch (`RepairTest`); the code TV accepts only its code (`FakeTvAdapterTest`).
+- AC-3 (TV prompt, then Connected and the token saved): the token-saving half is covered by `SamsungSessionTest`; the on-screen flow is not yet checked on a device. The Android modules are verified by CI only (assemble and lint), not run.
+- AC-5 (denying shows a clear error with retry): `PairingScreen` maps `PairingRefused` to "The TV said no", the Device Connection Manager path and "Try again". Not yet checked on a device.
+- Encryption at rest uses the Android Keystore, which has no JVM implementation, so `KeystoreCipher` is not unit-tested; it needs a device check with the reference TV (WI-001).

@@ -91,6 +91,11 @@ sealed interface TvError {
         override val message = "The TV no longer accepts this phone"
     }
 
+    /** The TV presented a different certificate than when it was paired; pairing must run again. */
+    data object CertificateChanged : TvError {
+        override val message = "The TV's identity changed since it was paired"
+    }
+
     data class ConnectionLost(
         override val message: String = "The connection to the TV was lost",
     ) : TvError

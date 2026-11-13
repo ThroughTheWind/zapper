@@ -9,9 +9,12 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import io.github.throughthewind.zapper.core.remote.ConnectionState
 import io.github.throughthewind.zapper.core.remote.DiscoveredTv
+import io.github.throughthewind.zapper.core.remote.TvError
 import io.github.throughthewind.zapper.discovery.DiscoveryScreen
 import io.github.throughthewind.zapper.discovery.DiscoveryViewModel
+import io.github.throughthewind.zapper.pairing.PairingScreen
 import io.github.throughthewind.zapper.remote.RemoteScreen
 import io.github.throughthewind.zapper.remote.RemoteViewModel
 import io.github.throughthewind.zapper.welcome.WelcomeScreen
@@ -29,6 +32,8 @@ sealed interface Screen {
 
     data object Discovery : Screen
 
+    data object Pairing : Screen
+
     data object Remote : Screen
 }
 
@@ -39,6 +44,15 @@ class AppViewModel(
     val screen: StateFlow<Screen> = _screen.asStateFlow()
 
     init {
+        // A saved TV that needs approving again, or whose identity changed, reopens the pairing flow.
+        viewModelScope.launch {
+            container.connection.state.collect { state ->
+                val mustPair =
+                    state is ConnectionState.AwaitingPairing ||
+                        (state as? ConnectionState.Failed)?.error == TvError.CertificateChanged
+                if (mustPair && _screen.value == Screen.Remote) _screen.value = Screen.Pairing
+            }
+        }
         viewModelScope.launch {
             val last = container.repository.lastDevice.first()
             if (last == null) {
@@ -56,7 +70,26 @@ class AppViewModel(
 
     fun select(tv: DiscoveredTv) {
         container.connection.connect(tv.toDevice())
+        _screen.value = Screen.Pairing
+    }
+
+    fun paired() {
         _screen.value = Screen.Remote
+    }
+
+    fun retryPairing() {
+        container.connection.device.value
+            ?.let(container.connection::connect)
+    }
+
+    fun pairAgain() {
+        container.connection.device.value
+            ?.let(container.connection::repair)
+    }
+
+    fun chooseAnotherTv() {
+        container.connection.disconnect()
+        _screen.value = Screen.Discovery
     }
 
     /** Returns false when there is nowhere to go back to, so the system closes the app. */
@@ -64,6 +97,11 @@ class AppViewModel(
         when (_screen.value) {
             Screen.Discovery -> {
                 _screen.value = if (container.connection.device.value != null) Screen.Remote else Screen.Welcome
+                true
+            }
+
+            Screen.Pairing -> {
+                chooseAnotherTv()
                 true
             }
 
@@ -81,7 +119,7 @@ class AppViewModel(
 fun ZapperApp(container: AppContainer) {
     val app: AppViewModel = viewModel(factory = AppViewModel.factory(container))
     val screen by app.screen.collectAsStateWithLifecycle()
-    BackHandler(enabled = screen == Screen.Discovery) { app.back() }
+    BackHandler(enabled = screen == Screen.Discovery || screen == Screen.Pairing) { app.back() }
 
     when (screen) {
         Screen.Loading -> {
@@ -100,6 +138,21 @@ fun ZapperApp(container: AppContainer) {
                     ),
                 brandName = { id -> container.adapters[id]?.displayName ?: id },
                 onSelect = app::select,
+            )
+        }
+
+        Screen.Pairing -> {
+            val device by container.connection.device.collectAsStateWithLifecycle()
+            val state by container.connection.state.collectAsStateWithLifecycle()
+            val reason by container.connection.repairReason.collectAsStateWithLifecycle()
+            PairingScreen(
+                device = device,
+                state = state,
+                repairReason = reason,
+                onPaired = app::paired,
+                onRetry = app::retryPairing,
+                onPairAgain = app::pairAgain,
+                onChooseAnotherTv = app::chooseAnotherTv,
             )
         }
 

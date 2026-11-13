@@ -12,6 +12,9 @@ import io.github.throughthewind.zapper.core.remote.TvAdapter
 import io.github.throughthewind.zapper.core.remote.TvError
 import io.github.throughthewind.zapper.core.remote.TvException
 import io.github.throughthewind.zapper.core.remote.TvSession
+import io.github.throughthewind.zapper.core.remote.saveToken
+import io.github.throughthewind.zapper.core.remote.token
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -52,13 +55,30 @@ class FakeTvAdapter(
             uniqueId = "uuid:fake-tv-1",
         )
 
+    /** A second simulated TV that pairs with a code, like Android TV, to exercise the PIN step. */
+    private val pinTv =
+        DiscoveredTv(
+            adapterId = ID,
+            host = PIN_HOST,
+            name = "Simulated TV (code)",
+            model = "Zapper Fake 2",
+            macAddress = "02:00:00:00:00:02",
+            uniqueId = "uuid:fake-tv-2",
+        )
+
     override fun discover(): Flow<DiscoveredTv> =
         flow {
             delay(behaviour.discoveryDelayMs)
             emit(tv)
+            emit(pinTv)
         }
 
-    override suspend fun probe(host: String): DiscoveredTv? = if (host == HOST) tv else null
+    override suspend fun probe(host: String): DiscoveredTv? =
+        when (host) {
+            HOST -> tv
+            PIN_HOST -> pinTv
+            else -> null
+        }
 
     override fun createSession(
         device: TvDevice,
@@ -77,7 +97,17 @@ class FakeTvAdapter(
 
         override suspend fun connect() {
             _state.value = ConnectionState.Connecting
-            if (credentials.token(device.id) == null) {
+            if (credentials.token(device.id) == null && device.host == PIN_HOST) {
+                val accepted = CompletableDeferred<Unit>()
+                val request =
+                    PairingRequest.EnterCode(length = PIN.length, hex = false) { code ->
+                        if (code != PIN) throw TvException(TvError.PairingRefused)
+                        accepted.complete(Unit)
+                    }
+                _state.value = ConnectionState.AwaitingPairing(request)
+                accepted.await()
+                credentials.saveToken(device.id, "fake-token")
+            } else if (credentials.token(device.id) == null) {
                 _state.value = ConnectionState.AwaitingPairing(PairingRequest.ConfirmOnTv(timeoutMs = 30_000))
                 delay(behaviour.pairingDelayMs)
                 if (behaviour.refusePairing) {
@@ -110,5 +140,9 @@ class FakeTvAdapter(
 
         /** TEST-NET-1 address, never a real device. Type it in "Add by IP" to reach the fake TV. */
         const val HOST = "192.0.2.1"
+
+        /** The simulated TV that asks for [PIN]. */
+        const val PIN_HOST = "192.0.2.2"
+        const val PIN = "1234"
     }
 }

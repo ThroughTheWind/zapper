@@ -19,7 +19,12 @@ internal data class StoredState(
     val devices: List<TvDevice> = emptyList(),
     val lastDeviceId: String? = null,
     val layouts: List<RemoteLayout> = emptyList(),
-    val tokens: Map<String, String> = emptyMap(),
+    /**
+     * Pairing secrets (tokens, certificate pins) per TV id and name, each sealed by [SecretCipher]
+     * and Base64-encoded. Plain `tokens` from scaffold builds are no longer read: those users pair
+     * once more.
+     */
+    val secrets: Map<String, Map<String, String>> = emptyMap(),
 )
 
 internal object StoredStateSerializer : Serializer<StoredState> {

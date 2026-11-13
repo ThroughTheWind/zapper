@@ -24,6 +24,7 @@ dependencies {
     testImplementation(testFixtures(project(":core:remote")))
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.okhttp.mockwebserver)
+    testImplementation(libs.okhttp.tls)
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.kotlin.test)

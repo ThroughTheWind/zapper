@@ -2,8 +2,13 @@ package io.github.throughthewind.zapper
 
 import android.app.Application
 import io.github.throughthewind.zapper.adapters.samsung.SamsungAdapter
+import io.github.throughthewind.zapper.connection.ConnectionController
+import io.github.throughthewind.zapper.connection.MulticastLock
 import io.github.throughthewind.zapper.core.data.ZapperRepository
 import io.github.throughthewind.zapper.core.remote.AdapterRegistry
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 
 class ZapperApplication : Application() {
     lateinit var container: AppContainer
@@ -23,6 +28,8 @@ class ZapperApplication : Application() {
 class AppContainer(
     application: Application,
 ) {
+    val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+
     val repository = ZapperRepository(application)
 
     val adapters =
@@ -32,6 +39,7 @@ class AppContainer(
             ) + buildTypeAdapters(),
         )
 
-    /** Adapter assumed for an address no adapter recognises, until every adapter can probe. */
-    val fallbackAdapterId: String = SamsungAdapter.ID
+    val multicastLock = MulticastLock(application)
+
+    val connection = ConnectionController(adapters, repository, scope)
 }

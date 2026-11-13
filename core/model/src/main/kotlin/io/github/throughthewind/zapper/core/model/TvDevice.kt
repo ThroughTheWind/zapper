@@ -16,4 +16,6 @@ data class TvDevice(
     val adapterId: String,
     val model: String? = null,
     val macAddress: String? = null,
+    /** Adapter-specific facts learned at discovery, such as a protocol variant. Opaque to the UI. */
+    val properties: Map<String, String> = emptyMap(),
 )

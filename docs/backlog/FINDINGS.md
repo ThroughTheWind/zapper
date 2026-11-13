@@ -7,13 +7,14 @@ Things noticed while doing something else. **A finding is the observation; a wor
 decision.** Recording one must cost almost nothing, or it will not happen — so a finding is a
 **row**, not a file. Items are files; findings are rows. The asymmetry is deliberate.
 
-<!-- NEXT-ID: F-002 -->
+<!-- NEXT-ID: F-003 -->
 
 ## Open
 
 | Id | Sev | Pri | What | Evidence | When to act | How to fix |
 | --- | --- | --- | --- | --- | --- | --- |
 | F-001 | high | next | The Samsung adapter accepts any TLS certificate from the TV's host, so anyone on the network who can impersonate the TV's IP can read the pairing token and key presses. | `adapters/samsung/src/main/kotlin/io/github/throughthewind/zapper/adapters/samsung/TvTls.kt` | Before the first public release | Pin the TV's certificate on first pairing (trust on first use) and store it with the token in `core/data`. |
+| F-002 | medium | someday | Android 16+ local network protection will require a runtime permission once the app targets SDK 37; discovery and every TV connection would fail without it. | `gradle/libs.versions.toml` targetSdk = 36; docs/research/tv-remote-protocols.md §1 | Before raising targetSdk to 37 | Check the permission's final name, request it in context on the discovery screen, and explain it as in OnboardingFlow. |
 
 ## Closed
 

@@ -1,0 +1,114 @@
+package io.github.throughthewind.zapper.adapters.fake
+
+import io.github.throughthewind.zapper.core.model.Capability
+import io.github.throughthewind.zapper.core.model.KeyAction
+import io.github.throughthewind.zapper.core.model.RemoteKey
+import io.github.throughthewind.zapper.core.model.TvDevice
+import io.github.throughthewind.zapper.core.remote.ConnectionState
+import io.github.throughthewind.zapper.core.remote.CredentialStore
+import io.github.throughthewind.zapper.core.remote.DiscoveredTv
+import io.github.throughthewind.zapper.core.remote.PairingRequest
+import io.github.throughthewind.zapper.core.remote.TvAdapter
+import io.github.throughthewind.zapper.core.remote.TvError
+import io.github.throughthewind.zapper.core.remote.TvException
+import io.github.throughthewind.zapper.core.remote.TvSession
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flow
+import java.util.concurrent.CopyOnWriteArrayList
+
+/** How the simulated TV behaves. Tests and the debug build tune it. */
+data class FakeTvBehaviour(
+    val discoveryDelayMs: Long = 800,
+    val pairingDelayMs: Long = 1_500,
+    val refusePairing: Boolean = false,
+    val unsupportedKeys: Set<RemoteKey> = setOf(RemoteKey.GUIDE),
+)
+
+/**
+ * A simulated TV for building and testing the UI without a real one (SPEC FR-11.3). Shipped in
+ * debug builds only. It is found by discovery, answers [HOST] when added by IP, asks for pairing
+ * once, and records every key it receives.
+ */
+class FakeTvAdapter(
+    private val behaviour: FakeTvBehaviour = FakeTvBehaviour(),
+) : TvAdapter {
+    override val id: String = ID
+    override val displayName: String = "Simulated TV"
+
+    /** Every key any session sent, as `KEY:ACTION`, oldest first. */
+    val received: MutableList<String> = CopyOnWriteArrayList()
+
+    private val tv =
+        DiscoveredTv(
+            adapterId = ID,
+            host = HOST,
+            name = "Simulated TV",
+            model = "Zapper Fake 1",
+            macAddress = "02:00:00:00:00:01",
+            uniqueId = "uuid:fake-tv-1",
+        )
+
+    override fun discover(): Flow<DiscoveredTv> =
+        flow {
+            delay(behaviour.discoveryDelayMs)
+            emit(tv)
+        }
+
+    override suspend fun probe(host: String): DiscoveredTv? = if (host == HOST) tv else null
+
+    override fun createSession(
+        device: TvDevice,
+        credentials: CredentialStore,
+    ): TvSession = FakeSession(device, credentials)
+
+    private inner class FakeSession(
+        override val device: TvDevice,
+        private val credentials: CredentialStore,
+    ) : TvSession {
+        override val capabilities: StateFlow<Set<Capability>> =
+            MutableStateFlow(setOf(Capability.KEYS, Capability.LONG_PRESS))
+
+        private val _state = MutableStateFlow<ConnectionState>(ConnectionState.Disconnected)
+        override val state: StateFlow<ConnectionState> = _state.asStateFlow()
+
+        override suspend fun connect() {
+            _state.value = ConnectionState.Connecting
+            if (credentials.token(device.id) == null) {
+                _state.value = ConnectionState.AwaitingPairing(PairingRequest.ConfirmOnTv(timeoutMs = 30_000))
+                delay(behaviour.pairingDelayMs)
+                if (behaviour.refusePairing) {
+                    _state.value = ConnectionState.Failed(TvError.PairingRefused)
+                    throw TvException(TvError.PairingRefused)
+                }
+                credentials.saveToken(device.id, "fake-token")
+            }
+            _state.value = ConnectionState.Connected
+        }
+
+        override fun supports(key: RemoteKey): Boolean = key !in behaviour.unsupportedKeys
+
+        override suspend fun send(
+            key: RemoteKey,
+            action: KeyAction,
+        ) {
+            if (_state.value != ConnectionState.Connected) throw TvException(TvError.NotConnected)
+            if (!supports(key)) return
+            received += "${key.name}:${action.name}"
+        }
+
+        override suspend fun disconnect() {
+            _state.value = ConnectionState.Disconnected
+        }
+    }
+
+    companion object {
+        const val ID = "fake"
+
+        /** TEST-NET-1 address, never a real device. Type it in "Add by IP" to reach the fake TV. */
+        const val HOST = "192.0.2.1"
+    }
+}

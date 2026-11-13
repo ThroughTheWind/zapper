@@ -1,9 +1,14 @@
 package io.github.throughthewind.zapper.adapters.samsung
 
+import io.github.throughthewind.zapper.core.model.KeyAction
 import io.github.throughthewind.zapper.core.model.RemoteKey
 import io.github.throughthewind.zapper.core.model.TvDevice
 import io.github.throughthewind.zapper.core.remote.ConnectionState
 import io.github.throughthewind.zapper.core.remote.CredentialStore
+import io.github.throughthewind.zapper.core.remote.TvError
+import io.github.throughthewind.zapper.core.remote.TvException
+import io.github.throughthewind.zapper.core.remote.TvSession
+import io.github.throughthewind.zapper.core.remote.TvSessionContract
 import kotlinx.coroutines.runBlocking
 import mockwebserver3.MockResponse
 import mockwebserver3.MockWebServer
@@ -13,16 +18,19 @@ import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
+import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.TimeUnit
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertTrue
 
 /** Drives [SamsungSession] against a fake TV served by MockWebServer over plain ws://. */
-class SamsungSessionTest {
+class SamsungSessionTest : TvSessionContract() {
     private val server = MockWebServer()
     private val received = LinkedBlockingQueue<String>()
+    private val receivedList = CopyOnWriteArrayList<String>()
     private val credentials = InMemoryCredentials()
 
     @BeforeEach
@@ -31,7 +39,7 @@ class SamsungSessionTest {
     @AfterEach
     fun stop() = server.close()
 
-    private fun fakeTv(firstMessage: String) {
+    private fun fakeTv(firstMessage: String = CONNECT_WITH_TOKEN) {
         server.enqueue(
             MockResponse
                 .Builder()
@@ -49,6 +57,7 @@ class SamsungSessionTest {
                             text: String,
                         ) {
                             received += text
+                            receivedList += text
                         }
 
                         override fun onClosing(
@@ -74,34 +83,75 @@ class SamsungSessionTest {
             pairingTimeoutMs = 5_000,
         )
 
+    override fun newSession(): TvSession {
+        fakeTv()
+        return session()
+    }
+
+    override fun keysReceived(): List<String> = receivedList
+
     @Test
     fun `pairing stores the token the TV issues, then keys reach the TV`() =
         runBlocking {
-            fakeTv("""{"event":"ms.channel.connect","data":{"token":"55555"}}""")
+            fakeTv()
             val session = session()
 
             session.connect()
             session.send(RemoteKey.VOLUME_UP)
 
-            assertEquals(ConnectionState.Connected, session.state.value)
             assertEquals("55555", credentials.token("tv-1"))
-            val message = received.poll(5, TimeUnit.SECONDS)
-            assertEquals(SamsungProtocol.keyPress("KEY_VOLUP"), message)
+            assertEquals(SamsungProtocol.keyPress("KEY_VOLUP"), received.poll(5, TimeUnit.SECONDS))
             session.disconnect()
         }
 
     @Test
-    fun `a refused prompt fails the connection`() =
+    fun `holding a key sends Press then Release`() =
         runBlocking {
-            fakeTv("""{"event":"ms.channel.unauthorized"}""")
+            fakeTv()
+            val session = session()
+            session.connect()
+
+            session.send(RemoteKey.VOLUME_UP, KeyAction.PRESS)
+            session.send(RemoteKey.VOLUME_UP, KeyAction.RELEASE)
+
+            assertEquals(SamsungProtocol.keyPress("KEY_VOLUP", "Press"), received.poll(5, TimeUnit.SECONDS))
+            assertEquals(SamsungProtocol.keyPress("KEY_VOLUP", "Release"), received.poll(5, TimeUnit.SECONDS))
+            session.disconnect()
+        }
+
+    @Test
+    fun `a refused prompt fails with PairingRefused`() =
+        runBlocking {
+            fakeTv(UNAUTHORIZED)
             val session = session()
 
-            assertFailsWith<IllegalStateException> { session.connect() }
-            assertEquals(true, session.state.value is ConnectionState.Failed)
+            val error = assertFailsWith<TvException> { session.connect() }
+            assertEquals(TvError.PairingRefused, error.error)
+            assertTrue(session.state.value is ConnectionState.Failed)
+        }
+
+    @Test
+    fun `a saved token the TV no longer accepts fails with TokenRejected`() =
+        runBlocking {
+            credentials.saveToken("tv-1", "old")
+            fakeTv(UNAUTHORIZED)
+
+            val error = assertFailsWith<TvException> { session().connect() }
+            assertEquals(TvError.TokenRejected, error.error)
+        }
+
+    @Test
+    fun `a TV that is not there fails with Unreachable`() =
+        runBlocking {
+            val session = session()
+            server.close()
+
+            val error = assertFailsWith<TvException> { session.connect() }
+            assertTrue(error.error is TvError.Unreachable)
         }
 
     private class InMemoryCredentials : CredentialStore {
-        private val tokens = mutableMapOf<String, String>()
+        private val tokens = java.util.concurrent.ConcurrentHashMap<String, String>()
 
         override suspend fun token(deviceId: String) = tokens[deviceId]
 
@@ -115,5 +165,10 @@ class SamsungSessionTest {
         override suspend fun clear(deviceId: String) {
             tokens.remove(deviceId)
         }
+    }
+
+    private companion object {
+        const val CONNECT_WITH_TOKEN = """{"event":"ms.channel.connect","data":{"token":"55555"}}"""
+        const val UNAUTHORIZED = """{"event":"ms.channel.unauthorized"}"""
     }
 }

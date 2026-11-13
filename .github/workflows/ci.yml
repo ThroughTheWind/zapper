@@ -37,6 +37,8 @@ jobs:
       - uses: gradle/actions/setup-gradle@v6
       - name: Format
         run: ./gradlew spotlessCheck
+      - name: Adapter boundaries
+        run: ./gradlew checkAdapterBoundaries
       - name: Unit tests
         run: ./gradlew test
       - name: Android lint

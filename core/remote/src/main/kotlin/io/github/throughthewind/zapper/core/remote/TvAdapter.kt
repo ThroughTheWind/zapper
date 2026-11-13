@@ -1,6 +1,8 @@
 package io.github.throughthewind.zapper.core.remote
 
 import io.github.throughthewind.zapper.core.model.TvDevice
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 
 /**
  * One TV brand's protocol. Each implementation lives in its own `:adapters:<brand>` module and
@@ -14,10 +16,13 @@ interface TvAdapter {
     val displayName: String
 
     /**
-     * Returns a [TvDevice] if this adapter can drive the TV that discovery found, or null if the
-     * TV is not one of this brand's.
+     * Emits this brand's TVs as they answer on the local network, until the collector stops.
+     * The caller holds whatever the platform needs for multicast while collecting.
      */
-    fun recognise(candidate: DiscoveredTv): TvDevice?
+    fun discover(): Flow<DiscoveredTv> = emptyFlow()
+
+    /** Asks [host] whether it is one of this brand's TVs. Null when it is not, or does not answer. */
+    suspend fun probe(host: String): DiscoveredTv? = null
 
     /** Creates a session for [device]. Does not connect; call [TvSession.connect]. */
     fun createSession(
@@ -26,19 +31,24 @@ interface TvAdapter {
     ): TvSession
 }
 
-/**
- * A TV seen on the network by discovery (SSDP, mDNS…), before any adapter claims it.
- * [attributes] carries protocol-specific details such as SSDP headers or mDNS TXT records.
- */
+/** A TV found by discovery or by probing an address, claimed by the adapter [adapterId]. */
 data class DiscoveredTv(
+    val adapterId: String,
     val host: String,
-    val name: String? = null,
-    val manufacturer: String? = null,
+    val name: String,
     val model: String? = null,
-    val attributes: Map<String, String> = emptyMap(),
-)
+    val macAddress: String? = null,
+    /** A stable id such as a UPnP UUID. Discovery merges duplicates on it, then on [macAddress]. */
+    val uniqueId: String? = null,
+) {
+    /** Identity used to merge the same TV seen twice. */
+    val identity: String get() = uniqueId ?: macAddress ?: host
 
-/** Where adapters keep pairing tokens, so the TV does not ask to pair again on every connect. */
+    fun toDevice(): TvDevice =
+        TvDevice(id = identity, name = name, host = host, adapterId = adapterId, model = model, macAddress = macAddress)
+}
+
+/** Where adapters keep pairing secrets, so the TV does not ask to pair again on every connect. */
 interface CredentialStore {
     suspend fun token(deviceId: String): String?
 

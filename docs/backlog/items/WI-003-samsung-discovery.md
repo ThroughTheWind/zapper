@@ -66,5 +66,5 @@ Deviation: the Android 16+ local network permission is not requested. It is not 
 ## Review
 
 - SSDP request and header parsing, the `/api/v2/` parser (reference TV fixture and non-Samsung answers), probe found / not found, and discovery probing each host once: 7 tests, run locally.
-- AC-1 (TV listed within 10 s) and AC-2 (add by IP when discovery is blocked) need the reference TV; the debug build lets them be checked, and on the simulated TV both paths work (it answers discovery and `192.0.2.1`).
+- AC-1 (TV listed within 10 s) and AC-2 (add by IP when discovery is blocked) need the reference TV; not yet checked on a device. The debug build's simulated TV answers discovery and `192.0.2.1`, so both paths can be tried without a TV; the Android build is verified by CI only (assemble and lint), not run.
 - Permissions: INTERNET, ACCESS_NETWORK_STATE, ACCESS_WIFI_STATE, CHANGE_WIFI_MULTICAST_STATE, VIBRATE, within NFR-5. No location permission.

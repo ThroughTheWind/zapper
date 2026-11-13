@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  TVs serve plain HTTP on the local network (Samsung's info endpoint on :8001, 2016-2017 Samsung
+  WebSockets). Android cannot limit cleartext to private addresses, so it is allowed here and the
+  code only ever uses it toward LAN addresses (SPEC NFR-5, ADR-0003).
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true" />
+</network-security-config>

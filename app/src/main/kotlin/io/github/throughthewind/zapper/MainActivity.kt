@@ -4,20 +4,16 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import io.github.throughthewind.zapper.core.designsystem.theme.ZapperTheme
 
 class MainActivity : ComponentActivity() {
-    private val viewModel: RemoteViewModel by viewModels {
-        RemoteViewModel.factory((application as ZapperApplication).container)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        val container = (application as ZapperApplication).container
         setContent {
             ZapperTheme {
-                RemoteScreen(viewModel)
+                ZapperApp(container)
             }
         }
     }

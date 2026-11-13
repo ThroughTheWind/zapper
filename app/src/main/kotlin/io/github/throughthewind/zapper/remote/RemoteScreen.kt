@@ -1,4 +1,4 @@
-package io.github.throughthewind.zapper
+package io.github.throughthewind.zapper.remote
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,16 +9,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -31,27 +28,34 @@ import io.github.throughthewind.zapper.core.remote.ConnectionState
 import io.github.throughthewind.zapper.core.designsystem.components.RemoteKey as KeyButton
 
 @Composable
-fun RemoteScreen(viewModel: RemoteViewModel) {
+fun RemoteScreen(
+    viewModel: RemoteViewModel,
+    onChangeTv: () -> Unit,
+) {
     val layout by viewModel.layout.collectAsStateWithLifecycle()
-    val connection by viewModel.connection.collectAsStateWithLifecycle()
-    var host by rememberSaveable { mutableStateOf("") }
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val device by viewModel.device.collectAsStateWithLifecycle()
 
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier.safeDrawingPadding().padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedTextField(
-                    value = host,
-                    onValueChange = { host = it.trim() },
-                    label = { Text("TV IP address") },
-                    singleLine = true,
-                    modifier = Modifier.weight(1f),
-                )
-                Button(onClick = { viewModel.connect(host) }, enabled = host.isNotEmpty()) { Text("Connect") }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Column(Modifier.weight(1f)) {
+                    device?.model?.let {
+                        Text(
+                            it,
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                    Text(device?.name ?: "No TV", style = MaterialTheme.typography.titleLarge)
+                    Text(state.describe(), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+                if (state is ConnectionState.Failed) TextButton(onClick = viewModel::retry) { Text("Retry") }
+                TextButton(onClick = onChangeTv) { Text("Change TV") }
             }
-            Text(connection.describe(), style = MaterialTheme.typography.bodyMedium)
             layout?.let { RemoteGrid(it, onPress = viewModel::press) }
         }
     }

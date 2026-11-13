@@ -40,12 +40,22 @@ data class DiscoveredTv(
     val macAddress: String? = null,
     /** A stable id such as a UPnP UUID. Discovery merges duplicates on it, then on [macAddress]. */
     val uniqueId: String? = null,
+    /** Adapter-specific facts carried into [TvDevice.properties]. */
+    val properties: Map<String, String> = emptyMap(),
 ) {
     /** Identity used to merge the same TV seen twice. */
     val identity: String get() = uniqueId ?: macAddress ?: host
 
     fun toDevice(): TvDevice =
-        TvDevice(id = identity, name = name, host = host, adapterId = adapterId, model = model, macAddress = macAddress)
+        TvDevice(
+            id = identity,
+            name = name,
+            host = host,
+            adapterId = adapterId,
+            model = model,
+            macAddress = macAddress,
+            properties = properties,
+        )
 }
 
 /** Where adapters keep pairing secrets, so the TV does not ask to pair again on every connect. */

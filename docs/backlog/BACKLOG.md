@@ -19,7 +19,7 @@ The board. One row per live work item, grouped by status. Items live in
 
 | Id | Title | Type | Branch |
 | --- | --- | --- | --- |
-| [WI-004](items/WI-004-pairing-and-credentials.md) | Guide pairing and keep credentials safe | feature | `feature/WI-004-pairing-and-credentials` |
+| — | | | |
 
 ## Planned
 

@@ -2,7 +2,7 @@
 id: WI-004
 title: Guide pairing and keep credentials safe
 type: feature
-status: review
+status: done
 branch: feature/WI-004-pairing-and-credentials
 created: 2026-11-13
 updated: 2026-11-13

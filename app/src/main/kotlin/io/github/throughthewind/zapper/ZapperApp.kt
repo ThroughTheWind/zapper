@@ -54,7 +54,7 @@ class AppViewModel(
             }
         }
         viewModelScope.launch {
-            val last = container.repository.lastDevice.first()
+            val last = container.repository.startDevice.first()
             if (last == null) {
                 _screen.value = Screen.Welcome
             } else {
@@ -71,6 +71,21 @@ class AppViewModel(
     fun select(tv: DiscoveredTv) {
         container.connection.connect(tv.toDevice())
         _screen.value = Screen.Pairing
+    }
+
+    /** The current TV was forgotten: open another saved TV, or start over. */
+    fun noTvLeft() {
+        viewModelScope.launch {
+            val next =
+                container.repository.startDevice.first() ?: container.repository.devices
+                    .first()
+                    .firstOrNull()
+            if (next == null) {
+                _screen.value = Screen.Welcome
+            } else {
+                container.connection.connect(next)
+            }
+        }
     }
 
     fun paired() {
@@ -159,7 +174,9 @@ fun ZapperApp(container: AppContainer) {
         Screen.Remote -> {
             RemoteScreen(
                 viewModel = viewModel(factory = RemoteViewModel.factory(container)),
-                onChangeTv = app::findTv,
+                brandName = { id -> container.adapters[id]?.displayName ?: id },
+                onAddTv = app::findTv,
+                onNoTvLeft = app::noTvLeft,
             )
         }
     }

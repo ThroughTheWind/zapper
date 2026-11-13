@@ -7,6 +7,7 @@ import androidx.datastore.dataStoreFile
 import io.github.throughthewind.zapper.core.model.DefaultLayouts
 import io.github.throughthewind.zapper.core.model.RemoteLayout
 import io.github.throughthewind.zapper.core.model.TvDevice
+import io.github.throughthewind.zapper.core.model.decodeHtmlEntities
 import io.github.throughthewind.zapper.core.remote.CredentialStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -23,9 +24,9 @@ class ZapperRepository internal constructor(
         KeystoreCipher(),
     )
 
-    val devices: Flow<List<TvDevice>> = store.data.map { it.devices }
+    val devices: Flow<List<TvDevice>> = store.data.map { state -> state.devices.map { it.readable() } }
 
-    val lastDevice: Flow<TvDevice?> = store.data.map { state -> state.devices.firstOrNull { it.id == state.lastDeviceId } }
+    val lastDevice: Flow<TvDevice?> = store.data.map { state -> state.devices.firstOrNull { it.id == state.lastDeviceId }?.readable() }
 
     val defaultDeviceId: Flow<String?> = store.data.map { it.defaultDeviceId }
 
@@ -33,7 +34,7 @@ class ZapperRepository internal constructor(
     val startDevice: Flow<TvDevice?> =
         store.data.map { state ->
             val id = state.defaultDeviceId ?: state.lastDeviceId
-            state.devices.firstOrNull { it.id == id }
+            state.devices.firstOrNull { it.id == id }?.readable()
         }
 
     /** The user's layouts, or the standard one until they make their own. */
@@ -135,4 +136,7 @@ class ZapperRepository internal constructor(
     override suspend fun clear(deviceId: String) {
         store.updateData { it.copy(secrets = it.secrets - deviceId) }
     }
+
+    /** Names saved by builds that did not decode the TV's HTML entities read as the user expects. */
+    private fun TvDevice.readable(): TvDevice = copy(name = name.decodeHtmlEntities())
 }

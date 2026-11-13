@@ -83,3 +83,13 @@ release 0.1.0 at the end of Phase 1, and that release needs this pipeline.
   never been released, so a first release lists only what it adds.
 
 ## Review
+
+- [x] CI on the pull request builds `:app:assembleRelease` with R8: passed on PR #13
+  (`build` job, run 43504019119).
+- [x] `scripts/release-notes.sh`: prints the 0.1.0 notes; exits 1 naming the missing notes file
+  or changelog section (run locally).
+- [ ] Dry run with the secrets set: waits on Antoine creating the key and secrets.
+- [ ] `v0.1.0` published with the APK and its `.sha256` (AC-21): waits on the tag.
+- [ ] Tag/version mismatch refused: shown by the first tag run's check step; not yet exercised.
+
+Stays `review` until the first tag run publishes 0.1.0.

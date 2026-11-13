@@ -17,6 +17,8 @@ class ZapperApplication : Application() {
 
 /**
  * Every long-lived object, built by hand (ADR-0001). Adding a brand is one line in [adapters].
+ * This file and `BuildAdapters.kt` are the only app code allowed to name an adapter
+ * (`./gradlew checkAdapterBoundaries`).
  */
 class AppContainer(
     application: Application,
@@ -27,6 +29,9 @@ class AppContainer(
         AdapterRegistry(
             listOf(
                 SamsungAdapter(),
-            ),
+            ) + buildTypeAdapters(),
         )
+
+    /** Adapter assumed for an address no adapter recognises, until every adapter can probe. */
+    val fallbackAdapterId: String = SamsungAdapter.ID
 }

@@ -29,9 +29,13 @@ Thanks for helping out. Issues and pull requests are welcome.
 ## Adding a TV brand
 
 1. Create `adapters/<brand>` as a plain Kotlin/JVM module depending on `:core:remote` only.
-2. Implement `TvAdapter` and `TvSession`, declaring only the capabilities the TV really has.
-3. Test it against a fake TV (see `SamsungSessionTest` for one built on MockWebServer).
-4. Register it in `AppContainer` and add it to `settings.gradle.kts`.
+2. Implement `TvAdapter` (discovery and probe) and `TvSession`, declaring only the capabilities the
+   TV really has.
+3. Test it against a fake TV: extend `TvSessionContract` from `core/remote`'s test fixtures, as
+   `SamsungSessionTest` does with MockWebServer.
+4. The debug build ships a simulated TV (`adapters/fake`): add it by IP with `192.0.2.1` to try the
+   UI without a real TV.
+5. Register it in `AppContainer` and add it to `settings.gradle.kts`.
 
 ## License of contributions
 

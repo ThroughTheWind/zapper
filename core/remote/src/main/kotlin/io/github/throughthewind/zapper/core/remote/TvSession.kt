@@ -2,6 +2,7 @@ package io.github.throughthewind.zapper.core.remote
 
 import io.github.throughthewind.zapper.core.model.ButtonAction
 import io.github.throughthewind.zapper.core.model.Capability
+import io.github.throughthewind.zapper.core.model.KeyAction
 import io.github.throughthewind.zapper.core.model.RemoteKey
 import io.github.throughthewind.zapper.core.model.TvDevice
 import kotlinx.coroutines.delay
@@ -11,21 +12,28 @@ import kotlinx.coroutines.flow.StateFlow
 interface TvSession {
     val device: TvDevice
 
-    /** What this TV can do. The UI disables any control whose capability is missing. */
-    val capabilities: Set<Capability>
+    /** What this TV can do. May grow after connecting, once the model is known. */
+    val capabilities: StateFlow<Set<Capability>>
 
     val state: StateFlow<ConnectionState>
 
-    /** Connects, pairing first if the TV asks for it. Suspends until connected or failed. */
+    /** Connects, pairing first if the TV asks for it. Returns when connected; throws [TvException] otherwise. */
     suspend fun connect()
 
-    suspend fun send(key: RemoteKey)
+    /** True when this adapter knows how to send [key]. The UI disables keys that return false. */
+    fun supports(key: RemoteKey): Boolean
+
+    /** Sends [key]. A key [supports] rejects is ignored. Throws [TvException] when not connected. */
+    suspend fun send(
+        key: RemoteKey,
+        action: KeyAction = KeyAction.CLICK,
+    )
 
     /** Requires [Capability.APP_LAUNCH]. */
-    suspend fun launchApp(appId: String): Unit = throw UnsupportedOperationException("${device.adapterId} cannot launch apps")
+    suspend fun launchApp(appId: String): Unit = throw TvException(TvError.Unsupported("launching apps"))
 
     /** Requires [Capability.TEXT_INPUT]. */
-    suspend fun sendText(text: String): Unit = throw UnsupportedOperationException("${device.adapterId} cannot send text")
+    suspend fun sendText(text: String): Unit = throw TvException(TvError.Unsupported("text input"))
 
     suspend fun disconnect()
 }
@@ -35,18 +43,73 @@ sealed interface ConnectionState {
 
     data object Connecting : ConnectionState
 
-    /** The TV is showing a prompt the user must accept, or a PIN to type. */
+    /** The TV needs the user to do something before it accepts the connection. */
     data class AwaitingPairing(
-        val pinRequired: Boolean,
+        val request: PairingRequest,
     ) : ConnectionState
 
     data object Connected : ConnectionState
 
     data class Failed(
-        val reason: String,
-        val cause: Throwable? = null,
+        val error: TvError,
     ) : ConnectionState
 }
+
+/** What the user must do to pair. The pairing UI renders one screen per kind. */
+sealed interface PairingRequest {
+    /** Accept a prompt on the TV (Samsung, LG). */
+    data class ConfirmOnTv(
+        val timeoutMs: Long,
+    ) : PairingRequest
+
+    /** Type the code the TV shows (Android TV, Philips, Hisense). */
+    data class EnterCode(
+        val length: Int,
+        val hex: Boolean,
+        val submit: suspend (String) -> Unit,
+    ) : PairingRequest
+}
+
+/** Why talking to a TV failed, in terms the UI can explain. */
+sealed interface TvError {
+    val message: String
+
+    data class Unreachable(
+        override val message: String = "The TV did not answer",
+    ) : TvError
+
+    data object PairingRefused : TvError {
+        override val message = "The TV refused the connection"
+    }
+
+    data object PairingTimedOut : TvError {
+        override val message = "Nobody answered the prompt on the TV"
+    }
+
+    /** A saved token stopped working; pairing must run again. */
+    data object TokenRejected : TvError {
+        override val message = "The TV no longer accepts this phone"
+    }
+
+    data class ConnectionLost(
+        override val message: String = "The connection to the TV was lost",
+    ) : TvError
+
+    data object NotConnected : TvError {
+        override val message = "Not connected to a TV"
+    }
+
+    data class Unsupported(
+        val feature: String,
+    ) : TvError {
+        override val message = "This TV does not support $feature"
+    }
+}
+
+class TvException(
+    val error: TvError,
+    cause: Throwable? = null,
+) : Exception(error.message, cause)
 
 /** Gap between keys of a macro, so the TV does not drop presses. */
 const val MACRO_KEY_GAP_MS: Long = 150

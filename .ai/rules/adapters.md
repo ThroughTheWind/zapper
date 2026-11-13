@@ -17,6 +17,7 @@ enforcement: review-only
   (NsdManager, multicast locks, Wi-Fi state) is passed in from `:app`, not imported.
 - Declare only capabilities the TV really has. A key you cannot confirm maps to `null` and is not
   sent: a wrong code fails silently on the TV.
-- Every adapter has a session test against a fake TV covering pairing, a key press and a refused
-  pairing.
+- Every adapter's session test extends `TvSessionContract` (`core/remote/src/testFixtures`) and adds
+  its own cases for pairing, a refused pairing and a rejected token.
+- Throw `TvException` with a `TvError`, never a raw exception: the UI explains errors by type.
 - No adapter talks to anything but the TV on the local network (ADR-0003).

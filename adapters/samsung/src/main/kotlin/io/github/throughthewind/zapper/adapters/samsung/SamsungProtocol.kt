@@ -31,11 +31,15 @@ internal object SamsungProtocol {
         return "$scheme://$host:$port$CHANNEL_PATH?name=$name$tokenParam"
     }
 
-    fun keyPress(code: String): String =
+    /** [cmd] is `Click`, or `Press` then `Release` to hold a key (hold-to-repeat, long press). */
+    fun keyPress(
+        code: String,
+        cmd: String = "Click",
+    ): String =
         buildJsonObject {
             put("method", "ms.remote.control")
             putJsonObject("params") {
-                put("Cmd", "Click")
+                put("Cmd", cmd)
                 put("DataOfCmd", code)
                 put("Option", "false")
                 put("TypeOfRemote", "SendRemoteKey")

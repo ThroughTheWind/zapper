@@ -26,7 +26,6 @@ The board. One row per live work item, grouped by status. Items live in
 | Id | Title | Type |
 | --- | --- | --- |
 | [WI-001](items/WI-001-samsung-reference-tv-spike.md) | Prove the Samsung path on the reference TV | spike |
-| [WI-002](items/WI-002-adapter-contract-v2.md) | Evolve the adapter contract and add a fake TV adapter | feature |
 | [WI-003](items/WI-003-samsung-discovery.md) | Find Samsung TVs on the network and add one by IP | feature |
 | [WI-004](items/WI-004-pairing-and-credentials.md) | Guide pairing and keep credentials safe | feature |
 | [WI-005](items/WI-005-connection-management.md) | Reconnect automatically and manage saved TVs | feature |

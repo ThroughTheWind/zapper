@@ -21,6 +21,7 @@ everything is slow enough to get skipped; running the wrong subset proves nothin
 | Change surface | Run |
 | --- | --- |
 | `core/model/`, `core/remote/`, `adapters/` | `./gradlew :core:model:test :core:remote:test :adapters:<brand>:test` |
+| imports in `app/` or `core/` | `./gradlew checkAdapterBoundaries` |
 | `core/data/`, `core/designsystem/`, `app/` | `./gradlew :app:assembleDebug lint` |
 | any `*.kt` or `*.kts` | `./gradlew spotlessCheck` (`spotlessApply` to fix) |
 | `gradle/libs.versions.toml`, build files | `./gradlew test :app:assembleDebug`, then CI |

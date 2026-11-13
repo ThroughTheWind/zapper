@@ -2,8 +2,8 @@
 id: WI-002
 title: Evolve the adapter contract and add a fake TV adapter
 type: feature
-status: planned
-branch:
+status: done
+branch: feature/WI-002-adapter-contract-v2
 created: 2026-11-13
 updated: 2026-11-13
 related: [ADR-0002, SPEC-F11, SPEC-AC-18, SPEC-AC-19]
@@ -55,4 +55,20 @@ Phase 1 — Basic Samsung remote ([roadmap](../../ROADMAP.md)).
 
 ## Execution
 
+Branch `feature/WI-002-adapter-contract-v2`.
+
+- `core/remote`: `TvAdapter.discover()` and `probe()`, `DiscoveredTv` carrying its adapter and a stable identity, `PairingRequest` (confirm on TV, enter a code), typed `TvError` and `TvException`, `capabilities` as a `StateFlow`, `supports(key)`, and `send(key, KeyAction)` with click, press and release. `AdapterRegistry.discover()` merges adapters and drops duplicates; `probe()` asks every adapter.
+- `core/model`: `Capability.LONG_PRESS` and `KeyAction`.
+- `core/remote` test fixtures: `TvSessionContract`, the behaviour every adapter's session must share.
+- `adapters/fake`: the simulated TV, `debugImplementation` only, reachable by discovery or at `192.0.2.1`.
+- `adapters/samsung` migrated: typed errors (a refused prompt is `PairingRefused`, a revoked token `TokenRejected`), `Press`/`Release` commands, unmapped keys reported by `supports`.
+- `./gradlew checkAdapterBoundaries` fails when `core` or `app` imports an adapter outside `ZapperApplication.kt` and `BuildAdapters.kt`; CI runs it.
+
+Deviation: discovery and probe for Samsung are left to WI-003 as planned; until then the scaffold screen falls back to the Samsung adapter for addresses no adapter recognises (`AppContainer.fallbackAdapterId`).
+
 ## Review
+
+- Contract and registry: 7 registry tests and the shared contract (5 cases) pass on both the fake and the Samsung session: 36 JVM tests in total, run locally.
+- Fake adapter: discovery, probe, one-time pairing, refused pairing and unsupported keys are tested.
+- AC-18 (app runs on the fake adapter): the debug build registers it; adding `192.0.2.1` on the scaffold screen connects after the simulated pairing. Checked in CI by compiling the debug APK; a UI test lands with WI-006.
+- AC-19: `checkAdapterBoundaries` runs in CI.

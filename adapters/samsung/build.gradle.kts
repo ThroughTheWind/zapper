@@ -21,6 +21,7 @@ dependencies {
     api(project(":core:remote"))
     implementation(libs.okhttp)
     implementation(libs.kotlinx.serialization.json)
+    testImplementation(testFixtures(project(":core:remote")))
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.okhttp.mockwebserver)
     testImplementation(platform(libs.junit.bom))

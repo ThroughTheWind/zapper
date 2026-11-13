@@ -45,7 +45,7 @@ fun RemoteScreen(viewModel: RemoteViewModel) {
                 OutlinedTextField(
                     value = host,
                     onValueChange = { host = it.trim() },
-                    label = { Text("Samsung TV IP address") },
+                    label = { Text("TV IP address") },
                     singleLine = true,
                     modifier = Modifier.weight(1f),
                 )
@@ -120,5 +120,5 @@ private fun ConnectionState.describe(): String =
         ConnectionState.Connecting -> "Connecting…"
         is ConnectionState.AwaitingPairing -> "Accept the connection on your TV"
         ConnectionState.Connected -> "Connected"
-        is ConnectionState.Failed -> "Failed: $reason"
+        is ConnectionState.Failed -> error.message
     }

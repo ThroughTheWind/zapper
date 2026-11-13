@@ -1,12 +1,17 @@
 package io.github.throughthewind.zapper.adapters.samsung
 
 import io.github.throughthewind.zapper.core.model.Capability
+import io.github.throughthewind.zapper.core.model.KeyAction
 import io.github.throughthewind.zapper.core.model.RemoteKey
 import io.github.throughthewind.zapper.core.model.TvDevice
 import io.github.throughthewind.zapper.core.remote.ConnectionState
 import io.github.throughthewind.zapper.core.remote.CredentialStore
+import io.github.throughthewind.zapper.core.remote.PairingRequest
+import io.github.throughthewind.zapper.core.remote.TvError
+import io.github.throughthewind.zapper.core.remote.TvException
 import io.github.throughthewind.zapper.core.remote.TvSession
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,12 +31,13 @@ internal class SamsungSession(
     private val port: Int = SamsungProtocol.SECURE_PORT,
     private val pairingTimeoutMs: Long = 60_000,
 ) : TvSession {
-    override val capabilities: Set<Capability> = setOf(Capability.KEYS)
+    override val capabilities: StateFlow<Set<Capability>> =
+        MutableStateFlow(setOf(Capability.KEYS, Capability.LONG_PRESS)).asStateFlow()
 
     private val _state = MutableStateFlow<ConnectionState>(ConnectionState.Disconnected)
     override val state: StateFlow<ConnectionState> = _state.asStateFlow()
 
-    private var socket: WebSocket? = null
+    @Volatile private var socket: WebSocket? = null
 
     override suspend fun connect() {
         if (_state.value == ConnectionState.Connected) return
@@ -48,8 +54,10 @@ internal class SamsungSession(
                         webSocket: WebSocket,
                         response: Response,
                     ) {
-                        // A TV that has never seen this token now shows its "Allow?" prompt.
-                        if (token == null) _state.value = ConnectionState.AwaitingPairing(pinRequired = false)
+                        // A TV that has never seen this phone now shows its "Allow?" prompt.
+                        if (token == null) {
+                            _state.value = ConnectionState.AwaitingPairing(PairingRequest.ConfirmOnTv(pairingTimeoutMs))
+                        }
                     }
 
                     override fun onMessage(
@@ -62,11 +70,13 @@ internal class SamsungSession(
                             }
 
                             SamsungProtocol.Event.Unauthorized -> {
-                                connected.completeExceptionally(IllegalStateException("The TV refused the connection"))
+                                connected.completeExceptionally(
+                                    TvException(if (token == null) TvError.PairingRefused else TvError.TokenRejected),
+                                )
                             }
 
                             SamsungProtocol.Event.Timeout -> {
-                                connected.completeExceptionally(IllegalStateException("Nobody answered the prompt on the TV"))
+                                connected.completeExceptionally(TvException(TvError.PairingTimedOut))
                             }
 
                             is SamsungProtocol.Event.Other -> {
@@ -80,8 +90,9 @@ internal class SamsungSession(
                         t: Throwable,
                         response: Response?,
                     ) {
-                        if (!connected.completeExceptionally(t)) {
-                            _state.value = ConnectionState.Failed(t.message ?: "Connection lost", t)
+                        if (!connected.completeExceptionally(TvException(TvError.Unreachable(), t))) {
+                            socket = null
+                            _state.value = ConnectionState.Failed(TvError.ConnectionLost())
                         }
                     }
 
@@ -90,7 +101,10 @@ internal class SamsungSession(
                         code: Int,
                         reason: String,
                     ) {
-                        _state.value = ConnectionState.Disconnected
+                        if (socket === webSocket) {
+                            socket = null
+                            _state.value = ConnectionState.Disconnected
+                        }
                     }
                 },
             )
@@ -102,20 +116,39 @@ internal class SamsungSession(
         } catch (e: Exception) {
             socket?.cancel()
             socket = null
-            _state.value = ConnectionState.Failed(e.message ?: "Could not connect", e)
-            throw e
+            val error =
+                when (e) {
+                    is TvException -> e
+                    is TimeoutCancellationException -> TvException(TvError.PairingTimedOut, e)
+                    else -> TvException(TvError.Unreachable(), e)
+                }
+            _state.value = ConnectionState.Failed(error.error)
+            throw error
         }
     }
 
-    override suspend fun send(key: RemoteKey) {
+    override fun supports(key: RemoteKey): Boolean = key.samsungCode() != null
+
+    override suspend fun send(
+        key: RemoteKey,
+        action: KeyAction,
+    ) {
+        val ws = socket
+        if (ws == null || _state.value != ConnectionState.Connected) throw TvException(TvError.NotConnected)
         val code = key.samsungCode() ?: return
-        val ws = checkNotNull(socket) { "Not connected" }
-        check(ws.send(SamsungProtocol.keyPress(code))) { "The connection to the TV is closed" }
+        val cmd =
+            when (action) {
+                KeyAction.CLICK -> "Click"
+                KeyAction.PRESS -> "Press"
+                KeyAction.RELEASE -> "Release"
+            }
+        if (!ws.send(SamsungProtocol.keyPress(code, cmd))) throw TvException(TvError.ConnectionLost())
     }
 
     override suspend fun disconnect() {
-        socket?.close(NORMAL_CLOSURE, null)
+        val ws = socket
         socket = null
+        ws?.close(NORMAL_CLOSURE, null)
         _state.value = ConnectionState.Disconnected
     }
 

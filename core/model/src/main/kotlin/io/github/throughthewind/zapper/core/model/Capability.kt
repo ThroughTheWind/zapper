@@ -8,6 +8,9 @@ enum class Capability {
     /** Sends [RemoteKey] presses. Every adapter supports this. */
     KEYS,
 
+    /** Holds a key down and releases it later ([KeyAction.PRESS] then [KeyAction.RELEASE]). */
+    LONG_PRESS,
+
     /** Types text into the TV's focused text field. */
     TEXT_INPUT,
 
@@ -20,3 +23,6 @@ enum class Capability {
     /** Moves an on-screen pointer like a touchpad. */
     POINTER,
 }
+
+/** How a key is sent. [PRESS] and [RELEASE] need [Capability.LONG_PRESS]. */
+enum class KeyAction { CLICK, PRESS, RELEASE }

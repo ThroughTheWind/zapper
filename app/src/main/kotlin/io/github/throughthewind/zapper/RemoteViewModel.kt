@@ -5,15 +5,15 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import io.github.throughthewind.zapper.adapters.samsung.SamsungAdapter
 import io.github.throughthewind.zapper.core.data.ZapperRepository
 import io.github.throughthewind.zapper.core.model.ButtonAction
 import io.github.throughthewind.zapper.core.model.RemoteLayout
-import io.github.throughthewind.zapper.core.model.TvDevice
 import io.github.throughthewind.zapper.core.remote.AdapterRegistry
 import io.github.throughthewind.zapper.core.remote.ConnectionState
+import io.github.throughthewind.zapper.core.remote.DiscoveredTv
 import io.github.throughthewind.zapper.core.remote.TvSession
 import io.github.throughthewind.zapper.core.remote.perform
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -25,11 +25,12 @@ import kotlinx.coroutines.runBlocking
 
 /**
  * Scaffold screen logic: connect to a TV by IP address and press buttons from the layout.
- * Discovery and the real screens come from the MVP spec.
+ * Replaced by the discovery, pairing and remote screens of WI-003 to WI-006.
  */
 class RemoteViewModel(
     private val repository: ZapperRepository,
     private val adapters: AdapterRegistry,
+    private val fallbackAdapterId: String,
 ) : ViewModel() {
     val layout: StateFlow<RemoteLayout?> =
         repository.layouts.map { it.firstOrNull() }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
@@ -38,14 +39,17 @@ class RemoteViewModel(
     val connection: StateFlow<ConnectionState> = _connection.asStateFlow()
 
     private var session: TvSession? = null
+    private var stateJob: Job? = null
 
     fun connect(host: String) {
         viewModelScope.launch {
             session?.disconnect()
-            val device = TvDevice(id = host, name = host, host = host, adapterId = SamsungAdapter.ID)
+            stateJob?.cancel()
+            val found = adapters.probe(host) ?: DiscoveredTv(adapterId = fallbackAdapterId, host = host, name = host)
+            val device = found.toDevice()
             val newSession = adapters.adapterFor(device).createSession(device, repository)
             session = newSession
-            launch { newSession.state.collect { _connection.value = it } }
+            stateJob = launch { newSession.state.collect { _connection.value = it } }
             runCatching { newSession.connect() }
                 .onSuccess { repository.saveDevice(device) }
         }
@@ -65,7 +69,7 @@ class RemoteViewModel(
     companion object {
         fun factory(container: AppContainer): ViewModelProvider.Factory =
             viewModelFactory {
-                initializer { RemoteViewModel(container.repository, container.adapters) }
+                initializer { RemoteViewModel(container.repository, container.adapters, container.fallbackAdapterId) }
             }
     }
 }

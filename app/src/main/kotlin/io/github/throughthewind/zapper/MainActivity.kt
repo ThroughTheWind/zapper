@@ -5,7 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import io.github.throughthewind.zapper.core.designsystem.ZapperTheme
+import io.github.throughthewind.zapper.core.designsystem.theme.ZapperTheme
 
 class MainActivity : ComponentActivity() {
     private val viewModel: RemoteViewModel by viewModels {

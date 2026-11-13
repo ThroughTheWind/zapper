@@ -19,7 +19,7 @@ The board. One row per live work item, grouped by status. Items live in
 
 | Id | Title | Type | Branch |
 | --- | --- | --- | --- |
-| [WI-020](items/WI-020-first-test-polish.md) | Polish the app after the first TV test | fix | `feature/WI-020-first-test-polish` |
+| — | | | |
 
 ## Planned
 

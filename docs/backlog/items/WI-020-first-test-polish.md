@@ -2,7 +2,7 @@
 id: WI-020
 title: Polish the app after the first TV test
 type: fix
-status: review
+status: done
 branch: feature/WI-020-first-test-polish
 created: 2026-11-13
 updated: 2026-11-13

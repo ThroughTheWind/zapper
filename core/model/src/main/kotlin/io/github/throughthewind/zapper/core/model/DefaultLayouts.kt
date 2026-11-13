@@ -1,29 +1,48 @@
 package io.github.throughthewind.zapper.core.model
 
-/** The layout a new user starts from. Placeholder until the design system defines the real one. */
+/**
+ * The layout a new user starts from (SPEC FR-4.1, docs/design/components/RemoteScreen and
+ * RemotePages), on the 4-column grid. Thumb-heavy controls sit in the lower two-thirds; Power sits
+ * top-left, away from them.
+ *
+ * The design's Main page puts 2x1 Netflix and YouTube shortcuts between the rockers. App shortcuts
+ * arrive with WI-009; until then those two rows stay empty rather than hold keys the design does
+ * not place there.
+ */
 object DefaultLayouts {
     val standard: RemoteLayout =
         RemoteLayout(
             id = "standard",
             name = "Standard",
-            columns = 3,
-            buttons =
+            columns = 4,
+            pages =
                 listOf(
-                    key(RemoteKey.POWER, 0, 0),
-                    key(RemoteKey.SOURCE, 1, 0),
-                    key(RemoteKey.HOME, 2, 0),
-                    key(RemoteKey.UP, 1, 1),
-                    key(RemoteKey.LEFT, 0, 2),
-                    key(RemoteKey.OK, 1, 2),
-                    key(RemoteKey.RIGHT, 2, 2),
-                    key(RemoteKey.DOWN, 1, 3),
-                    key(RemoteKey.BACK, 0, 4),
-                    key(RemoteKey.MUTE, 1, 4),
-                    key(RemoteKey.MENU, 2, 4),
-                    key(RemoteKey.VOLUME_UP, 0, 5),
-                    key(RemoteKey.CHANNEL_UP, 2, 5),
-                    key(RemoteKey.VOLUME_DOWN, 0, 6),
-                    key(RemoteKey.CHANNEL_DOWN, 2, 6),
+                    RemotePage(
+                        id = "main",
+                        name = "Main",
+                        widgets =
+                            listOf(
+                                key(RemoteKey.POWER, 0, 0),
+                                key(RemoteKey.SOURCE, 1, 0),
+                                key(RemoteKey.MENU, 2, 0),
+                                key(RemoteKey.SETTINGS, 3, 0),
+                                DPadWidget("dpad", column = 0, row = 1),
+                                key(RemoteKey.HOME, 3, 1),
+                                key(RemoteKey.BACK, 3, 2),
+                                key(RemoteKey.MUTE, 3, 3),
+                                RockerWidget("volume", RockerKind.VOLUME, column = 0, row = 4),
+                                // Rows 4-5, columns 1-2: the Netflix and YouTube shortcuts (WI-009).
+                                key(RemoteKey.GUIDE, 1, 6),
+                                key(RemoteKey.INFO, 2, 6),
+                                RockerWidget("channel", RockerKind.CHANNEL, column = 3, row = 4),
+                                MediaBarWidget("media", column = 0, row = 7),
+                            ),
+                    ),
+                    RemotePage(
+                        id = "numbers",
+                        name = "Numbers",
+                        widgets = listOf(NumberPadWidget("numberpad", column = 0, row = 0)),
+                    ),
                 ),
         )
 

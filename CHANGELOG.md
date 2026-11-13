@@ -9,6 +9,9 @@ All notable changes to Zapper are listed here. The format follows
 ### Added
 
 - Finds Samsung TVs on the Wi-Fi automatically, or by IP address, with tips when nothing is found.
+- The default remote: power, source, menu, a round D-pad you can hold or swipe, volume and
+  channel rockers, media controls, and a number pad on its own page. Keys a TV does not support
+  are greyed out.
 - Reconnects by itself when the app opens, when Wi-Fi returns or when the TV comes back, and
   lets go of the TV when the app is in the background. A status chip shows the connection.
 - Saved TVs: switch between them, rename, forget, see their details, and pick the one the app

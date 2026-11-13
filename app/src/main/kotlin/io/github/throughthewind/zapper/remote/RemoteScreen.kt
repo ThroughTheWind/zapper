@@ -2,12 +2,9 @@ package io.github.throughthewind.zapper.remote
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.MaterialTheme
@@ -16,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -24,13 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.throughthewind.zapper.core.designsystem.components.ConnectionChipState
 import io.github.throughthewind.zapper.core.designsystem.components.ConnectionStatusChip
-import io.github.throughthewind.zapper.core.designsystem.components.KeyEmphasis
-import io.github.throughthewind.zapper.core.model.ButtonAction
-import io.github.throughthewind.zapper.core.model.LayoutButton
-import io.github.throughthewind.zapper.core.model.RemoteKey
-import io.github.throughthewind.zapper.core.model.RemoteLayout
 import io.github.throughthewind.zapper.core.remote.ConnectionState
-import io.github.throughthewind.zapper.core.designsystem.components.RemoteKey as KeyButton
 
 @Composable
 fun RemoteScreen(
@@ -69,7 +61,8 @@ fun RemoteScreen(
                 }
                 ConnectionStatusChip(state = state.chip(), onRetry = viewModel::retry)
             }
-            layout?.let { RemoteGrid(it, enabled = !offline, onPress = viewModel::press) }
+            val actions = remember(state) { viewModel.actions(connected = !offline) }
+            layout?.let { RemoteCanvas(it, actions, modifier = Modifier.weight(1f)) }
         }
     }
 
@@ -93,65 +86,6 @@ fun RemoteScreen(
         )
     }
 }
-
-@Composable
-private fun RemoteGrid(
-    layout: RemoteLayout,
-    enabled: Boolean,
-    onPress: (ButtonAction) -> Unit,
-) {
-    val rows = layout.buttons.groupBy { it.row }
-    val rowCount = (layout.buttons.maxOfOrNull { it.row } ?: -1) + 1
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        repeat(rowCount) { row ->
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
-                repeat(layout.columns) { column ->
-                    val button = rows[row]?.firstOrNull { it.column == column }
-                    Box(modifier = Modifier.weight(1f).aspectRatio(1.6f)) {
-                        if (button != null) {
-                            KeyButton(
-                                label = button.title(),
-                                onPress = { onPress(button.action) },
-                                emphasis = button.emphasis(),
-                                repeatOnHold = button.repeats(),
-                                enabled = enabled,
-                                modifier = Modifier.fillMaxSize(),
-                            ) { Text(button.title(), style = MaterialTheme.typography.labelLarge) }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-private fun LayoutButton.title(): String =
-    label ?: when (val a = action) {
-        is ButtonAction.Key -> a.key.name.replace('_', ' ')
-        is ButtonAction.LaunchApp -> a.appId
-        is ButtonAction.Macro -> a.keys.joinToString(" ")
-    }
-
-private fun LayoutButton.emphasis(): KeyEmphasis =
-    when ((action as? ButtonAction.Key)?.key) {
-        RemoteKey.POWER -> KeyEmphasis.Power
-        RemoteKey.OK -> KeyEmphasis.Primary
-        else -> KeyEmphasis.Standard
-    }
-
-private val repeatingKeys =
-    setOf(
-        RemoteKey.VOLUME_UP,
-        RemoteKey.VOLUME_DOWN,
-        RemoteKey.CHANNEL_UP,
-        RemoteKey.CHANNEL_DOWN,
-        RemoteKey.UP,
-        RemoteKey.DOWN,
-        RemoteKey.LEFT,
-        RemoteKey.RIGHT,
-    )
-
-private fun LayoutButton.repeats(): Boolean = (action as? ButtonAction.Key)?.key in repeatingKeys
 
 private fun ConnectionState.chip(): ConnectionChipState =
     when (this) {

@@ -19,7 +19,7 @@ The board. One row per live work item, grouped by status. Items live in
 
 | Id | Title | Type | Branch |
 | --- | --- | --- | --- |
-| [WI-002](items/WI-002-adapter-contract-v2.md) | Evolve the adapter contract and add a fake TV adapter | feature | `feature/WI-002-adapter-contract-v2` |
+| — | | | |
 
 ## Planned
 

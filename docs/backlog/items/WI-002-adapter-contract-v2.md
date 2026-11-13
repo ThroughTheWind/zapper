@@ -2,7 +2,7 @@
 id: WI-002
 title: Evolve the adapter contract and add a fake TV adapter
 type: feature
-status: review
+status: done
 branch: feature/WI-002-adapter-contract-v2
 created: 2026-11-13
 updated: 2026-11-13

@@ -48,3 +48,29 @@ jobs:
           name: zapper-debug-apk
           path: app/build/outputs/apk/debug/*.apk
           retention-days: 14
+
+  # Every push to main refreshes the "dev" pre-release with a debug APK, so the
+  # app can be installed on a phone straight from the Releases page.
+  dev-release:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [gates, build]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v8
+        with:
+          name: zapper-debug-apk
+          path: apk
+      - name: Publish the dev pre-release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mv apk/*.apk zapper-dev-debug.apk
+          gh release delete dev --yes --cleanup-tag || true
+          gh release create dev zapper-dev-debug.apk \
+            --prerelease \
+            --target "$GITHUB_SHA" \
+            --title "Development build" \
+            --notes "Debug build of main at ${GITHUB_SHA::7}. Not signed for release; install by allowing installs from your browser."

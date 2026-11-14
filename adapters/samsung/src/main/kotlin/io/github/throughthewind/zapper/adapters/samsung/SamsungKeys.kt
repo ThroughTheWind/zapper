@@ -5,6 +5,9 @@ import io.github.throughthewind.zapper.core.model.RemoteKey
 /**
  * Samsung Tizen key codes. A key mapped to null is not sent: the code is not confirmed yet, and a
  * wrong code fails silently on the TV. The protocol research confirms or fills these in.
+ *
+ * The direct HDMI keys are not on every model (research, Samsung key list). A TV without them
+ * ignores the key, and the local channel cannot tell which models have them.
  */
 internal fun RemoteKey.samsungCode(): String? =
     when (this) {
@@ -14,6 +17,10 @@ internal fun RemoteKey.samsungCode(): String? =
         RemoteKey.EXIT -> "KEY_EXIT"
         RemoteKey.MENU -> "KEY_MENU"
         RemoteKey.SOURCE -> "KEY_SOURCE"
+        RemoteKey.HDMI_1 -> "KEY_HDMI1"
+        RemoteKey.HDMI_2 -> "KEY_HDMI2"
+        RemoteKey.HDMI_3 -> "KEY_HDMI3"
+        RemoteKey.HDMI_4 -> "KEY_HDMI4"
         RemoteKey.SETTINGS -> null
         RemoteKey.UP -> "KEY_UP"
         RemoteKey.DOWN -> "KEY_DOWN"

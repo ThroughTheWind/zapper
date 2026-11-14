@@ -13,6 +13,8 @@ All notable changes to Zapper are listed here. The format follows
 
 ### Added
 
+- Source and HDMI 1 to 4 keys in the edit mode catalog (System group). HDMI keys switch
+  straight to a port on Samsung TVs that support it; some models ignore them.
 - Edit mode, from the pencil on the remote: drag keys to move them, resize them with a handle,
   remove them with the badge or the trash zone, and add keys, rockers, the D-pad, app shortcuts,
   spacers and labels from a catalog. Each key can get a label, an icon, a colour and repeat while

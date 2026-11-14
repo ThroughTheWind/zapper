@@ -6,7 +6,7 @@
 The board. One row per live work item, grouped by status. Items live in
 [`items/`](items/); finished work moves to [`archive/`](archive/).
 
-<!-- NEXT-ID: WI-021 -->
+<!-- NEXT-ID: WI-023 -->
 <!-- Claim from this marker and bump it on your own branch. `node .ai/rungs.mjs check` refuses a duplicate. -->
 
 ## In progress
@@ -27,6 +27,7 @@ The board. One row per live work item, grouped by status. Items live in
 | [WI-013](items/WI-013-layout-pages.md) | Add, rename and reorder remote pages | feature | `claude/project-thread-n0w6sb` |
 | [WI-014](items/WI-014-layout-undo-reset-per-tv.md) | Undo edits, reset layouts and keep one layout per TV | feature | `claude/project-thread-n0w6sb` |
 | [WI-015](items/WI-015-layout-import-export.md) | Export and import layouts as files | feature | `claude/project-thread-n0w6sb` |
+| [WI-022](items/WI-022-source-and-hdmi-shortcuts.md) | Switch TV inputs from Source and HDMI shortcut keys | feature | `claude/project-thread-v05i3a` |
 
 ## Planned
 

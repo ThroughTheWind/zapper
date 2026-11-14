@@ -22,6 +22,11 @@ The board. One row per live work item, grouped by status. Items live in
 | [WI-008](items/WI-008-text-input.md) | Type into the TV from the phone keyboard | feature | `claude/project-thread-qlkfpf` |
 | [WI-009](items/WI-009-app-shortcuts.md) | Launch TV apps from shortcut buttons | feature | `claude/project-thread-qlkfpf` |
 | [WI-010](items/WI-010-power-on.md) | Turn the TV on and show its power state | feature | `claude/project-thread-qlkfpf` |
+| [WI-011](items/WI-011-appearance-and-feedback-settings.md) | Let users pick theme, colors, key style and haptics | feature | `claude/project-thread-n0w6sb` |
+| [WI-012](items/WI-012-layout-edit-mode.md) | Edit the remote: move, resize, add and remove buttons | feature | `claude/project-thread-n0w6sb` |
+| [WI-013](items/WI-013-layout-pages.md) | Add, rename and reorder remote pages | feature | `claude/project-thread-n0w6sb` |
+| [WI-014](items/WI-014-layout-undo-reset-per-tv.md) | Undo edits, reset layouts and keep one layout per TV | feature | `claude/project-thread-n0w6sb` |
+| [WI-015](items/WI-015-layout-import-export.md) | Export and import layouts as files | feature | `claude/project-thread-n0w6sb` |
 
 ## Planned
 
@@ -33,11 +38,6 @@ The board. One row per live work item, grouped by status. Items live in
 
 | Id | Title | Type |
 | --- | --- | --- |
-| [WI-011](items/WI-011-appearance-and-feedback-settings.md) | Let users pick theme, colors, key style and haptics | feature |
-| [WI-012](items/WI-012-layout-edit-mode.md) | Edit the remote: move, resize, add and remove buttons | feature |
-| [WI-013](items/WI-013-layout-pages.md) | Add, rename and reorder remote pages | feature |
-| [WI-014](items/WI-014-layout-undo-reset-per-tv.md) | Undo edits, reset layouts and keep one layout per TV | feature |
-| [WI-015](items/WI-015-layout-import-export.md) | Export and import layouts as files | feature |
 | [WI-016](items/WI-016-accessibility-onboarding-polish.md) | Pass accessibility review and polish onboarding and errors | feature |
 | [WI-017](items/WI-017-signed-release-on-tag.md) | Publish a signed APK to GitHub Releases on each tag | chore |
 | [WI-018](items/WI-018-adapter-guide.md) | Write the guide for adding a TV brand | docs |

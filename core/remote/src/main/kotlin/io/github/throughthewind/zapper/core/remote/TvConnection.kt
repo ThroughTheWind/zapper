@@ -173,6 +173,12 @@ class TvConnection(
     /** Types [text] on the TV (FR-5.1). Null when the TV took it, otherwise why not. */
     suspend fun sendText(text: String): TvError? = attempt { it.sendText(text) }
 
+    /** The apps the connected TV lists, for the catalog's Apps group; empty when it lists none or is not connected. */
+    suspend fun installedApps(): List<TvApp> {
+        val current = session.takeIf { _state.value == ConnectionState.Connected } ?: return emptyList()
+        return quietly { current.installedApps() }.orEmpty()
+    }
+
     /** Opens an app on the TV (FR-6.1). Null when the TV took the request, otherwise why not. */
     suspend fun launchApp(appId: String): TvError? = attempt { it.launchApp(appId) }
 

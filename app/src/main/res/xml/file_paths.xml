@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Exported layouts, shared read-only through the share sheet (SPEC FR-12.1). -->
+<paths>
+    <cache-path name="layouts" path="layouts/" />
+</paths>

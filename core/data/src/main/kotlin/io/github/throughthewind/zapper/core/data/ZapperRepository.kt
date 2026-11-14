@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.dataStoreFile
+import io.github.throughthewind.zapper.core.model.AppearanceSettings
 import io.github.throughthewind.zapper.core.model.DefaultLayouts
 import io.github.throughthewind.zapper.core.model.RemoteLayout
 import io.github.throughthewind.zapper.core.model.TvDevice
@@ -37,11 +38,38 @@ class ZapperRepository internal constructor(
             state.devices.firstOrNull { it.id == id }?.readable()
         }
 
-    /** The user's layouts, or the standard one until they make their own. */
-    val layouts: Flow<List<RemoteLayout>> =
-        store.data.map { state ->
-            state.layouts.filter { it.pages.isNotEmpty() }.ifEmpty { listOf(DefaultLayouts.standard) }
-        }
+    /** The layout of the TV [deviceId] (SPEC FR-8.7), or the default until the user edits it. */
+    fun layoutFor(deviceId: String?): Flow<RemoteLayout> = store.data.map { it.layoutOf(deviceId) }
+
+    /** The TVs that have a layout of their own, to copy one from. */
+    val devicesWithLayouts: Flow<Set<String>> = store.data.map { it.deviceLayouts.keys }
+
+    suspend fun saveLayout(
+        deviceId: String,
+        layout: RemoteLayout,
+    ) {
+        require(layout.pages.isNotEmpty()) { "a layout needs a page" }
+        store.updateData { it.copy(deviceLayouts = it.deviceLayouts + (deviceId to layout)) }
+    }
+
+    /** Goes back to the default layout for [deviceId] (SPEC FR-8.6). */
+    suspend fun resetLayout(deviceId: String) {
+        store.updateData { it.copy(deviceLayouts = it.deviceLayouts - deviceId) }
+    }
+
+    /** Gives [toId] a copy of the layout of [fromId] (SPEC FR-8.7). */
+    suspend fun copyLayout(
+        fromId: String,
+        toId: String,
+    ) {
+        store.updateData { state -> state.copy(deviceLayouts = state.deviceLayouts + (toId to state.layoutOf(fromId))) }
+    }
+
+    val appearance: Flow<AppearanceSettings> = store.data.map { it.appearance }
+
+    suspend fun updateAppearance(transform: (AppearanceSettings) -> AppearanceSettings) {
+        store.updateData { it.copy(appearance = transform(it.appearance)) }
+    }
 
     /** Saves [device] as the last used TV, keeping the name the user gave it, if any. */
     suspend fun saveDevice(device: TvDevice) {
@@ -83,6 +111,7 @@ class ZapperRepository internal constructor(
                 devices = state.devices.filterNot { it.id == id },
                 lastDeviceId = state.lastDeviceId.takeUnless { it == id },
                 defaultDeviceId = state.defaultDeviceId.takeUnless { it == id },
+                deviceLayouts = state.deviceLayouts - id,
                 secrets = state.secrets - id,
             )
         }
@@ -98,10 +127,6 @@ class ZapperRepository internal constructor(
 
     suspend fun setPowerOnHelpSeen() {
         store.updateData { it.copy(powerOnHelpSeen = true) }
-    }
-
-    suspend fun saveLayout(layout: RemoteLayout) {
-        store.updateData { state -> state.copy(layouts = state.layouts.filterNot { it.id == layout.id } + layout) }
     }
 
     /** A secret that no longer decrypts (the Keystore key was lost) reads as absent: the TV pairs again. */
@@ -142,6 +167,8 @@ class ZapperRepository internal constructor(
     override suspend fun clear(deviceId: String) {
         store.updateData { it.copy(secrets = it.secrets - deviceId) }
     }
+
+    private fun StoredState.layoutOf(deviceId: String?): RemoteLayout = deviceId?.let { deviceLayouts[it] } ?: DefaultLayouts.standard
 
     /** Names saved by builds that did not decode the TV's HTML entities read as the user expects. */
     private fun TvDevice.readable(): TvDevice = copy(name = name.decodeHtmlEntities())

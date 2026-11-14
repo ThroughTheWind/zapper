@@ -27,6 +27,12 @@ data class AppearancePrefs(
     val seed: SeedColor? = null,
     val keyStyle: KeyStyle = KeyStyle.Rounded,
     val haptics: HapticsLevel = HapticsLevel.Light,
+    /** Pure black backgrounds whenever the theme is dark, including a dark System theme. */
+    val oledBlack: Boolean = false,
+    /** A click sound on key press, off by default (SPEC FR-10.2). */
+    val clickSound: Boolean = false,
+    /** Hold-to-repeat interval (Settings > Controls). */
+    val repeatIntervalMs: Long = 90L,
 )
 
 @Immutable
@@ -51,7 +57,7 @@ fun ZapperTheme(
             DarkModePref.Light -> ThemeMode.Light
             DarkModePref.Dark -> ThemeMode.Dark
             DarkModePref.Oled -> ThemeMode.Oled
-        }
+        }.let { if (it == ThemeMode.Dark && prefs.oledBlack) ThemeMode.Oled else it }
     val context = LocalContext.current
     val scheme: ColorScheme =
         when {
@@ -73,8 +79,9 @@ fun ZapperTheme(
         LocalPowerColors provides power,
         LocalKeyStyle provides prefs.keyStyle,
         LocalSpacing provides Spacing(),
-        LocalRemoteMotion provides RemoteMotion(),
+        LocalRemoteMotion provides RemoteMotion(repeatIntervalMs = prefs.repeatIntervalMs),
         LocalHaptics provides prefs.haptics,
+        LocalClickSound provides prefs.clickSound,
     ) {
         MaterialTheme(colorScheme = scheme, typography = RemoteTypography, shapes = RemoteShapes, content = content)
     }

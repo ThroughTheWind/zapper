@@ -64,8 +64,10 @@ jobs:
         # before the slow build. The real body is written after signing.
         run: scripts/release-notes.sh "$VERSION" check check > /dev/null
 
+      # Release variants only: the release run never builds or tests a debug variant. CI covers
+      # debug on every pull request.
       - name: Format, boundaries, tests and lint
-        run: ./gradlew spotlessCheck checkAdapterBoundaries test lint
+        run: ./gradlew spotlessCheck checkAdapterBoundaries test lintRelease -x testDebugUnitTest
 
       - name: Restore the signing key
         env:

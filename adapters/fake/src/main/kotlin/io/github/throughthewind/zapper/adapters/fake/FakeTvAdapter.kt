@@ -9,6 +9,7 @@ import io.github.throughthewind.zapper.core.remote.ConnectionState
 import io.github.throughthewind.zapper.core.remote.CredentialStore
 import io.github.throughthewind.zapper.core.remote.DiscoveredTv
 import io.github.throughthewind.zapper.core.remote.PairingRequest
+import io.github.throughthewind.zapper.core.remote.PowerState
 import io.github.throughthewind.zapper.core.remote.TvAdapter
 import io.github.throughthewind.zapper.core.remote.TvApp
 import io.github.throughthewind.zapper.core.remote.TvError
@@ -31,6 +32,8 @@ data class FakeTvBehaviour(
     val pairingDelayMs: Long = 1_500,
     val refusePairing: Boolean = false,
     val unsupportedKeys: Set<RemoteKey> = setOf(RemoteKey.GUIDE),
+    /** Whether Wake-on-LAN brings the TV back online. */
+    val wakesOnLan: Boolean = true,
     /** Every bundled app but Plex, so the debug build shows a shortcut failing too. */
     val installedApps: List<TvApp> =
         KnownApps.all.filter { it.id != "plex" }.map { TvApp(it.id, it.name) },
@@ -52,6 +55,10 @@ class FakeTvAdapter(
 
     /** False simulates a TV that is off or off the network: connecting fails with Unreachable. */
     @Volatile var online: Boolean = true
+
+    /** How many wake-ups were sent. */
+    @Volatile var wakeUps: Int = 0
+        private set
 
     /** How many times a session tried to connect. */
     @Volatile var connectAttempts: Int = 0
@@ -103,6 +110,18 @@ class FakeTvAdapter(
             PIN_HOST -> pinTv
             else -> null
         }
+
+    override fun canPowerOn(device: TvDevice): Boolean = device.macAddress != null
+
+    override suspend fun powerOn(device: TvDevice) {
+        wakeUps++
+        if (behaviour.wakesOnLan) online = true
+    }
+
+    /** On when online; a TV that is off the network says nothing. */
+    override suspend fun powerState(device: TvDevice): PowerState? = if (online) PowerState.ON else null
+
+    override val powerOnHelp: String = "The simulated TV wakes up unless its behaviour says otherwise."
 
     override fun createSession(
         device: TvDevice,

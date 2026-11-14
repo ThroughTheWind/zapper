@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 
 /**
  * The one connection to the current TV, shared by every screen (SPEC F3). Brand-independent, so it
@@ -49,6 +50,13 @@ class TvConnection(
     /** What the current TV can do. Empty until it has connected once. */
     val capabilities: StateFlow<Set<Capability>> = _capabilities.asStateFlow()
 
+    private val _power = MutableStateFlow<PowerState?>(null)
+
+    /** What the current TV last said about its power; null when unknown (FR-7.3). */
+    val power: StateFlow<PowerState?> = _power.asStateFlow()
+
+    private var powerJob: Job? = null
+
     private val _tvKeyboard = MutableStateFlow(false)
 
     /** True while the current TV shows its on-screen keyboard (FR-5.1). */
@@ -72,6 +80,7 @@ class TvConnection(
     fun disconnect() {
         stop()
         _device.value = null
+        _power.value = null
     }
 
     /** The app left the foreground: drop the socket, keep the TV (FR-3.4, NFR-12). */
@@ -97,12 +106,69 @@ class TvConnection(
 
     fun supports(key: RemoteKey): Boolean = session?.supports(key) ?: true
 
+    /** Whether the current TV can be woken from the phone. */
+    fun canPowerOn(): Boolean = _device.value?.let { adapters.adapterFor(it).canPowerOn(it) } ?: false
+
+    /** How to enable power-on on the current TV's brand, if the adapter knows (FR-7.2). */
+    fun powerOnHelp(): String? = _device.value?.let { adapters.adapterFor(it).powerOnHelp }
+
+    /**
+     * Wakes the current TV and waits for it to say it is on, sending the wake-up again every few
+     * seconds in case a packet was lost. True once the TV is on; it then connects as usual.
+     */
+    suspend fun powerOn(timeoutMs: Long = POWER_ON_TIMEOUT_MS): Boolean {
+        val device = _device.value ?: return false
+        val adapter = adapters.adapterFor(device)
+        if (!adapter.canPowerOn(device)) return false
+        val on =
+            withTimeoutOrNull(timeoutMs) {
+                var reported: PowerState? = null
+                while (reported != PowerState.ON) {
+                    quietly { adapter.powerOn(device) }
+                    var checks = 0
+                    while (reported != PowerState.ON && checks++ < POWER_CHECKS_PER_WAKE) {
+                        delay(POWER_CHECK_MS)
+                        reported = quietly { adapter.powerState(device) }
+                        if (reported != null) _power.value = reported
+                    }
+                }
+                true
+            } ?: false
+        if (on && _device.value == device && _state.value != ConnectionState.Connected) connect(device)
+        return on
+    }
+
     fun press(action: ButtonAction) = whenConnected { it.perform(action) }
 
     fun send(
         key: RemoteKey,
         action: KeyAction = KeyAction.CLICK,
-    ) = whenConnected { it.send(key, action) }
+    ) = whenConnected {
+        it.send(key, action)
+        // The TV takes a few seconds to go to standby or wake; ask it afterwards.
+        if (key == RemoteKey.POWER) refreshPower(delayMs = POWER_SETTLE_MS)
+    }
+
+    /** Asks the current TV for its power state, after [delayMs]. */
+    private fun refreshPower(delayMs: Long = 0) {
+        val device = _device.value ?: return
+        powerJob?.cancel()
+        powerJob =
+            scope.launch {
+                delay(delayMs)
+                _power.value = quietly { adapters.adapterFor(device).powerState(device) }
+            }
+    }
+
+    /** Runs [block], treating any failure but cancellation as no answer. */
+    private suspend fun <T> quietly(block: suspend () -> T): T? =
+        try {
+            block()
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            null
+        }
 
     /** Types [text] on the TV (FR-5.1). Null when the TV took it, otherwise why not. */
     suspend fun sendText(text: String): TvError? = attempt { it.sendText(text) }
@@ -150,6 +216,7 @@ class TvConnection(
         _repairReason.value = null
         _capabilities.value = emptySet()
         _tvKeyboard.value = false
+        powerJob?.cancel()
     }
 
     private fun start(
@@ -161,12 +228,15 @@ class TvConnection(
         stateJob?.cancel()
         val previous = session
         session = null
+        val sameTv = _device.value?.id == device.id
         // Set synchronously, so no screen sees the previous TV's state as this one's.
         _device.value = device
         _state.value = ConnectionState.Connecting
         _repairReason.value = reason
         _capabilities.value = emptySet()
         _tvKeyboard.value = false
+        powerJob?.cancel()
+        if (!sameTv) _power.value = null
         runJob =
             scope.launch {
                 previous?.disconnect()
@@ -203,6 +273,7 @@ class TvConnection(
                 failures = 0
                 _repairReason.value = null
                 onConnected(device)
+                refreshPower()
                 // Hold the connection until it drops, then reconnect.
                 val current = session ?: return
                 current.state.first { it !is ConnectionState.Connected }
@@ -212,6 +283,7 @@ class TvConnection(
             }
 
             _state.value = ConnectionState.Failed(error)
+            refreshPower()
             if (!retryable(error)) return
             delay(retryDelaysMs[minOf(failures, retryDelaysMs.lastIndex)])
             failures++
@@ -235,5 +307,11 @@ class TvConnection(
     companion object {
         /** 1 s, then doubling to a 15 s ceiling: quick after a blip, quiet while the TV is off. */
         val DEFAULT_RETRY_DELAYS_MS = listOf(1_000L, 2_000L, 4_000L, 8_000L, 15_000L)
+
+        /** SPEC AC-11 asks for the TV on within 10 s; a little more before giving up. */
+        const val POWER_ON_TIMEOUT_MS = 15_000L
+        private const val POWER_CHECK_MS = 1_000L
+        private const val POWER_CHECKS_PER_WAKE = 3
+        private const val POWER_SETTLE_MS = 5_000L
     }
 }

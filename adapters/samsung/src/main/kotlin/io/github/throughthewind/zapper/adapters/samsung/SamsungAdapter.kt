@@ -3,8 +3,12 @@ package io.github.throughthewind.zapper.adapters.samsung
 import io.github.throughthewind.zapper.core.model.TvDevice
 import io.github.throughthewind.zapper.core.remote.CredentialStore
 import io.github.throughthewind.zapper.core.remote.DiscoveredTv
+import io.github.throughthewind.zapper.core.remote.PowerState
 import io.github.throughthewind.zapper.core.remote.TvAdapter
+import io.github.throughthewind.zapper.core.remote.TvError
+import io.github.throughthewind.zapper.core.remote.TvException
 import io.github.throughthewind.zapper.core.remote.TvSession
+import io.github.throughthewind.zapper.core.remote.WakeOnLan
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
@@ -23,6 +27,7 @@ class SamsungAdapter internal constructor(
     private val ssdpSearch: (List<String>) -> Flow<Ssdp.Response>,
     private val infoPort: Int,
     private val subnetHosts: () -> Flow<String> = { SubnetScan(infoPort).hosts() },
+    private val wake: suspend (mac: String, host: String) -> Unit = WakeOnLan::send,
 ) : TvAdapter {
     constructor(
         httpClient: OkHttpClient = OkHttpClient(),
@@ -62,6 +67,30 @@ class SamsungAdapter internal constructor(
                 }
             }.getOrNull()
         }
+
+    override fun canPowerOn(device: TvDevice): Boolean = device.macAddress != null
+
+    /** Wake-on-LAN to the MAC the TV gave at discovery (research §2.5). */
+    override suspend fun powerOn(device: TvDevice) {
+        val mac = device.macAddress ?: throw TvException(TvError.Unsupported("turning on a TV without its MAC address"))
+        wake(mac, device.host)
+    }
+
+    /**
+     * `PowerState` from the info endpoint on 2019+ TVs. An older TV that answers without one is
+     * on; one that does not answer is unknown (research §2.5).
+     */
+    override suspend fun powerState(device: TvDevice): PowerState? {
+        val info = probe(device.host) ?: return null
+        return when (info.properties[SamsungDeviceInfo.PROPERTY_POWER_STATE]?.lowercase()) {
+            "standby" -> PowerState.STANDBY
+            else -> PowerState.ON
+        }
+    }
+
+    override val powerOnHelp: String =
+        "On the TV, open Settings › General › Network › Expert Settings and turn on Power On with Mobile. " +
+            "Some TVs only wake when connected to the router by cable."
 
     override fun createSession(
         device: TvDevice,

@@ -12,11 +12,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.PowerSettingsNew
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -28,12 +31,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import io.github.throughthewind.zapper.core.designsystem.components.Banner
+import io.github.throughthewind.zapper.core.designsystem.components.BannerKind
 import io.github.throughthewind.zapper.core.designsystem.components.ConnectionChipState
 import io.github.throughthewind.zapper.core.designsystem.components.ConnectionStatusChip
 import io.github.throughthewind.zapper.core.designsystem.components.TextInputBar
 import io.github.throughthewind.zapper.core.designsystem.theme.RemoteHaptic
 import io.github.throughthewind.zapper.core.designsystem.theme.rememberRemoteHaptics
 import io.github.throughthewind.zapper.core.remote.ConnectionState
+import io.github.throughthewind.zapper.core.remote.PowerState
+import io.github.throughthewind.zapper.core.remote.TvError
 
 @Composable
 fun RemoteScreen(
@@ -50,6 +57,9 @@ fun RemoteScreen(
     val capabilities by viewModel.capabilities.collectAsStateWithLifecycle()
     val textInput by viewModel.textInput.collectAsStateWithLifecycle()
     val tvKeyboard by viewModel.tvKeyboard.collectAsStateWithLifecycle()
+    val power by viewModel.power.collectAsStateWithLifecycle()
+    val poweringOn by viewModel.poweringOn.collectAsStateWithLifecycle()
+    val chip = chipState(state, power, poweringOn, canPowerOn = viewModel.canPowerOn())
     var switcher by rememberSaveable { mutableStateOf(false) }
     val offline = state is ConnectionState.Failed || state == ConnectionState.Disconnected
     val snackbar = remember { SnackbarHostState() }
@@ -73,7 +83,7 @@ fun RemoteScreen(
     Box(Modifier.fillMaxSize()) {
         RemoteContent(
             viewModel = viewModel,
-            state = state,
+            chip = chip,
             actions = remember(state, capabilities) { viewModel.actions(connected = !offline, capabilities = capabilities) },
             onChooseTv = { switcher = true },
         )
@@ -92,7 +102,7 @@ fun RemoteScreen(
         TvSwitcher(
             devices = saved,
             activeId = device?.id,
-            activeStatus = state.chip().label(),
+            activeStatus = chip.label(),
             defaultId = defaultId,
             brandName = brandName,
             onSelect = {
@@ -114,12 +124,13 @@ fun RemoteScreen(
 @Composable
 private fun RemoteContent(
     viewModel: RemoteViewModel,
-    state: ConnectionState,
+    chip: ConnectionChipState,
     actions: RemoteActions,
     onChooseTv: () -> Unit,
 ) {
     val layout by viewModel.layout.collectAsStateWithLifecycle()
     val device by viewModel.device.collectAsStateWithLifecycle()
+    val powerOnHelp by viewModel.powerOnHelp.collectAsStateWithLifecycle()
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier.safeDrawingPadding().padding(16.dp),
@@ -140,7 +151,18 @@ private fun RemoteContent(
                     }
                     Text(device?.name ?: "No TV", style = MaterialTheme.typography.titleLarge)
                 }
-                ConnectionStatusChip(state = state.chip(), onRetry = viewModel::retry)
+                ConnectionStatusChip(state = chip, onRetry = viewModel::retry, onPowerOn = viewModel::turnOn)
+            }
+            // FR-7.2: shown once, at the top of the canvas, pushing the keys down (Banner).
+            powerOnHelp?.let { help ->
+                Banner(
+                    kind = BannerKind.Info,
+                    icon = Icons.Rounded.PowerSettingsNew,
+                    title = "The TV did not turn on",
+                    body = help,
+                ) {
+                    TextButton(onClick = viewModel::dismissPowerOnHelp) { Text("Got it") }
+                }
             }
             layout?.let { RemoteCanvas(it, actions, modifier = Modifier.weight(1f)) }
         }
@@ -174,16 +196,31 @@ private fun TextInputOverlay(
     }
 }
 
-private fun ConnectionState.chip(): ConnectionChipState =
-    when (this) {
-        ConnectionState.Connected -> ConnectionChipState.Connected
-        ConnectionState.Connecting, is ConnectionState.AwaitingPairing -> ConnectionChipState.Connecting
-        ConnectionState.Disconnected, is ConnectionState.Failed -> ConnectionChipState.Offline
+/**
+ * The chip for the connection and the TV's power (ConnectionStatus): a TV that can be woken and
+ * does not answer, or says it is in standby, reads "TV off · Power on" rather than offline.
+ */
+private fun chipState(
+    state: ConnectionState,
+    power: PowerState?,
+    poweringOn: Boolean,
+    canPowerOn: Boolean,
+): ConnectionChipState {
+    val asleep = (state as? ConnectionState.Failed)?.error.let { it is TvError.Unreachable || it is TvError.ConnectionLost }
+    return when {
+        poweringOn -> ConnectionChipState.Connecting
+        state == ConnectionState.Connected && power == PowerState.STANDBY -> ConnectionChipState.TvOff
+        state == ConnectionState.Connected -> ConnectionChipState.Connected
+        state == ConnectionState.Connecting || state is ConnectionState.AwaitingPairing -> ConnectionChipState.Connecting
+        canPowerOn && (asleep || power == PowerState.STANDBY) -> ConnectionChipState.TvOff
+        else -> ConnectionChipState.Offline
     }
+}
 
 private fun ConnectionChipState.label(): String =
     when (this) {
         ConnectionChipState.Connected -> "Connected"
         ConnectionChipState.Connecting -> "Connecting"
         ConnectionChipState.Offline -> "Not found"
+        ConnectionChipState.TvOff -> "TV off"
     }

@@ -13,6 +13,7 @@ import io.github.throughthewind.zapper.core.model.RemoteLayout
 import io.github.throughthewind.zapper.core.model.TvDevice
 import io.github.throughthewind.zapper.core.model.requiredCapability
 import io.github.throughthewind.zapper.core.remote.ConnectionState
+import io.github.throughthewind.zapper.core.remote.PowerState
 import io.github.throughthewind.zapper.core.remote.TvConnection
 import io.github.throughthewind.zapper.core.remote.TvError
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -23,6 +24,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -59,6 +61,19 @@ class RemoteViewModel(
     /** Whether the text input bar is open: by the Keyboard key, or because the TV asked for text. */
     val textInput: StateFlow<Boolean> = _textInput.asStateFlow()
 
+    /** What the TV last said about its power (FR-7.3). */
+    val power: StateFlow<PowerState?> = connection.power
+
+    private val _poweringOn = MutableStateFlow(false)
+
+    /** True while waiting for the TV to wake. */
+    val poweringOn: StateFlow<Boolean> = _poweringOn.asStateFlow()
+
+    private val _powerOnHelp = MutableStateFlow<String?>(null)
+
+    /** The one-time explanation of how to let the phone turn the TV on, while it shows (FR-7.2). */
+    val powerOnHelp: StateFlow<String?> = _powerOnHelp.asStateFlow()
+
     private val _feedback = MutableSharedFlow<RemoteFeedback>(extraBufferCapacity = 4)
 
     /** One-off outcomes the screen answers with a haptic and, on failure, a snackbar. */
@@ -93,6 +108,42 @@ class RemoteViewModel(
         }
     }
 
+    /** Whether the Power key can wake the current TV while it is not connected. */
+    fun canPowerOn(): Boolean = connection.canPowerOn()
+
+    /**
+     * Power while the TV is not connected (FR-7.1): wake it and wait. When it stays off, the first
+     * time explains how to enable power-on on the TV; later times only say it did not work.
+     */
+    fun powerOn() {
+        if (_poweringOn.value) return
+        viewModelScope.launch {
+            _poweringOn.value = true
+            val on =
+                try {
+                    connection.powerOn()
+                } finally {
+                    _poweringOn.value = false
+                }
+            val help = connection.powerOnHelp()
+            when {
+                on -> _feedback.emit(RemoteFeedback.Success)
+                help != null && !repository.powerOnHelpSeen.first() -> _powerOnHelp.value = help
+                else -> _feedback.emit(RemoteFeedback.Failure("The TV did not turn on"))
+            }
+        }
+    }
+
+    /** The status chip's "Power on": a connected TV in standby gets its Power key, any other is woken. */
+    fun turnOn() {
+        if (connection.state.value == ConnectionState.Connected) connection.send(RemoteKey.POWER) else powerOn()
+    }
+
+    fun dismissPowerOnHelp() {
+        _powerOnHelp.value = null
+        viewModelScope.launch { repository.setPowerOnHelpSeen() }
+    }
+
     /** Opens an app; a Success haptic when the TV took it, a snackbar saying why when not (AppShortcut). */
     private fun launchApp(appId: String) {
         viewModelScope.launch { report(connection.launchApp(appId)) }
@@ -119,7 +170,9 @@ class RemoteViewModel(
     ): RemoteActions =
         object : RemoteActions {
             override fun send(key: RemoteKey) {
-                if (key == RemoteKey.PLAY_PAUSE && !connection.supports(RemoteKey.PLAY_PAUSE)) {
+                if (key == RemoteKey.POWER && !connected) {
+                    powerOn()
+                } else if (key == RemoteKey.PLAY_PAUSE && !connection.supports(RemoteKey.PLAY_PAUSE)) {
                     // A TV with separate Play and Pause keys: alternate between them.
                     connection.send(if (playing) RemoteKey.PAUSE else RemoteKey.PLAY)
                     playing = !playing
@@ -132,6 +185,7 @@ class RemoteViewModel(
                 when (action) {
                     ButtonAction.OpenKeyboard -> openTextInput()
                     is ButtonAction.LaunchApp -> launchApp(action.appId)
+                    is ButtonAction.Key -> send(action.key)
                     else -> connection.press(action)
                 }
             }
@@ -143,12 +197,12 @@ class RemoteViewModel(
                     else -> connected && action.requiredCapability in capabilities
                 }
 
-            override fun isEnabled(key: RemoteKey): Boolean =
-                connected &&
-                    (
-                        connection.supports(key) ||
-                            (key == RemoteKey.PLAY_PAUSE && connection.supports(RemoteKey.PLAY) && connection.supports(RemoteKey.PAUSE))
-                    )
+            override fun isEnabled(key: RemoteKey): Boolean {
+                // Power stays usable while the TV is off, to wake it (ErrorsAndHelp).
+                if (!connected) return key == RemoteKey.POWER && canPowerOn()
+                return connection.supports(key) ||
+                    (key == RemoteKey.PLAY_PAUSE && connection.supports(RemoteKey.PLAY) && connection.supports(RemoteKey.PAUSE))
+            }
         }
 
     fun retry() {

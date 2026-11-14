@@ -6,7 +6,9 @@ import io.github.throughthewind.zapper.core.model.KeyAction
 import io.github.throughthewind.zapper.core.model.RemoteKey
 import io.github.throughthewind.zapper.core.model.TvDevice
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 /** A connection to one TV. */
 interface TvSession {
@@ -29,14 +31,38 @@ interface TvSession {
         action: KeyAction = KeyAction.CLICK,
     )
 
-    /** Requires [Capability.APP_LAUNCH]. */
+    /**
+     * Opens [appId], a [io.github.throughthewind.zapper.core.model.KnownApps] id or one from
+     * [installedApps]. Throws [TvError.AppNotInstalled] when the TV says it does not have it.
+     * Requires [Capability.APP_LAUNCH].
+     */
     suspend fun launchApp(appId: String): Unit = throw TvException(TvError.Unsupported("launching apps"))
 
-    /** Requires [Capability.TEXT_INPUT]. */
+    /** The apps the TV says it has. Empty when it does not say, which some firmware never does (FR-6.1). */
+    suspend fun installedApps(): List<TvApp> = emptyList()
+
+    /**
+     * True while the TV shows its on-screen keyboard, so text sent now lands in a field. Stays false
+     * on a TV that does not say; [sendText] is still worth trying there.
+     */
+    val tvKeyboard: StateFlow<Boolean> get() = NO_TV_KEYBOARD
+
+    /**
+     * Types [text] into the TV's focused text field and confirms it, as Enter on the TV keyboard
+     * would. Requires [Capability.TEXT_INPUT].
+     */
     suspend fun sendText(text: String): Unit = throw TvException(TvError.Unsupported("text input"))
 
     suspend fun disconnect()
 }
+
+/** An app installed on the TV, by the TV's own [id]. */
+data class TvApp(
+    val id: String,
+    val name: String,
+)
+
+private val NO_TV_KEYBOARD: StateFlow<Boolean> = MutableStateFlow(false).asStateFlow()
 
 sealed interface ConnectionState {
     data object Disconnected : ConnectionState
@@ -104,6 +130,10 @@ sealed interface TvError {
         override val message = "Not connected to a TV"
     }
 
+    data object AppNotInstalled : TvError {
+        override val message = "This app is not installed on the TV"
+    }
+
     data class Unsupported(
         val feature: String,
     ) : TvError {
@@ -135,6 +165,11 @@ suspend fun TvSession.perform(action: ButtonAction) {
                 if (index > 0) delay(MACRO_KEY_GAP_MS)
                 send(key)
             }
+        }
+
+        ButtonAction.OpenKeyboard -> {
+            // The phone keyboard is the app's to open; nothing goes to the TV until text is sent.
+            Unit
         }
     }
 }

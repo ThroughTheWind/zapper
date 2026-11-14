@@ -23,6 +23,7 @@ import androidx.compose.material.icons.automirrored.rounded.Input
 import androidx.compose.material.icons.automirrored.rounded.VolumeOff
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Info
+import androidx.compose.material.icons.rounded.Keyboard
 import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.material.icons.rounded.PowerSettingsNew
 import androidx.compose.material.icons.rounded.Settings
@@ -37,6 +38,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import io.github.throughthewind.zapper.core.designsystem.components.AppShortcut
 import io.github.throughthewind.zapper.core.designsystem.components.DPad
 import io.github.throughthewind.zapper.core.designsystem.components.DPadDirection
 import io.github.throughthewind.zapper.core.designsystem.components.KeyEmphasis
@@ -50,6 +52,7 @@ import io.github.throughthewind.zapper.core.designsystem.theme.KeyType
 import io.github.throughthewind.zapper.core.designsystem.theme.RemoteGrid
 import io.github.throughthewind.zapper.core.model.ButtonAction
 import io.github.throughthewind.zapper.core.model.DPadWidget
+import io.github.throughthewind.zapper.core.model.KnownApps
 import io.github.throughthewind.zapper.core.model.LayoutButton
 import io.github.throughthewind.zapper.core.model.LayoutWidget
 import io.github.throughthewind.zapper.core.model.MediaBarWidget
@@ -61,13 +64,16 @@ import io.github.throughthewind.zapper.core.model.RockerKind
 import io.github.throughthewind.zapper.core.model.RockerWidget
 import io.github.throughthewind.zapper.core.designsystem.components.RemoteKey as KeyButton
 
-/** What the canvas needs from the connection: send a key, run a button, and whether a key works. */
+/** What the canvas needs from the connection: send a key, run a button, and whether either works. */
 interface RemoteActions {
     fun send(key: RemoteKey)
 
     fun press(action: ButtonAction)
 
     fun isEnabled(key: RemoteKey): Boolean
+
+    /** Whether a button's action works on this TV right now. */
+    fun isAvailable(action: ButtonAction): Boolean
 }
 
 /**
@@ -203,16 +209,28 @@ private fun ButtonWidget(
     button: LayoutButton,
     actions: RemoteActions,
 ) {
-    val key = (button.action as? ButtonAction.Key)?.key
+    val action = button.action
+    if (action is ButtonAction.LaunchApp) {
+        AppShortcut(
+            name = button.label ?: KnownApps.named(action.appId)?.name ?: action.appId,
+            onPress = { actions.press(action) },
+            columns = button.columnSpan,
+            rows = button.rowSpan,
+            enabled = actions.isAvailable(action),
+            modifier = Modifier.fillMaxSize(),
+        )
+        return
+    }
+    val key = (action as? ButtonAction.Key)?.key
     val title = button.label ?: key?.title() ?: button.action.fallbackTitle()
     KeyButton(
         label = title,
         onPress = { actions.press(button.action) },
         emphasis = key.emphasis(),
-        enabled = key?.let(actions::isEnabled) ?: true,
+        enabled = actions.isAvailable(button.action),
         modifier = Modifier.fillMaxSize(),
     ) {
-        val icon = key?.icon()
+        val icon = key?.icon() ?: button.action.icon()
         if (icon != null) {
             Icon(icon, contentDescription = null)
         } else {
@@ -286,4 +304,11 @@ private fun ButtonAction.fallbackTitle(): String =
         is ButtonAction.Key -> key.name
         is ButtonAction.LaunchApp -> appId
         is ButtonAction.Macro -> keys.joinToString(" ")
+        ButtonAction.OpenKeyboard -> "Keyboard"
+    }
+
+private fun ButtonAction.icon(): ImageVector? =
+    when (this) {
+        ButtonAction.OpenKeyboard -> Icons.Rounded.Keyboard
+        else -> null
     }

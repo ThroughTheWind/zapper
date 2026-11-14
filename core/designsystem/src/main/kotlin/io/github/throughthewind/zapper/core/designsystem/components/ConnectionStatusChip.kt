@@ -27,7 +27,7 @@ import io.github.throughthewind.zapper.core.designsystem.theme.RemoteHaptic
 import io.github.throughthewind.zapper.core.designsystem.theme.rememberRemoteHaptics
 import kotlinx.coroutines.delay
 
-enum class ConnectionChipState { Connected, Connecting, Offline }
+enum class ConnectionChipState { Connected, Connecting, Offline, TvOff }
 
 /** How long "Connected" stays spelled out before the chip shrinks to its dot. */
 private const val CONNECTED_LABEL_MS = 3_000L
@@ -35,13 +35,15 @@ private const val CONNECTED_LABEL_MS = 3_000L
 /**
  * The status chip in the remote's top bar (docs/design/components/ConnectionStatus): Connected
  * (tertiary dot, label hides after 3 s), Connecting (spinner), Offline ("Offline · Retry", tap
- * retries, one Failure haptic when the connection drops).
+ * retries, one Failure haptic when the connection drops), and TV off ("TV off · Power on", tap
+ * turns the TV on) when the TV is known but asleep.
  */
 @Composable
 fun ConnectionStatusChip(
     state: ConnectionChipState,
     onRetry: () -> Unit,
     modifier: Modifier = Modifier,
+    onPowerOn: () -> Unit = onRetry,
 ) {
     val colors = MaterialTheme.colorScheme
     val haptics = rememberRemoteHaptics()
@@ -57,7 +59,7 @@ fun ConnectionStatusChip(
                 showConnectedLabel = false
             }
 
-            ConnectionChipState.Offline -> {
+            ConnectionChipState.Offline, ConnectionChipState.TvOff -> {
                 if (wasConnected) haptics.perform(RemoteHaptic.Failure)
                 wasConnected = false
             }
@@ -71,6 +73,7 @@ fun ConnectionStatusChip(
     val (container, content) =
         when (state) {
             ConnectionChipState.Offline -> colors.errorContainer to colors.onErrorContainer
+            ConnectionChipState.TvOff -> colors.secondaryContainer to colors.onSecondaryContainer
             else -> colors.surfaceContainerHigh to colors.onSurfaceVariant
         }
     val description =
@@ -78,6 +81,7 @@ fun ConnectionStatusChip(
             ConnectionChipState.Connected -> "Connected"
             ConnectionChipState.Connecting -> "Connecting"
             ConnectionChipState.Offline -> "Offline, tap to retry"
+            ConnectionChipState.TvOff -> "TV off, tap to turn it on"
         }
     Surface(
         color = container,
@@ -87,7 +91,11 @@ fun ConnectionStatusChip(
             modifier
                 .semantics(mergeDescendants = true) { contentDescription = description }
                 .then(
-                    if (state == ConnectionChipState.Offline) Modifier.clickable(role = Role.Button, onClick = onRetry) else Modifier,
+                    when (state) {
+                        ConnectionChipState.Offline -> Modifier.clickable(role = Role.Button, onClick = onRetry)
+                        ConnectionChipState.TvOff -> Modifier.clickable(role = Role.Button, onClick = onPowerOn)
+                        else -> Modifier
+                    },
                 ),
     ) {
         Row(
@@ -108,6 +116,10 @@ fun ConnectionStatusChip(
 
                 ConnectionChipState.Offline -> {
                     Text("Offline · Retry", style = MaterialTheme.typography.labelMedium)
+                }
+
+                ConnectionChipState.TvOff -> {
+                    Text("TV off · Power on", style = MaterialTheme.typography.labelMedium)
                 }
             }
         }

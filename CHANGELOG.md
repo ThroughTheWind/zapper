@@ -13,6 +13,13 @@ All notable changes to Zapper are listed here. The format follows
 
 ### Added
 
+- Power turns the TV on when it is off, with Wake-on-LAN. The status chip says when the TV is off
+  or in standby, and a one-time tip explains the TV setting to enable when it does not wake.
+- App shortcuts: Netflix and YouTube on the main page, and an Apps page with Prime Video,
+  Disney+, Apple TV, Spotify and Plex. The app opens under whichever id the TV lists, and a
+  shortcut to an app the TV lacks says so.
+- A Keyboard key opens the phone keyboard to type into the TV's search fields. It also opens by
+  itself when the TV shows its own keyboard.
 - An app icon, with a monochrome version for themed icons.
 - Discovery also sweeps the phone's Wi-Fi subnet, so the TV is found on routers that block
   multicast.

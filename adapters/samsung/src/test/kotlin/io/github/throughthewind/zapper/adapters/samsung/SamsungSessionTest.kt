@@ -5,13 +5,16 @@ import io.github.throughthewind.zapper.core.model.RemoteKey
 import io.github.throughthewind.zapper.core.model.TvDevice
 import io.github.throughthewind.zapper.core.remote.ConnectionState
 import io.github.throughthewind.zapper.core.remote.InMemoryCredentialStore
+import io.github.throughthewind.zapper.core.remote.TvApp
 import io.github.throughthewind.zapper.core.remote.TvError
 import io.github.throughthewind.zapper.core.remote.TvException
 import io.github.throughthewind.zapper.core.remote.TvSession
 import io.github.throughthewind.zapper.core.remote.TvSessionContract
 import io.github.throughthewind.zapper.core.remote.saveToken
 import io.github.throughthewind.zapper.core.remote.token
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
 import mockwebserver3.MockResponse
 import mockwebserver3.MockWebServer
 import okhttp3.OkHttpClient
@@ -26,6 +29,7 @@ import java.util.concurrent.TimeUnit
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 /** Drives [SamsungSession] against a fake TV served by MockWebServer over plain ws://. */
@@ -35,13 +39,19 @@ class SamsungSessionTest : TvSessionContract() {
     private val receivedList = CopyOnWriteArrayList<String>()
     private val credentials = InMemoryCredentialStore()
 
+    /** What the fake TV answers to `ed.installedApp.get`; null never answers, like some firmware. */
+    @Volatile private var appList: String? = null
+
     @BeforeEach
     fun start() = server.start()
 
     @AfterEach
     fun stop() = server.close()
 
-    private fun fakeTv(firstMessage: String = CONNECT_WITH_TOKEN) {
+    private fun fakeTv(
+        firstMessage: String = CONNECT_WITH_TOKEN,
+        vararg then: String,
+    ) {
         server.enqueue(
             MockResponse
                 .Builder()
@@ -52,12 +62,17 @@ class SamsungSessionTest : TvSessionContract() {
                             response: Response,
                         ) {
                             webSocket.send(firstMessage)
+                            then.forEach { webSocket.send(it) }
                         }
 
                         override fun onMessage(
                             webSocket: WebSocket,
                             text: String,
                         ) {
+                            if (text.contains("ed.installedApp.get")) {
+                                appList?.let(webSocket::send)
+                                return
+                            }
                             received += text
                             receivedList += text
                         }
@@ -83,6 +98,7 @@ class SamsungSessionTest : TvSessionContract() {
             scheme = "ws",
             port = server.port,
             pairingTimeoutMs = 5_000,
+            appsTimeoutMs = 300,
         )
 
     override fun newSession(): TvSession {
@@ -118,6 +134,75 @@ class SamsungSessionTest : TvSessionContract() {
 
             assertEquals(SamsungProtocol.keyPress("KEY_VOLUP", "Press"), received.poll(5, TimeUnit.SECONDS))
             assertEquals(SamsungProtocol.keyPress("KEY_VOLUP", "Release"), received.poll(5, TimeUnit.SECONDS))
+            session.disconnect()
+        }
+
+    @Test
+    fun `typed text reaches the TV and is confirmed`() =
+        runBlocking {
+            fakeTv()
+            val session = session()
+            session.connect()
+
+            session.sendText("stranger")
+
+            assertEquals(SamsungProtocol.textInput("stranger"), received.poll(5, TimeUnit.SECONDS))
+            assertEquals(SamsungProtocol.textInputEnd(), received.poll(5, TimeUnit.SECONDS))
+            session.disconnect()
+        }
+
+    @Test
+    fun `the session follows the TV keyboard`() =
+        runBlocking {
+            fakeTv(CONNECT_WITH_TOKEN, """{"event":"ms.remote.imeStart"}""")
+            val session = session()
+            session.connect()
+
+            withTimeout(5_000) { session.tvKeyboard.first { it } }
+
+            session.disconnect()
+            assertFalse(session.tvKeyboard.value)
+        }
+
+    @Test
+    fun `a known app opens under the id the TV lists`() =
+        runBlocking {
+            appList = """{"event":"ed.installedApp.get","data":{"data":[{"appId":"11101200001","app_type":2,"name":"Netflix"}]}}"""
+            fakeTv()
+            val session = session()
+            session.connect()
+
+            session.launchApp("netflix")
+
+            assertEquals(SamsungProtocol.launchApp("11101200001"), received.poll(5, TimeUnit.SECONDS))
+            assertEquals(listOf(TvApp("11101200001", "Netflix")), session.installedApps())
+            session.disconnect()
+        }
+
+    @Test
+    fun `an app missing from the TV list fails with AppNotInstalled`() =
+        runBlocking {
+            appList = """{"event":"ed.installedApp.get","data":{"data":[{"appId":"111299001912","app_type":2,"name":"YouTube"}]}}"""
+            fakeTv()
+            val session = session()
+            session.connect()
+
+            val error = assertFailsWith<TvException> { session.launchApp("netflix") }
+
+            assertEquals(TvError.AppNotInstalled, error.error)
+            session.disconnect()
+        }
+
+    @Test
+    fun `a TV that does not list its apps gets the newest id`() =
+        runBlocking {
+            fakeTv()
+            val session = session()
+            session.connect()
+
+            session.launchApp("netflix")
+
+            assertEquals(SamsungProtocol.launchApp("3201907018807"), received.poll(5, TimeUnit.SECONDS))
             session.disconnect()
         }
 

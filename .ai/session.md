@@ -8,20 +8,19 @@ Keep it short. This document is read at the start of every session, and a long o
 
 ## Current objective
 
-Phase 1 of the [roadmap](../docs/ROADMAP.md): a basic Samsung remote with a fixed default layout, built from the [design system](../docs/design/README.md). Customization is Phase 3.
+Phase 2 of the [roadmap](../docs/ROADMAP.md), Samsung extras: text input, app shortcuts and power on. Phase 1 (WI-002 to WI-007) is merged; customization is Phase 3.
 
 ## In progress
 
-Nothing in progress. Phase 1 items WI-001 to WI-007 are `planned`.
+WI-008 (text input), WI-009 (app shortcuts) and WI-010 (power on) are in `review` together in PR #15, one commit each. Their unit criteria pass; AC-9, AC-10 and AC-11 still need the reference TV.
 
 ## Resume from
 
-WI-001: Antoine runs the CI debug APK against the reference TV and the results go into the item. WI-002 (adapter contract v2) can start in parallel.
+Antoine tries PR #15's debug APK on the reference TV: type "stranger" in YouTube search (AC-9), the Netflix shortcut (AC-10), and Power from standby (AC-11). Results go into each item's Review.
 
 ## Up next
 
-1. WI-003 to WI-005 (discovery, pairing, connection) once WI-002 is merged.
-2. WI-006 default remote, then WI-007 hardware volume keys.
+1. Phase 3: WI-011 appearance and feedback settings, and WI-012 edit mode, which WI-013 to WI-015 build on.
 
 ## Active constraints — do not reopen
 
@@ -46,6 +45,8 @@ WI-001: Antoine runs the CI debug APK against the reference TV and the results g
 
 - The Android toolchain versions in `gradle/libs.versions.toml` (AGP 9.5.0, Compose BOM 2026.09.00, compileSdk 37) were chosen from release notes and not built locally; CI is the first real build.
 - The Samsung key codes are the commonly documented Tizen ones and have not been tried on a real TV.
+- Samsung `SendInputString` is sent once on Send, then `SendInputEnd`, because whether each send appends or replaces the field is unconfirmed (WI-008). If it replaces, live typing is a small change.
+- The 2019 set lists its apps with `ed.installedApp.get`; if it does not, Netflix opens under the newest id `3201907018807`, which may not be the one a 2019 TV has (WI-009).
 
 ## Open questions
 

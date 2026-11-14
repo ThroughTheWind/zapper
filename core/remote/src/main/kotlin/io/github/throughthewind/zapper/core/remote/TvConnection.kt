@@ -1,6 +1,7 @@
 package io.github.throughthewind.zapper.core.remote
 
 import io.github.throughthewind.zapper.core.model.ButtonAction
+import io.github.throughthewind.zapper.core.model.Capability
 import io.github.throughthewind.zapper.core.model.KeyAction
 import io.github.throughthewind.zapper.core.model.RemoteKey
 import io.github.throughthewind.zapper.core.model.TvDevice
@@ -42,6 +43,16 @@ class TvConnection(
 
     /** Why pairing runs again for a TV that was already paired, shown above the pairing hero (FR-2.4). */
     val repairReason: StateFlow<RepairReason?> = _repairReason.asStateFlow()
+
+    private val _capabilities = MutableStateFlow<Set<Capability>>(emptySet())
+
+    /** What the current TV can do. Empty until it has connected once. */
+    val capabilities: StateFlow<Set<Capability>> = _capabilities.asStateFlow()
+
+    private val _tvKeyboard = MutableStateFlow(false)
+
+    /** True while the current TV shows its on-screen keyboard (FR-5.1). */
+    val tvKeyboard: StateFlow<Boolean> = _tvKeyboard.asStateFlow()
 
     @Volatile private var session: TvSession? = null
     private var stateJob: Job? = null
@@ -93,16 +104,35 @@ class TvConnection(
         action: KeyAction = KeyAction.CLICK,
     ) = whenConnected { it.send(key, action) }
 
+    /** Types [text] on the TV (FR-5.1). False when no TV is connected or the TV did not take it. */
+    suspend fun sendText(text: String): Boolean = attempt { it.sendText(text) }
+
     private fun whenConnected(block: suspend (TvSession) -> Unit) {
-        val current = session
-        if (current == null || _state.value != ConnectionState.Connected) {
-            // FR-3.5: reconnect, and drop the press rather than replay it later.
-            val device = _device.value
-            val idle = _state.value is ConnectionState.Failed || _state.value == ConnectionState.Disconnected
-            if (device != null && idle && foreground) connect(device)
-            return
-        }
+        val current = connectedSession() ?: return
         scope.launch { runCatching { block(current) } }
+    }
+
+    /** Runs [block] now and says whether it worked, for actions the user expects an answer to. */
+    private suspend fun attempt(block: suspend (TvSession) -> Unit): Boolean {
+        val current = connectedSession() ?: return false
+        return try {
+            block(current)
+            true
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    /** The session if connected; otherwise starts a reconnect and returns null (FR-3.5: never queue). */
+    private fun connectedSession(): TvSession? {
+        val current = session
+        if (current != null && _state.value == ConnectionState.Connected) return current
+        val device = _device.value
+        val idle = _state.value is ConnectionState.Failed || _state.value == ConnectionState.Disconnected
+        if (device != null && idle && foreground) connect(device)
+        return null
     }
 
     private fun stop() {
@@ -113,6 +143,8 @@ class TvConnection(
         if (current != null) scope.launch { current.disconnect() }
         _state.value = ConnectionState.Disconnected
         _repairReason.value = null
+        _capabilities.value = emptySet()
+        _tvKeyboard.value = false
     }
 
     private fun start(
@@ -128,6 +160,8 @@ class TvConnection(
         _device.value = device
         _state.value = ConnectionState.Connecting
         _repairReason.value = reason
+        _capabilities.value = emptySet()
+        _tvKeyboard.value = false
         runJob =
             scope.launch {
                 previous?.disconnect()
@@ -183,7 +217,12 @@ class TvConnection(
         session?.takeIf { it !== newSession }?.disconnect()
         stateJob?.cancel()
         session = newSession
-        stateJob = scope.launch { newSession.state.collect { if (it !is ConnectionState.Failed) _state.value = it } }
+        stateJob =
+            scope.launch {
+                launch { newSession.state.collect { if (it !is ConnectionState.Failed) _state.value = it } }
+                launch { newSession.capabilities.collect { _capabilities.value = it } }
+                launch { newSession.tvKeyboard.collect { _tvKeyboard.value = it } }
+            }
     }
 
     private fun retryable(error: TvError): Boolean = error is TvError.Unreachable || error is TvError.ConnectionLost

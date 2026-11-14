@@ -48,6 +48,14 @@ class RemoteLayoutTest {
         assertEquals(Capability.KEYS, ButtonAction.Key(RemoteKey.OK).requiredCapability)
         assertEquals(Capability.KEYS, ButtonAction.Macro(emptyList()).requiredCapability)
         assertEquals(Capability.APP_LAUNCH, ButtonAction.LaunchApp("youtube").requiredCapability)
+        assertEquals(Capability.TEXT_INPUT, ButtonAction.OpenKeyboard.requiredCapability)
+    }
+
+    @Test
+    fun `the keyboard button survives a JSON round trip`() {
+        val button = LayoutButton("keyboard", ButtonAction.OpenKeyboard, column = 2, row = 0)
+
+        assertEquals(button, json.decodeFromString<LayoutWidget>(json.encodeToString<LayoutWidget>(button)))
     }
 }
 
@@ -99,6 +107,16 @@ class DefaultLayoutsTest {
                 RemoteKey.GUIDE,
             ) + (0..9).map { RemoteKey.valueOf("DIGIT_$it") }
         assertEquals(emptySet(), required - keys)
+    }
+
+    @Test
+    fun `the main page has a keyboard button`() {
+        assertTrue(
+            layout.pages
+                .first()
+                .widgets
+                .any { it is LayoutButton && it.action == ButtonAction.OpenKeyboard },
+        )
     }
 
     @Test

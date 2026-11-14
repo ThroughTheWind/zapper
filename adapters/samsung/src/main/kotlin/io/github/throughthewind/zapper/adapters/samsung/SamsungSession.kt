@@ -34,7 +34,10 @@ internal class SamsungSession(
     private val pairingTimeoutMs: Long = 60_000,
 ) : TvSession {
     override val capabilities: StateFlow<Set<Capability>> =
-        MutableStateFlow(setOf(Capability.KEYS, Capability.LONG_PRESS)).asStateFlow()
+        MutableStateFlow(setOf(Capability.KEYS, Capability.LONG_PRESS, Capability.TEXT_INPUT)).asStateFlow()
+
+    private val _tvKeyboard = MutableStateFlow(false)
+    override val tvKeyboard: StateFlow<Boolean> = _tvKeyboard.asStateFlow()
 
     private val _state = MutableStateFlow<ConnectionState>(ConnectionState.Disconnected)
     override val state: StateFlow<ConnectionState> = _state.asStateFlow()
@@ -83,6 +86,14 @@ internal class SamsungSession(
                                 connected.completeExceptionally(TvException(TvError.PairingTimedOut))
                             }
 
+                            SamsungProtocol.Event.KeyboardShown -> {
+                                _tvKeyboard.value = true
+                            }
+
+                            SamsungProtocol.Event.KeyboardHidden -> {
+                                _tvKeyboard.value = false
+                            }
+
                             is SamsungProtocol.Event.Other -> {
                                 Unit
                             }
@@ -108,6 +119,7 @@ internal class SamsungSession(
                     ) {
                         if (socket === webSocket) {
                             socket = null
+                            _tvKeyboard.value = false
                             _state.value = ConnectionState.Disconnected
                         }
                     }
@@ -140,8 +152,7 @@ internal class SamsungSession(
         key: RemoteKey,
         action: KeyAction,
     ) {
-        val ws = socket
-        if (ws == null || _state.value != ConnectionState.Connected) throw TvException(TvError.NotConnected)
+        val ws = connectedSocket()
         val code = key.samsungCode() ?: return
         val cmd =
             when (action) {
@@ -152,9 +163,23 @@ internal class SamsungSession(
         if (!ws.send(SamsungProtocol.keyPress(code, cmd))) throw TvException(TvError.ConnectionLost())
     }
 
+    override suspend fun sendText(text: String) {
+        val ws = connectedSocket()
+        if (!ws.send(SamsungProtocol.textInput(text)) || !ws.send(SamsungProtocol.textInputEnd())) {
+            throw TvException(TvError.ConnectionLost())
+        }
+    }
+
+    private fun connectedSocket(): WebSocket {
+        val ws = socket
+        if (ws == null || _state.value != ConnectionState.Connected) throw TvException(TvError.NotConnected)
+        return ws
+    }
+
     override suspend fun disconnect() {
         val ws = socket
         socket = null
+        _tvKeyboard.value = false
         ws?.close(NORMAL_CLOSURE, null)
         _state.value = ConnectionState.Disconnected
     }

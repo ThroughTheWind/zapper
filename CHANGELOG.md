@@ -13,6 +13,8 @@ All notable changes to Zapper are listed here. The format follows
 
 ### Added
 
+- A Keyboard key opens the phone keyboard to type into the TV's search fields. It also opens by
+  itself when the TV shows its own keyboard.
 - An app icon, with a monochrome version for themed icons.
 - Discovery also sweeps the phone's Wi-Fi subnet, so the TV is found on routers that block
   multicast.

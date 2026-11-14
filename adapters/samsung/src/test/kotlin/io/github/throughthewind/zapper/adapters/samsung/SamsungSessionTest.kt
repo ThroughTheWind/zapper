@@ -11,7 +11,9 @@ import io.github.throughthewind.zapper.core.remote.TvSession
 import io.github.throughthewind.zapper.core.remote.TvSessionContract
 import io.github.throughthewind.zapper.core.remote.saveToken
 import io.github.throughthewind.zapper.core.remote.token
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
 import mockwebserver3.MockResponse
 import mockwebserver3.MockWebServer
 import okhttp3.OkHttpClient
@@ -26,6 +28,7 @@ import java.util.concurrent.TimeUnit
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 /** Drives [SamsungSession] against a fake TV served by MockWebServer over plain ws://. */
@@ -41,7 +44,10 @@ class SamsungSessionTest : TvSessionContract() {
     @AfterEach
     fun stop() = server.close()
 
-    private fun fakeTv(firstMessage: String = CONNECT_WITH_TOKEN) {
+    private fun fakeTv(
+        firstMessage: String = CONNECT_WITH_TOKEN,
+        vararg then: String,
+    ) {
         server.enqueue(
             MockResponse
                 .Builder()
@@ -52,6 +58,7 @@ class SamsungSessionTest : TvSessionContract() {
                             response: Response,
                         ) {
                             webSocket.send(firstMessage)
+                            then.forEach { webSocket.send(it) }
                         }
 
                         override fun onMessage(
@@ -119,6 +126,33 @@ class SamsungSessionTest : TvSessionContract() {
             assertEquals(SamsungProtocol.keyPress("KEY_VOLUP", "Press"), received.poll(5, TimeUnit.SECONDS))
             assertEquals(SamsungProtocol.keyPress("KEY_VOLUP", "Release"), received.poll(5, TimeUnit.SECONDS))
             session.disconnect()
+        }
+
+    @Test
+    fun `typed text reaches the TV and is confirmed`() =
+        runBlocking {
+            fakeTv()
+            val session = session()
+            session.connect()
+
+            session.sendText("stranger")
+
+            assertEquals(SamsungProtocol.textInput("stranger"), received.poll(5, TimeUnit.SECONDS))
+            assertEquals(SamsungProtocol.textInputEnd(), received.poll(5, TimeUnit.SECONDS))
+            session.disconnect()
+        }
+
+    @Test
+    fun `the session follows the TV keyboard`() =
+        runBlocking {
+            fakeTv(CONNECT_WITH_TOKEN, """{"event":"ms.remote.imeStart"}""")
+            val session = session()
+            session.connect()
+
+            withTimeout(5_000) { session.tvKeyboard.first { it } }
+
+            session.disconnect()
+            assertFalse(session.tvKeyboard.value)
         }
 
     @Test

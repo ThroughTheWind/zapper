@@ -3,7 +3,8 @@ package io.github.throughthewind.zapper.core.model
 /**
  * The layout a new user starts from (SPEC FR-4.1, docs/design/components/RemoteScreen and
  * RemotePages), on the 4-column grid. Thumb-heavy controls sit in the lower two-thirds; Power sits
- * top-left, away from them.
+ * top-left, away from them. The top row follows RemotePages (Power, Source, Keyboard, Menu) rather
+ * than RemoteScreen's Settings key, which no Samsung code is confirmed for.
  *
  * The design's Main page puts 2x1 Netflix and YouTube shortcuts between the rockers. App shortcuts
  * arrive with WI-009; until then those two rows stay empty rather than hold keys the design does
@@ -24,8 +25,8 @@ object DefaultLayouts {
                             listOf(
                                 key(RemoteKey.POWER, 0, 0),
                                 key(RemoteKey.SOURCE, 1, 0),
-                                key(RemoteKey.MENU, 2, 0),
-                                key(RemoteKey.SETTINGS, 3, 0),
+                                LayoutButton("keyboard", ButtonAction.OpenKeyboard, column = 2, row = 0),
+                                key(RemoteKey.MENU, 3, 0),
                                 DPadWidget("dpad", column = 0, row = 1),
                                 key(RemoteKey.HOME, 3, 1),
                                 key(RemoteKey.BACK, 3, 2),

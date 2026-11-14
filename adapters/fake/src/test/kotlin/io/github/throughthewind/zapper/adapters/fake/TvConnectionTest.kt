@@ -1,5 +1,6 @@
 package io.github.throughthewind.zapper.adapters.fake
 
+import io.github.throughthewind.zapper.core.model.Capability
 import io.github.throughthewind.zapper.core.model.RemoteKey
 import io.github.throughthewind.zapper.core.model.TvDevice
 import io.github.throughthewind.zapper.core.remote.AdapterRegistry
@@ -15,6 +16,7 @@ import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 /** Reconnection, backoff and the no-queue rule (SPEC F3), against the simulated TV. */
@@ -157,5 +159,38 @@ class TvConnectionTest {
             connection.resume()
             runCurrent()
             assertEquals(ConnectionState.Connected, connection.state.value)
+        }
+
+    @Test
+    fun `text reaches the TV and the TV keyboard is followed`() =
+        runTest {
+            paired()
+            val connection = connection()
+            connection.connect(device)
+            runCurrent()
+            assertTrue(Capability.TEXT_INPUT in connection.capabilities.value)
+
+            tv.showKeyboard(true)
+            runCurrent()
+            assertTrue(connection.tvKeyboard.value)
+
+            assertTrue(connection.sendText("stranger"))
+            runCurrent()
+            assertEquals(listOf("TEXT:stranger"), tv.received)
+            assertFalse(connection.tvKeyboard.value)
+        }
+
+    @Test
+    fun `text while disconnected is refused, not queued`() =
+        runTest {
+            paired()
+            tv.online = false
+            val connection = connection()
+            connection.connect(device)
+            runCurrent()
+
+            assertFalse(connection.sendText("stranger"))
+            assertTrue(connection.capabilities.value.isEmpty())
+            assertTrue(tv.received.isEmpty())
         }
 }

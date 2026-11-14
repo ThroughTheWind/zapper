@@ -47,6 +47,31 @@ class SamsungProtocolTest {
     }
 
     @Test
+    fun `text goes as base64 in SendInputString, then SendInputEnd confirms it`() {
+        val params =
+            Json
+                .parseToJsonElement(SamsungProtocol.textInput("stranger"))
+                .jsonObject["params"]!!
+                .jsonObject
+        assertEquals("c3RyYW5nZXI=", params["Cmd"]!!.jsonPrimitive.content)
+        assertEquals("base64", params["DataOfCmd"]!!.jsonPrimitive.content)
+        assertEquals("SendInputString", params["TypeOfRemote"]!!.jsonPrimitive.content)
+
+        val end =
+            Json
+                .parseToJsonElement(SamsungProtocol.textInputEnd())
+                .jsonObject["params"]!!
+                .jsonObject
+        assertEquals("SendInputEnd", end["TypeOfRemote"]!!.jsonPrimitive.content)
+    }
+
+    @Test
+    fun `the TV keyboard opening and closing are events`() {
+        assertEquals(SamsungProtocol.Event.KeyboardShown, SamsungProtocol.parse("""{"event":"ms.remote.imeStart","data":""}"""))
+        assertEquals(SamsungProtocol.Event.KeyboardHidden, SamsungProtocol.parse("""{"event":"ms.remote.imeEnd"}"""))
+    }
+
+    @Test
     fun `every mapped key code follows the KEY_ convention`() {
         RemoteKey.entries.mapNotNull { it.samsungCode() }.forEach { assertTrue(it.startsWith("KEY_"), it) }
     }

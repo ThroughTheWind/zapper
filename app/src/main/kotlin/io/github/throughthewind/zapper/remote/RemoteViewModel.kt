@@ -7,13 +7,20 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import io.github.throughthewind.zapper.AppContainer
 import io.github.throughthewind.zapper.core.data.ZapperRepository
 import io.github.throughthewind.zapper.core.model.ButtonAction
+import io.github.throughthewind.zapper.core.model.Capability
 import io.github.throughthewind.zapper.core.model.RemoteKey
 import io.github.throughthewind.zapper.core.model.RemoteLayout
 import io.github.throughthewind.zapper.core.model.TvDevice
+import io.github.throughthewind.zapper.core.model.requiredCapability
 import io.github.throughthewind.zapper.core.remote.ConnectionState
 import io.github.throughthewind.zapper.core.remote.TvConnection
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -41,6 +48,53 @@ class RemoteViewModel(
 
     val state: StateFlow<ConnectionState> = connection.state
 
+    val capabilities: StateFlow<Set<Capability>> = connection.capabilities
+
+    /** True while the TV shows its own keyboard, so typed text lands in a field (FR-5.1). */
+    val tvKeyboard: StateFlow<Boolean> = connection.tvKeyboard
+
+    private val _textInput = MutableStateFlow(false)
+
+    /** Whether the text input bar is open: by the Keyboard key, or because the TV asked for text. */
+    val textInput: StateFlow<Boolean> = _textInput.asStateFlow()
+
+    private val _feedback = MutableSharedFlow<RemoteFeedback>(extraBufferCapacity = 4)
+
+    /** One-off outcomes the screen answers with a haptic and, on failure, a snackbar. */
+    val feedback: SharedFlow<RemoteFeedback> = _feedback.asSharedFlow()
+
+    init {
+        // The bar follows the TV keyboard: it opens when the TV asks for text and closes with it.
+        viewModelScope.launch {
+            var shown = false
+            connection.tvKeyboard.collect { open ->
+                if (open) _textInput.value = true
+                if (shown && !open) _textInput.value = false
+                shown = open
+            }
+        }
+    }
+
+    fun openTextInput() {
+        _textInput.value = true
+    }
+
+    fun closeTextInput() {
+        _textInput.value = false
+    }
+
+    /** Sends [text] to the TV; closes the bar when the TV took it. */
+    fun sendText(text: String) {
+        viewModelScope.launch {
+            if (connection.sendText(text)) {
+                _textInput.value = false
+                _feedback.emit(RemoteFeedback.Success)
+            } else {
+                _feedback.emit(RemoteFeedback.Failure("The TV did not get the text"))
+            }
+        }
+    }
+
     val hardwareVolumeKeys: StateFlow<Boolean> =
         repository.hardwareVolumeKeys.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), true)
 
@@ -52,7 +106,10 @@ class RemoteViewModel(
     private var playing = true
 
     /** The canvas's view of the connection; a new one per connection state, so keys re-enable. */
-    fun actions(connected: Boolean): RemoteActions =
+    fun actions(
+        connected: Boolean,
+        capabilities: Set<Capability>,
+    ): RemoteActions =
         object : RemoteActions {
             override fun send(key: RemoteKey) {
                 if (key == RemoteKey.PLAY_PAUSE && !connection.supports(RemoteKey.PLAY_PAUSE)) {
@@ -64,7 +121,19 @@ class RemoteViewModel(
                 }
             }
 
-            override fun press(action: ButtonAction) = connection.press(action)
+            override fun press(action: ButtonAction) {
+                when (action) {
+                    ButtonAction.OpenKeyboard -> openTextInput()
+                    else -> connection.press(action)
+                }
+            }
+
+            override fun isAvailable(action: ButtonAction): Boolean =
+                when (action) {
+                    is ButtonAction.Key -> isEnabled(action.key)
+                    is ButtonAction.Macro -> action.keys.all { isEnabled(it) }
+                    else -> connected && action.requiredCapability in capabilities
+                }
 
             override fun isEnabled(key: RemoteKey): Boolean =
                 connected &&
@@ -110,4 +179,13 @@ class RemoteViewModel(
         fun factory(container: AppContainer) =
             viewModelFactory { initializer { RemoteViewModel(container.repository, container.connection) } }
     }
+}
+
+/** What became of something the user asked the TV to do. */
+sealed interface RemoteFeedback {
+    data object Success : RemoteFeedback
+
+    data class Failure(
+        val message: String,
+    ) : RemoteFeedback
 }

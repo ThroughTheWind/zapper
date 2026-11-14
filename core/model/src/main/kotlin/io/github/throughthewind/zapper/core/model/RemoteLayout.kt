@@ -137,7 +137,7 @@ val LayoutWidget.keys: List<RemoteKey>
                 when (val a = action) {
                     is ButtonAction.Key -> listOf(a.key)
                     is ButtonAction.Macro -> a.keys
-                    is ButtonAction.LaunchApp -> emptyList()
+                    is ButtonAction.LaunchApp, ButtonAction.OpenKeyboard -> emptyList()
                 }
             }
 
@@ -194,6 +194,10 @@ sealed interface ButtonAction {
     data class Macro(
         val keys: List<RemoteKey>,
     ) : ButtonAction
+
+    /** Opens the phone keyboard to type into the TV (SPEC F5). Needs [Capability.TEXT_INPUT]. */
+    @Serializable
+    data object OpenKeyboard : ButtonAction
 }
 
 /** The capability a button needs to be usable on a given TV. */
@@ -202,4 +206,5 @@ val ButtonAction.requiredCapability: Capability
         when (this) {
             is ButtonAction.Key, is ButtonAction.Macro -> Capability.KEYS
             is ButtonAction.LaunchApp -> Capability.APP_LAUNCH
+            ButtonAction.OpenKeyboard -> Capability.TEXT_INPUT
         }

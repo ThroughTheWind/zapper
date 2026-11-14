@@ -42,7 +42,7 @@ class FakeTvAdapter(
     override val id: String = ID
     override val displayName: String = "Simulated TV"
 
-    /** Every key any session sent, as `KEY:ACTION`, oldest first. */
+    /** Every key any session sent, as `KEY:ACTION`, and text as `TEXT:typed`, oldest first. */
     val received: MutableList<String> = CopyOnWriteArrayList()
 
     /** False simulates a TV that is off or off the network: connecting fails with Unreachable. */
@@ -53,6 +53,11 @@ class FakeTvAdapter(
         private set
 
     private val sessions = CopyOnWriteArrayList<FakeSession>()
+
+    /** Simulates the TV opening or closing its on-screen keyboard. */
+    fun showKeyboard(open: Boolean) {
+        sessions.forEach { it.keyboard.value = open }
+    }
 
     /** Simulates the network dropping: every connected session fails with ConnectionLost. */
     fun dropConnections() {
@@ -104,7 +109,10 @@ class FakeTvAdapter(
         private val credentials: CredentialStore,
     ) : TvSession {
         override val capabilities: StateFlow<Set<Capability>> =
-            MutableStateFlow(setOf(Capability.KEYS, Capability.LONG_PRESS))
+            MutableStateFlow(setOf(Capability.KEYS, Capability.LONG_PRESS, Capability.TEXT_INPUT))
+
+        val keyboard = MutableStateFlow(false)
+        override val tvKeyboard: StateFlow<Boolean> = keyboard.asStateFlow()
 
         private val _state = MutableStateFlow<ConnectionState>(ConnectionState.Disconnected)
         override val state: StateFlow<ConnectionState> = _state.asStateFlow()
@@ -154,7 +162,14 @@ class FakeTvAdapter(
             received += "${key.name}:${action.name}"
         }
 
+        override suspend fun sendText(text: String) {
+            if (_state.value != ConnectionState.Connected) throw TvException(TvError.NotConnected)
+            received += "TEXT:$text"
+            keyboard.value = false
+        }
+
         override suspend fun disconnect() {
+            keyboard.value = false
             _state.value = ConnectionState.Disconnected
         }
     }

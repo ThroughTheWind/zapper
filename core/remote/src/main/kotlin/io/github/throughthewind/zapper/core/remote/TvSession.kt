@@ -6,7 +6,9 @@ import io.github.throughthewind.zapper.core.model.KeyAction
 import io.github.throughthewind.zapper.core.model.RemoteKey
 import io.github.throughthewind.zapper.core.model.TvDevice
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 /** A connection to one TV. */
 interface TvSession {
@@ -32,11 +34,22 @@ interface TvSession {
     /** Requires [Capability.APP_LAUNCH]. */
     suspend fun launchApp(appId: String): Unit = throw TvException(TvError.Unsupported("launching apps"))
 
-    /** Requires [Capability.TEXT_INPUT]. */
+    /**
+     * True while the TV shows its on-screen keyboard, so text sent now lands in a field. Stays false
+     * on a TV that does not say; [sendText] is still worth trying there.
+     */
+    val tvKeyboard: StateFlow<Boolean> get() = NO_TV_KEYBOARD
+
+    /**
+     * Types [text] into the TV's focused text field and confirms it, as Enter on the TV keyboard
+     * would. Requires [Capability.TEXT_INPUT].
+     */
     suspend fun sendText(text: String): Unit = throw TvException(TvError.Unsupported("text input"))
 
     suspend fun disconnect()
 }
+
+private val NO_TV_KEYBOARD: StateFlow<Boolean> = MutableStateFlow(false).asStateFlow()
 
 sealed interface ConnectionState {
     data object Disconnected : ConnectionState
@@ -135,6 +148,11 @@ suspend fun TvSession.perform(action: ButtonAction) {
                 if (index > 0) delay(MACRO_KEY_GAP_MS)
                 send(key)
             }
+        }
+
+        ButtonAction.OpenKeyboard -> {
+            // The phone keyboard is the app's to open; nothing goes to the TV until text is sent.
+            Unit
         }
     }
 }

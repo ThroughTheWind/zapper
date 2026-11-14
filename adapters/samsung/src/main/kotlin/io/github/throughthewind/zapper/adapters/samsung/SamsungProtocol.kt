@@ -46,6 +46,27 @@ internal object SamsungProtocol {
             }
         }.toString()
 
+    /**
+     * Types [text] into the field the TV keyboard is editing. The TV only takes it while its
+     * keyboard is on screen (research §2.3).
+     */
+    fun textInput(text: String): String =
+        buildJsonObject {
+            put("method", "ms.remote.control")
+            putJsonObject("params") {
+                put("Cmd", Base64.getEncoder().encodeToString(text.toByteArray(Charsets.UTF_8)))
+                put("DataOfCmd", "base64")
+                put("TypeOfRemote", "SendInputString")
+            }
+        }.toString()
+
+    /** Confirms the typed text and closes the TV keyboard, like its Done key. */
+    fun textInputEnd(): String =
+        buildJsonObject {
+            put("method", "ms.remote.control")
+            putJsonObject("params") { put("TypeOfRemote", "SendInputEnd") }
+        }.toString()
+
     /** What the TV said, reduced to what the session acts on. */
     sealed interface Event {
         /** The TV accepted us. [token] is set when it issued a new pairing token. */
@@ -57,6 +78,11 @@ internal object SamsungProtocol {
         data object Unauthorized : Event
 
         data object Timeout : Event
+
+        /** The TV opened its on-screen keyboard: a text field wants input. */
+        data object KeyboardShown : Event
+
+        data object KeyboardHidden : Event
 
         data class Other(
             val name: String?,
@@ -77,6 +103,14 @@ internal object SamsungProtocol {
 
             "ms.channel.timeOut" -> {
                 Event.Timeout
+            }
+
+            "ms.remote.imeStart" -> {
+                Event.KeyboardShown
+            }
+
+            "ms.remote.imeEnd" -> {
+                Event.KeyboardHidden
             }
 
             else -> {

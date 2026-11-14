@@ -66,6 +66,9 @@ built (PR #15, PR #16). The features, the phone mockup (Keyboard key, Netflix an
 shortcuts, three pages), the demo and the roadmap (Phases 1 to 3 done, 1.0 next) now match the
 app after those PRs. Merge this after them.
 
+The page ships with release 0.2.0 (Phases 1 to 3), so the version label's fallback is `v0.2.0`;
+the live label still comes from the latest release.
+
 ## Review
 
 Checked with Playwright in Chromium: desktop dark and light, phone dark; demo D-pad, OK and volume.

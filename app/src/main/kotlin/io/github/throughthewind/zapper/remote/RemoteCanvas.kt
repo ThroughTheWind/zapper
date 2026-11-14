@@ -343,15 +343,16 @@ private fun ButtonWidget(
         modifier = Modifier.fillMaxSize(),
     ) {
         val icon = button.icon?.let(::keyIcon) ?: key?.icon() ?: button.action.icon()
+        val label = button.label
         when {
-            icon != null && button.label != null && button.columnSpan > 1 -> {
+            icon != null && label != null && button.columnSpan > 1 -> {
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     Icon(icon, contentDescription = null)
-                    Text(button.label.uppercase(), style = KeyType.label, maxLines = 1)
+                    Text(label.uppercase(), style = KeyType.label, maxLines = 1)
                 }
             }
 
-            icon != null && button.label == null -> {
+            icon != null && label == null -> {
                 Icon(icon, contentDescription = null)
             }
 

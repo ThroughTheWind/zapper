@@ -120,10 +120,13 @@ jobs:
           cp "$apk" "dist/zapper-$VERSION.apk"
           (cd dist && sha256sum "zapper-$VERSION.apk" > "zapper-$VERSION.apk.sha256")
           apk_sha256="$(cut -d ' ' -f 1 "dist/zapper-$VERSION.apk.sha256")"
-          cert_sha256="$("$build_tools/apksigner" verify --print-certs "$apk" \
-            | sed -n 's/^Signer #1 certificate SHA-256 digest: //p')"
-          if [[ -z "$cert_sha256" ]]; then
-            echo "::error::Could not read the signing certificate digest"
+          # apksigner's wording for this line differs between build-tools versions, so match loosely
+          # and show the whole output when nothing matches.
+          certs="$("$build_tools/apksigner" verify --print-certs "$apk")"
+          cert_sha256="$(grep -iE 'certificate SHA-?256 digest' <<< "$certs" | head -n 1 | sed -E 's/.*[Dd]igest: *//' || true)"
+          if [[ ! "$cert_sha256" =~ ^[0-9a-fA-F:]{64,95}$ ]]; then
+            echo "::error::Could not read the signing certificate digest from apksigner --print-certs:"
+            echo "$certs"
             exit 1
           fi
           if ! scripts/release-notes.sh "$VERSION" "$apk_sha256" "$cert_sha256" > dist/release-notes.md; then

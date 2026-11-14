@@ -14,8 +14,8 @@ The page itself is [`site/`](../../../site/README.md), published to
    components laid out like the app's real default remote, and the demo drives a mock TV.
 2. **Only what ships is shown as working.** The phone mockup, the demo and the Features section
    show what the current release does. Anything planned lives in the Roadmap section, labelled with
-   its phase. A slot the app keeps empty (app shortcuts until Phase 2) is drawn as a dashed
-   placeholder that says when it fills, never as a working key.
+   its phase. If the app keeps a slot empty until a feature ships, draw it as a dashed
+   placeholder (`.slot`) that says when it fills, never as a working key.
 3. **One action per section.** Download is the filled button in the nav, hero and download band.
    Everything else is outlined, tonal or a text link.
 4. **Honest and plain.** Say what works today (Samsung, tested on a 2019 RU7020) and what doesn't

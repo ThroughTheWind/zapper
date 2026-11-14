@@ -66,13 +66,14 @@
     if (icon) icon.setAttribute("href", muted ? "icons.svg#volume_off" : "icons.svg#volume_up");
     flash($("#osd"), "osd");
   };
-  const openTile = (tile) => {
-    app = tile.textContent;
+  const openScreen = (name, background) => {
+    app = name;
     const screen = $("#tvapp");
-    screen.textContent = app;
-    screen.style.background = tile.style.background;
+    screen.textContent = name;
+    screen.style.background = background;
     screen.classList.add("show");
   };
+  const openTile = (tile) => openScreen(tile.textContent, tile.style.background);
   const closeApp = () => { app = null; $("#tvapp").classList.remove("show"); };
 
   const act = (a) => {
@@ -101,9 +102,12 @@
       case "rew": toast("Rewind"); break;
       case "ff": toast("Fast-forward"); break;
       case "menu": toast("Menu"); break;
-      case "settings": toast("Settings"); break;
+      case "keyboard": toast("Type with your phone keyboard"); break;
       case "guide": toast("Guide"); break;
       case "info": toast("Info"); break;
+      default:
+        // App shortcuts open the app on the TV, wherever the focus is.
+        if (a && a.startsWith("app:")) openScreen(a.slice(4), "#2a2b3d");
     }
     paint();
   };

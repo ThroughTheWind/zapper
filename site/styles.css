@@ -269,7 +269,7 @@ code.inline { font: 500 0.92em/1 var(--font-mono); padding: 2px 6px; border-radi
 @media (max-width: 904px) { .hero .art { display: none; } }
 
 /* ===== 3. Additions for the current phase ===== */
-/* A slot in the phone mockup the app keeps empty until the feature ships (app shortcuts, Phase 2). */
+/* A slot in the phone mockup that the app keeps empty until its feature ships (unused while every slot is filled). */
 .mock-phone .slot { display: grid; place-items: center; text-align: center; padding: 6px; border-radius: var(--radius-lg); border: 1.5px dashed var(--outline-variant); color: var(--on-surface-variant); font: 600 11px/14px var(--font-brand); letter-spacing: .3px; }
 .rk--pill { border-radius: var(--radius-full); }
 .mock-phone .rk--pill { border-radius: var(--radius-full); width: 100%; }

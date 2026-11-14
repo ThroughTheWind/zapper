@@ -5,7 +5,7 @@ type: docs
 status: review
 branch: claude/project-thread-238rhr
 created: 2026-11-13
-updated: 2026-11-13
+updated: 2026-11-14
 related: [WI-017]
 epic:
 children: []
@@ -43,8 +43,7 @@ GitHub Pages, adapted with its design system to the current phase and the planne
 - `site/` deployed by Actions rather than Pages from `docs/`, so the Markdown docs are not published
   as a Jekyll site beside the page.
 - Icons as an SVG sprite of the used symbols instead of the multi-megabyte icon font.
-- The phone mockup mirrors `DefaultLayouts.standard`, with the app-shortcut slot drawn as a
-  "coming in Phase 2" placeholder.
+- The phone mockup mirrors `DefaultLayouts.standard`.
 
 ### Acceptance criteria / tests
 
@@ -60,6 +59,12 @@ GitHub Pages, adapted with its design system to the current phase and the planne
 
 Branch `claude/project-thread-238rhr` (the session's assigned branch, instead of
 `feature/WI-021-…`).
+
+The first version of the page covered Phase 1 only, with app shortcuts as a "coming in Phase 2" placeholder.
+On 2026-11-14 Antoine asked for it to reflect Phase 3 before merging, once Phases 2 and 3 were
+built (PR #15, PR #16). The features, the phone mockup (Keyboard key, Netflix and YouTube
+shortcuts, three pages), the demo and the roadmap (Phases 1 to 3 done, 1.0 next) now match the
+app after those PRs. Merge this after them.
 
 ## Review
 

@@ -5,6 +5,7 @@ import io.github.throughthewind.zapper.adapters.samsung.SamsungAdapter
 import io.github.throughthewind.zapper.connection.MulticastLock
 import io.github.throughthewind.zapper.connection.NetworkMonitor
 import io.github.throughthewind.zapper.core.data.ZapperRepository
+import io.github.throughthewind.zapper.core.model.AppearanceSettings
 import io.github.throughthewind.zapper.core.remote.AdapterRegistry
 import io.github.throughthewind.zapper.core.remote.TvConnection
 import kotlinx.coroutines.CoroutineScope
@@ -45,6 +46,9 @@ class AppContainer(
         )
 
     val multicastLock = MulticastLock(application)
+
+    /** The theme, applied as soon as it changes (SPEC AC-17); hot so the first frame already has it. */
+    val appearance = repository.appearance.stateIn(scope, SharingStarted.Eagerly, AppearanceSettings())
 
     /** Read on every key event, so kept hot rather than read from disk each time. */
     val hardwareVolumeKeys = repository.hardwareVolumeKeys.stateIn(scope, SharingStarted.Eagerly, true)

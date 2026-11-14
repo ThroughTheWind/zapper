@@ -8,19 +8,21 @@ Keep it short. This document is read at the start of every session, and a long o
 
 ## Current objective
 
-Phase 2 of the [roadmap](../docs/ROADMAP.md), Samsung extras: text input, app shortcuts and power on. Phase 1 (WI-002 to WI-007) is merged; customization is Phase 3.
+Phases 2 and 3 of the [roadmap](../docs/ROADMAP.md) are built and waiting on a real TV and phone: Samsung extras (PR #15) and customization (PR #16, stacked on #15). Phase 4 (release 1.0) is next.
 
 ## In progress
 
-WI-008 (text input), WI-009 (app shortcuts) and WI-010 (power on) are in `review` together in PR #15, one commit each. Their unit criteria pass; AC-9, AC-10 and AC-11 still need the reference TV.
+- WI-008 to WI-010 are in `review` in PR #15; AC-9, AC-10 and AC-11 need the reference TV.
+- WI-011 to WI-015 are in `review` in PR #16, whose base is PR #15's branch: merge #15 first, then retarget #16 to `main`. Their unit criteria pass; AC-13 to AC-17 need a phone.
 
 ## Resume from
 
-Antoine tries PR #15's debug APK on the reference TV: type "stranger" in YouTube search (AC-9), the Netflix shortcut (AC-10), and Power from standby (AC-11). Results go into each item's Review.
+Antoine tries the PR #16 debug APK (it includes Phase 2): the TV checks from PR #15, then edit mode, pages, reset, export/import and the theme switch (AC-13 to AC-17). Results go into each item's Review.
 
 ## Up next
 
-1. Phase 3: WI-011 appearance and feedback settings, and WI-012 edit mode, which WI-013 to WI-015 build on.
+1. F-003: Compose UI tests in `app` (Robolectric), now that edit mode exists.
+2. Phase 4: WI-016 accessibility, onboarding and polish; WI-017 signed release (PR #13); WI-018 adapter guide.
 
 ## Active constraints — do not reopen
 

@@ -54,13 +54,16 @@ jobs:
       - name: No simulated TV in release builds
         run: |
           set -euo pipefail
-          ./gradlew -q :app:dependencies --configuration debugRuntimeClasspath > debug-deps.txt
-          ./gradlew -q :app:dependencies --configuration releaseRuntimeClasspath > release-deps.txt
-          if ! grep -q "project :adapters:fake" debug-deps.txt; then
+          ./gradlew :app:dependencies --configuration debugRuntimeClasspath > debug-deps.txt
+          ./gradlew :app:dependencies --configuration releaseRuntimeClasspath > release-deps.txt
+          # No -q, and match the module path alone: the first version of this check, with -q and a
+          # "project " prefix, found nothing even in the debug build.
+          if ! grep -q "adapters:fake" debug-deps.txt; then
             echo "::error::The check is blind: :adapters:fake not found in the debug build either"
+            head -n 80 debug-deps.txt || true
             exit 1
           fi
-          if grep -q "project :adapters:fake" release-deps.txt; then
+          if grep -q "adapters:fake" release-deps.txt; then
             echo "::error::The release build links :adapters:fake (the simulated TV)"
             exit 1
           fi

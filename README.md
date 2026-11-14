@@ -4,8 +4,15 @@ A free, open-source TV remote for Android phones, with a modern design and butto
 you can arrange the way you like. Samsung smart TVs come first; other brands plug in through
 adapters.
 
-> **Status:** early development. The scaffold can pair with a Samsung TV (2016 or later) by IP
-> address and send keys. Discovery, layout editing and the real design are next.
+> **Status:** 0.1.0, the basic Samsung remote. It finds a Samsung TV (2016 or later) on the
+> Wi-Fi, pairs once and controls it with a fixed layout. Text input, app shortcuts and power on
+> are next, then layout editing ([roadmap](docs/ROADMAP.md)).
+
+## Install
+
+Download the latest `zapper-X.Y.Z.apk` from [Releases](https://github.com/ThroughTheWind/zapper/releases/latest)
+on your phone and open it. Needs Android 8.0 or later. Each release lists the APK's SHA-256 and
+the signing certificate's fingerprint.
 
 ## Principles
 
@@ -26,7 +33,7 @@ adapters.
 
 | Brand | Status |
 | --- | --- |
-| Samsung (Tizen, 2016+) | In progress |
+| Samsung (Tizen, 2016+) | Supported since 0.1.0 |
 | Others | Planned. Open a [TV support request](.github/ISSUE_TEMPLATE/tv_support.md) |
 
 ## Building
@@ -39,6 +46,7 @@ You need JDK 17 or newer and the Android SDK (Android Studio installs both).
 ./gradlew spotlessApply          # format
 ```
 
+Releases are built, signed and published by CI from a tag; see [releasing](docs/releasing.md).
 The stack and the reasons for it are in [ADR-0001](docs/decisions/ADR-0001-kotlin-compose-multi-module.md).
 
 ## Project layout

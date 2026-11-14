@@ -1,0 +1,154 @@
+name: Release
+
+# Pushing a tag vX.Y.Z builds the signed release APK and publishes it as the GitHub Release for that
+# tag. Running the workflow by hand ("Run workflow" on the Actions tab) is a dry run: it builds and
+# signs the same APK and attaches it to the run, but publishes nothing. The procedure, and how to
+# set up the signing secrets, is in docs/releasing.md.
+
+on:
+  push:
+    tags: ["v*.*.*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+defaults:
+  run:
+    # Explicit bash runs every step with -e and -o pipefail.
+    shell: bash
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: android-actions/setup-android@v4
+      - uses: gradle/actions/setup-gradle@v6
+
+      - name: Read the version
+        id: version
+        run: |
+          version="$(sed -n 's/^zapper = "\(.*\)"$/\1/p' gradle/libs.versions.toml)"
+          if [[ -z "$version" ]]; then
+            echo "::error::No zapper version in gradle/libs.versions.toml"
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Check the tag matches the version
+        if: github.ref_type == 'tag'
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          if [[ "$GITHUB_REF_NAME" != "v$VERSION" ]]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match the app version $VERSION; the tag must be v$VERSION"
+            exit 1
+          fi
+
+      - name: Check the release notes exist
+        if: github.ref_type == 'tag'
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        # Placeholder hashes: this step only proves the notes and the changelog section exist,
+        # before the slow build. The real body is written after signing.
+        run: scripts/release-notes.sh "$VERSION" check check > /dev/null
+
+      - name: Format, boundaries, tests and lint
+        run: ./gradlew spotlessCheck checkAdapterBoundaries test lint
+
+      - name: Restore the signing key
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ZAPPER_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.ZAPPER_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ZAPPER_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ZAPPER_KEY_PASSWORD }}
+        run: |
+          for name in KEYSTORE_BASE64 KEYSTORE_PASSWORD KEY_ALIAS KEY_PASSWORD; do
+            if [[ -z "${!name}" ]]; then
+              echo "::error::The secret ZAPPER_$name is not set. See docs/releasing.md, \"One-time setup\"."
+              exit 1
+            fi
+          done
+          keystore="$RUNNER_TEMP/zapper-release.jks"
+          base64 --decode <<< "$KEYSTORE_BASE64" > "$keystore"
+          echo "ZAPPER_KEYSTORE_FILE=$keystore" >> "$GITHUB_ENV"
+
+      - name: Build the release APK
+        env:
+          ZAPPER_KEYSTORE_PASSWORD: ${{ secrets.ZAPPER_KEYSTORE_PASSWORD }}
+          ZAPPER_KEY_ALIAS: ${{ secrets.ZAPPER_KEY_ALIAS }}
+          ZAPPER_KEY_PASSWORD: ${{ secrets.ZAPPER_KEY_PASSWORD }}
+        run: ./gradlew :app:assembleRelease
+
+      - name: Verify the APK and write the release notes
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          build_tools="$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -n 1)"
+          apk="app/build/outputs/apk/release/app-release.apk"
+          if [[ ! -f "$apk" ]]; then
+            echo "::error::$apk was not produced; is the release signing config applied?"
+            ls -R app/build/outputs/apk/release || true
+            exit 1
+          fi
+
+          # Check the artifact, not the build script: signed, right version, not debuggable.
+          "$build_tools/apksigner" verify --verbose "$apk"
+          badging="$("$build_tools/aapt2" dump badging "$apk")"
+          if ! grep -q "versionName='$VERSION'" <<< "$badging"; then
+            echo "::error::The APK's versionName is not $VERSION"
+            grep '^package:' <<< "$badging"
+            exit 1
+          fi
+          if grep -q "application-debuggable" <<< "$badging"; then
+            echo "::error::The release APK is debuggable"
+            exit 1
+          fi
+
+          mkdir dist
+          cp "$apk" "dist/zapper-$VERSION.apk"
+          (cd dist && sha256sum "zapper-$VERSION.apk" > "zapper-$VERSION.apk.sha256")
+          apk_sha256="$(cut -d ' ' -f 1 "dist/zapper-$VERSION.apk.sha256")"
+          cert_sha256="$("$build_tools/apksigner" verify --print-certs "$apk" \
+            | sed -n 's/^Signer #1 certificate SHA-256 digest: //p')"
+          if [[ -z "$cert_sha256" ]]; then
+            echo "::error::Could not read the signing certificate digest"
+            exit 1
+          fi
+          if ! scripts/release-notes.sh "$VERSION" "$apk_sha256" "$cert_sha256" > dist/release-notes.md; then
+            # Only a dry run gets this far without notes; a tag was refused before the build.
+            echo "::warning::The release notes for $VERSION are not ready, so a tag would be refused. See docs/releasing.md."
+            printf 'Dry run: release notes for %s are not ready.\n\n- APK SHA-256: `%s`\n- Signing certificate SHA-256: `%s`\n' \
+              "$VERSION" "$apk_sha256" "$cert_sha256" > dist/release-notes.md
+          fi
+          cat dist/release-notes.md >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: zapper-${{ steps.version.outputs.version }}
+          path: dist/
+          retention-days: 30
+
+      - name: Publish the GitHub Release
+        if: github.ref_type == 'tag'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            "dist/zapper-$VERSION.apk" \
+            "dist/zapper-$VERSION.apk.sha256" \
+            --verify-tag \
+            --title "Zapper $VERSION" \
+            --notes-file dist/release-notes.md

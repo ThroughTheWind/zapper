@@ -6,8 +6,14 @@ All notable changes to Zapper are listed here. The format follows
 
 ## [Unreleased]
 
+### Fixed
+
+- The remote fits under the top bar instead of scrolling.
+- TV names show characters such as `&` instead of `&amp;`.
+
 ### Added
 
+- An app icon, with a monochrome version for themed icons.
 - Discovery also sweeps the phone's Wi-Fi subnet, so the TV is found on routers that block
   multicast.
 - Finds Samsung TVs on the Wi-Fi automatically, or by IP address, with tips when nothing is found.

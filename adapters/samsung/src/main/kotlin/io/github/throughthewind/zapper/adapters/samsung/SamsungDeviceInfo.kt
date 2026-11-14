@@ -1,5 +1,6 @@
 package io.github.throughthewind.zapper.adapters.samsung
 
+import io.github.throughthewind.zapper.core.model.decodeHtmlEntities
 import io.github.throughthewind.zapper.core.remote.DiscoveredTv
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
@@ -33,7 +34,12 @@ internal object SamsungDeviceInfo {
 
         val isTizen = field("OS") == "Tizen" || field("type")?.contains("Samsung", ignoreCase = true) == true
         if (!isTizen) return null
-        val name = (field("name") ?: root["name"]?.jsonPrimitive?.contentOrNull ?: "Samsung TV").removePrefix("[TV]").trim()
+        val name =
+            (
+                field(
+                    "name",
+                ) ?: root["name"]?.jsonPrimitive?.contentOrNull ?: "Samsung TV"
+            ).decodeHtmlEntities().removePrefix("[TV]").trim()
         return DiscoveredTv(
             adapterId = SamsungAdapter.ID,
             host = host,

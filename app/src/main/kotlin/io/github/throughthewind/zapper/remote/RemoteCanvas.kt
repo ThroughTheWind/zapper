@@ -118,13 +118,19 @@ private fun RemotePageGrid(
     columns: Int,
     actions: RemoteActions,
 ) {
-    BoxWithConstraints(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-        val cell = ((maxWidth - RemoteGrid.gutter * (columns - 1)) / columns).coerceIn(RemoteGrid.minCell, RemoteGrid.maxCell)
-        val gridWidth = RemoteGrid.spanSize(cell, columns)
+    val rows = page.rows.coerceAtLeast(1)
+    BoxWithConstraints(Modifier.fillMaxSize()) {
+        // Square cells that fit both the width and the height left under the header, so the page
+        // never scrolls. Only a screen too short for 56 dp keys falls back to scrolling.
+        val byWidth = (maxWidth - RemoteGrid.gutter * (columns - 1)) / columns
+        val byHeight = (maxHeight - RemoteGrid.gutter * (rows - 1)) / rows
+        val cell = minOf(byWidth, byHeight, RemoteGrid.maxCell).coerceAtLeast(RemoteGrid.minTouchTarget)
+        val scrolls = byHeight < RemoteGrid.minTouchTarget
         Box(
             Modifier
                 .align(Alignment.TopCenter)
-                .size(width = gridWidth, height = RemoteGrid.spanSize(cell, page.rows.coerceAtLeast(1))),
+                .then(if (scrolls) Modifier.verticalScroll(rememberScrollState()) else Modifier)
+                .size(width = RemoteGrid.spanSize(cell, columns), height = RemoteGrid.spanSize(cell, rows)),
         ) {
             page.widgets.forEach { widget ->
                 Box(

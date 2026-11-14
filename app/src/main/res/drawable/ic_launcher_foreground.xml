@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Zapper's launcher mark: a remote with the round D-pad, the app's signature control
+  (docs/design/components/DPad). Original artwork, no brand assets (ADR-0003). 108dp adaptive
+  canvas; everything sits inside the 66dp safe zone.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Remote body -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M38,40 A16,16 0 0,1 54,24 A16,16 0 0,1 70,40 L70,68 A16,16 0 0,1 54,84 A16,16 0 0,1 38,68 Z" />
+    <!-- D-pad -->
+    <path
+        android:fillColor="#FF283FFF"
+        android:pathData="M43,44 A11,11 0 1,1 65,44 A11,11 0 1,1 43,44 Z" />
+    <!-- OK -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M50,44 A4,4 0 1,1 58,44 A4,4 0 1,1 50,44 Z" />
+    <!-- Volume rocker -->
+    <path
+        android:fillColor="#FF283FFF"
+        android:pathData="M49,65 A5,5 0 0,1 59,65 L59,73 A5,5 0 0,1 49,73 Z" />
+</vector>

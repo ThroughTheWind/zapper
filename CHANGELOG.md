@@ -27,8 +27,6 @@ All notable changes to Zapper are listed here. The format follows
   pairs again by itself when the TV forgets the phone.
 - Pairing secrets are encrypted with a key kept in the Android Keystore, and the TV's certificate
   is pinned on first pairing, so another device cannot pretend to be the TV.
-- A simulated TV in debug builds, reachable by IP at `192.0.2.1`, for trying the app without a TV, and a
-  second one at `192.0.2.2` that pairs with the code `1234`.
 - Project scaffold: Kotlin and Jetpack Compose app, brand adapter contract, and a first Samsung
   Tizen adapter that pairs and sends keys.
 

@@ -49,6 +49,21 @@ jobs:
       # R8 shrinking and release lint break a pull request, not a release tag.
       - name: Release APK (unsigned)
         run: ./gradlew :app:assembleRelease
+      # The simulated TV is for development only. Prove the release build does not link it, and
+      # that the check can fail by finding it in the debug build.
+      - name: No simulated TV in release builds
+        run: |
+          set -euo pipefail
+          ./gradlew -q :app:dependencies --configuration debugRuntimeClasspath > debug-deps.txt
+          ./gradlew -q :app:dependencies --configuration releaseRuntimeClasspath > release-deps.txt
+          if ! grep -q "project :adapters:fake" debug-deps.txt; then
+            echo "::error::The check is blind: :adapters:fake not found in the debug build either"
+            exit 1
+          fi
+          if grep -q "project :adapters:fake" release-deps.txt; then
+            echo "::error::The release build links :adapters:fake (the simulated TV)"
+            exit 1
+          fi
       - uses: actions/upload-artifact@v7
         with:
           name: zapper-debug-apk

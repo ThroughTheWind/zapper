@@ -104,24 +104,29 @@ class TvConnection(
         action: KeyAction = KeyAction.CLICK,
     ) = whenConnected { it.send(key, action) }
 
-    /** Types [text] on the TV (FR-5.1). False when no TV is connected or the TV did not take it. */
-    suspend fun sendText(text: String): Boolean = attempt { it.sendText(text) }
+    /** Types [text] on the TV (FR-5.1). Null when the TV took it, otherwise why not. */
+    suspend fun sendText(text: String): TvError? = attempt { it.sendText(text) }
+
+    /** Opens an app on the TV (FR-6.1). Null when the TV took the request, otherwise why not. */
+    suspend fun launchApp(appId: String): TvError? = attempt { it.launchApp(appId) }
 
     private fun whenConnected(block: suspend (TvSession) -> Unit) {
         val current = connectedSession() ?: return
         scope.launch { runCatching { block(current) } }
     }
 
-    /** Runs [block] now and says whether it worked, for actions the user expects an answer to. */
-    private suspend fun attempt(block: suspend (TvSession) -> Unit): Boolean {
-        val current = connectedSession() ?: return false
+    /** Runs [block] now and says why it failed, if it did, for actions the user expects an answer to. */
+    private suspend fun attempt(block: suspend (TvSession) -> Unit): TvError? {
+        val current = connectedSession() ?: return TvError.NotConnected
         return try {
             block(current)
-            true
+            null
         } catch (e: CancellationException) {
             throw e
+        } catch (e: TvException) {
+            e.error
         } catch (e: Exception) {
-            false
+            TvError.ConnectionLost()
         }
     }
 

@@ -38,6 +38,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import io.github.throughthewind.zapper.core.designsystem.components.AppShortcut
 import io.github.throughthewind.zapper.core.designsystem.components.DPad
 import io.github.throughthewind.zapper.core.designsystem.components.DPadDirection
 import io.github.throughthewind.zapper.core.designsystem.components.KeyEmphasis
@@ -51,6 +52,7 @@ import io.github.throughthewind.zapper.core.designsystem.theme.KeyType
 import io.github.throughthewind.zapper.core.designsystem.theme.RemoteGrid
 import io.github.throughthewind.zapper.core.model.ButtonAction
 import io.github.throughthewind.zapper.core.model.DPadWidget
+import io.github.throughthewind.zapper.core.model.KnownApps
 import io.github.throughthewind.zapper.core.model.LayoutButton
 import io.github.throughthewind.zapper.core.model.LayoutWidget
 import io.github.throughthewind.zapper.core.model.MediaBarWidget
@@ -207,7 +209,19 @@ private fun ButtonWidget(
     button: LayoutButton,
     actions: RemoteActions,
 ) {
-    val key = (button.action as? ButtonAction.Key)?.key
+    val action = button.action
+    if (action is ButtonAction.LaunchApp) {
+        AppShortcut(
+            name = button.label ?: KnownApps.named(action.appId)?.name ?: action.appId,
+            onPress = { actions.press(action) },
+            columns = button.columnSpan,
+            rows = button.rowSpan,
+            enabled = actions.isAvailable(action),
+            modifier = Modifier.fillMaxSize(),
+        )
+        return
+    }
+    val key = (action as? ButtonAction.Key)?.key
     val title = button.label ?: key?.title() ?: button.action.fallbackTitle()
     KeyButton(
         label = title,

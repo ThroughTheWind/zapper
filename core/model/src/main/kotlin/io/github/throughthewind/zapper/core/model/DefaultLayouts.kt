@@ -6,9 +6,7 @@ package io.github.throughthewind.zapper.core.model
  * top-left, away from them. The top row follows RemotePages (Power, Source, Keyboard, Menu) rather
  * than RemoteScreen's Settings key, which no Samsung code is confirmed for.
  *
- * The design's Main page puts 2x1 Netflix and YouTube shortcuts between the rockers. App shortcuts
- * arrive with WI-009; until then those two rows stay empty rather than hold keys the design does
- * not place there.
+ * Pages follow RemotePages: Main, Apps (2x1 shortcuts to the bundled [KnownApps]), Numbers.
  */
 object DefaultLayouts {
     val standard: RemoteLayout =
@@ -32,12 +30,21 @@ object DefaultLayouts {
                                 key(RemoteKey.BACK, 3, 2),
                                 key(RemoteKey.MUTE, 3, 3),
                                 RockerWidget("volume", RockerKind.VOLUME, column = 0, row = 4),
-                                // Rows 4-5, columns 1-2: the Netflix and YouTube shortcuts (WI-009).
+                                app("netflix", 1, 4),
+                                app("youtube", 1, 5),
                                 key(RemoteKey.GUIDE, 1, 6),
                                 key(RemoteKey.INFO, 2, 6),
                                 RockerWidget("channel", RockerKind.CHANNEL, column = 3, row = 4),
                                 MediaBarWidget("media", column = 0, row = 7),
                             ),
+                    ),
+                    RemotePage(
+                        id = "apps",
+                        name = "Apps",
+                        widgets =
+                            KnownApps.all.mapIndexed { index, known ->
+                                app(known.id, column = (index % 2) * 2, row = index / 2)
+                            },
                     ),
                     RemotePage(
                         id = "numbers",
@@ -46,6 +53,20 @@ object DefaultLayouts {
                     ),
                 ),
         )
+
+    /** A 2x1 shortcut to the known app [id] (docs/design/components/AppShortcut). */
+    private fun app(
+        id: String,
+        column: Int,
+        row: Int,
+    ) = LayoutButton(
+        id = id,
+        action = ButtonAction.LaunchApp(id),
+        column = column,
+        row = row,
+        columnSpan = 2,
+        label = KnownApps.named(id)?.name,
+    )
 
     private fun key(
         key: RemoteKey,

@@ -13,6 +13,9 @@ All notable changes to Zapper are listed here. The format follows
 
 ### Added
 
+- App shortcuts: Netflix and YouTube on the main page, and an Apps page with Prime Video,
+  Disney+, Apple TV, Spotify and Plex. The app opens under whichever id the TV lists, and a
+  shortcut to an app the TV lacks says so.
 - A Keyboard key opens the phone keyboard to type into the TV's search fields. It also opens by
   itself when the TV shows its own keyboard.
 - An app icon, with a monochrome version for themed icons.

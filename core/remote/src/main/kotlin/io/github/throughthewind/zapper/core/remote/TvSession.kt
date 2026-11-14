@@ -31,8 +31,15 @@ interface TvSession {
         action: KeyAction = KeyAction.CLICK,
     )
 
-    /** Requires [Capability.APP_LAUNCH]. */
+    /**
+     * Opens [appId], a [io.github.throughthewind.zapper.core.model.KnownApps] id or one from
+     * [installedApps]. Throws [TvError.AppNotInstalled] when the TV says it does not have it.
+     * Requires [Capability.APP_LAUNCH].
+     */
     suspend fun launchApp(appId: String): Unit = throw TvException(TvError.Unsupported("launching apps"))
+
+    /** The apps the TV says it has. Empty when it does not say, which some firmware never does (FR-6.1). */
+    suspend fun installedApps(): List<TvApp> = emptyList()
 
     /**
      * True while the TV shows its on-screen keyboard, so text sent now lands in a field. Stays false
@@ -48,6 +55,12 @@ interface TvSession {
 
     suspend fun disconnect()
 }
+
+/** An app installed on the TV, by the TV's own [id]. */
+data class TvApp(
+    val id: String,
+    val name: String,
+)
 
 private val NO_TV_KEYBOARD: StateFlow<Boolean> = MutableStateFlow(false).asStateFlow()
 
@@ -115,6 +128,10 @@ sealed interface TvError {
 
     data object NotConnected : TvError {
         override val message = "Not connected to a TV"
+    }
+
+    data object AppNotInstalled : TvError {
+        override val message = "This app is not installed on the TV"
     }
 
     data class Unsupported(

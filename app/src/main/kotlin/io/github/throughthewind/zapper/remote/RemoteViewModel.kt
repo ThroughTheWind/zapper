@@ -14,6 +14,7 @@ import io.github.throughthewind.zapper.core.model.TvDevice
 import io.github.throughthewind.zapper.core.model.requiredCapability
 import io.github.throughthewind.zapper.core.remote.ConnectionState
 import io.github.throughthewind.zapper.core.remote.TvConnection
+import io.github.throughthewind.zapper.core.remote.TvError
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -86,13 +87,19 @@ class RemoteViewModel(
     /** Sends [text] to the TV; closes the bar when the TV took it. */
     fun sendText(text: String) {
         viewModelScope.launch {
-            if (connection.sendText(text)) {
-                _textInput.value = false
-                _feedback.emit(RemoteFeedback.Success)
-            } else {
-                _feedback.emit(RemoteFeedback.Failure("The TV did not get the text"))
-            }
+            val error = connection.sendText(text)
+            if (error == null) _textInput.value = false
+            report(error)
         }
+    }
+
+    /** Opens an app; a Success haptic when the TV took it, a snackbar saying why when not (AppShortcut). */
+    private fun launchApp(appId: String) {
+        viewModelScope.launch { report(connection.launchApp(appId)) }
+    }
+
+    private suspend fun report(error: TvError?) {
+        _feedback.emit(if (error == null) RemoteFeedback.Success else RemoteFeedback.Failure(error.message))
     }
 
     val hardwareVolumeKeys: StateFlow<Boolean> =
@@ -124,6 +131,7 @@ class RemoteViewModel(
             override fun press(action: ButtonAction) {
                 when (action) {
                     ButtonAction.OpenKeyboard -> openTextInput()
+                    is ButtonAction.LaunchApp -> launchApp(action.appId)
                     else -> connection.press(action)
                 }
             }

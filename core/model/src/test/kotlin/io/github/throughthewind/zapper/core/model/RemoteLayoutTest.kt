@@ -120,9 +120,21 @@ class DefaultLayoutsTest {
     }
 
     @Test
-    fun `numbers are on their own page`() {
-        assertEquals(listOf("main", "numbers"), layout.pages.map { it.id })
-        assertTrue(layout.pages[1].widgets.single() is NumberPadWidget)
+    fun `pages are Main, Apps and Numbers, with numbers on their own`() {
+        assertEquals(listOf("main", "apps", "numbers"), layout.pages.map { it.id })
+        assertTrue(layout.pages[2].widgets.single() is NumberPadWidget)
+    }
+
+    @Test
+    fun `Netflix and YouTube sit on the Main page and every known app on the Apps page`() {
+        fun apps(page: RemotePage) = page.widgets.mapNotNull { ((it as? LayoutButton)?.action as? ButtonAction.LaunchApp)?.appId }
+
+        assertEquals(listOf("netflix", "youtube"), apps(layout.pages[0]))
+        assertEquals(KnownApps.all.map { it.id }, apps(layout.pages[1]))
+        layout.pages.flatMap { it.widgets }.filterIsInstance<LayoutButton>().filter { it.action is ButtonAction.LaunchApp }.forEach {
+            assertEquals(2, it.columnSpan, it.id)
+            assertEquals(KnownApps.named(it.id)?.name, it.label)
+        }
     }
 }
 

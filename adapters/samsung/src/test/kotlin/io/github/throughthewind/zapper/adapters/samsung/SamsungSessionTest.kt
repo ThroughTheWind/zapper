@@ -5,6 +5,7 @@ import io.github.throughthewind.zapper.core.model.RemoteKey
 import io.github.throughthewind.zapper.core.model.TvDevice
 import io.github.throughthewind.zapper.core.remote.ConnectionState
 import io.github.throughthewind.zapper.core.remote.InMemoryCredentialStore
+import io.github.throughthewind.zapper.core.remote.TvApp
 import io.github.throughthewind.zapper.core.remote.TvError
 import io.github.throughthewind.zapper.core.remote.TvException
 import io.github.throughthewind.zapper.core.remote.TvSession
@@ -38,6 +39,9 @@ class SamsungSessionTest : TvSessionContract() {
     private val receivedList = CopyOnWriteArrayList<String>()
     private val credentials = InMemoryCredentialStore()
 
+    /** What the fake TV answers to `ed.installedApp.get`; null never answers, like some firmware. */
+    @Volatile private var appList: String? = null
+
     @BeforeEach
     fun start() = server.start()
 
@@ -65,6 +69,10 @@ class SamsungSessionTest : TvSessionContract() {
                             webSocket: WebSocket,
                             text: String,
                         ) {
+                            if (text.contains("ed.installedApp.get")) {
+                                appList?.let(webSocket::send)
+                                return
+                            }
                             received += text
                             receivedList += text
                         }
@@ -90,6 +98,7 @@ class SamsungSessionTest : TvSessionContract() {
             scheme = "ws",
             port = server.port,
             pairingTimeoutMs = 5_000,
+            appsTimeoutMs = 300,
         )
 
     override fun newSession(): TvSession {
@@ -153,6 +162,48 @@ class SamsungSessionTest : TvSessionContract() {
 
             session.disconnect()
             assertFalse(session.tvKeyboard.value)
+        }
+
+    @Test
+    fun `a known app opens under the id the TV lists`() =
+        runBlocking {
+            appList = """{"event":"ed.installedApp.get","data":{"data":[{"appId":"11101200001","app_type":2,"name":"Netflix"}]}}"""
+            fakeTv()
+            val session = session()
+            session.connect()
+
+            session.launchApp("netflix")
+
+            assertEquals(SamsungProtocol.launchApp("11101200001"), received.poll(5, TimeUnit.SECONDS))
+            assertEquals(listOf(TvApp("11101200001", "Netflix")), session.installedApps())
+            session.disconnect()
+        }
+
+    @Test
+    fun `an app missing from the TV list fails with AppNotInstalled`() =
+        runBlocking {
+            appList = """{"event":"ed.installedApp.get","data":{"data":[{"appId":"111299001912","app_type":2,"name":"YouTube"}]}}"""
+            fakeTv()
+            val session = session()
+            session.connect()
+
+            val error = assertFailsWith<TvException> { session.launchApp("netflix") }
+
+            assertEquals(TvError.AppNotInstalled, error.error)
+            session.disconnect()
+        }
+
+    @Test
+    fun `a TV that does not list its apps gets the newest id`() =
+        runBlocking {
+            fakeTv()
+            val session = session()
+            session.connect()
+
+            session.launchApp("netflix")
+
+            assertEquals(SamsungProtocol.launchApp("3201907018807"), received.poll(5, TimeUnit.SECONDS))
+            session.disconnect()
         }
 
     @Test

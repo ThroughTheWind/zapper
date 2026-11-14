@@ -2,6 +2,7 @@ package io.github.throughthewind.zapper.adapters.fake
 
 import io.github.throughthewind.zapper.core.model.Capability
 import io.github.throughthewind.zapper.core.model.KeyAction
+import io.github.throughthewind.zapper.core.model.KnownApps
 import io.github.throughthewind.zapper.core.model.RemoteKey
 import io.github.throughthewind.zapper.core.model.TvDevice
 import io.github.throughthewind.zapper.core.remote.ConnectionState
@@ -9,6 +10,7 @@ import io.github.throughthewind.zapper.core.remote.CredentialStore
 import io.github.throughthewind.zapper.core.remote.DiscoveredTv
 import io.github.throughthewind.zapper.core.remote.PairingRequest
 import io.github.throughthewind.zapper.core.remote.TvAdapter
+import io.github.throughthewind.zapper.core.remote.TvApp
 import io.github.throughthewind.zapper.core.remote.TvError
 import io.github.throughthewind.zapper.core.remote.TvException
 import io.github.throughthewind.zapper.core.remote.TvSession
@@ -29,6 +31,9 @@ data class FakeTvBehaviour(
     val pairingDelayMs: Long = 1_500,
     val refusePairing: Boolean = false,
     val unsupportedKeys: Set<RemoteKey> = setOf(RemoteKey.GUIDE),
+    /** Every bundled app but Plex, so the debug build shows a shortcut failing too. */
+    val installedApps: List<TvApp> =
+        KnownApps.all.filter { it.id != "plex" }.map { TvApp(it.id, it.name) },
 )
 
 /**
@@ -42,7 +47,7 @@ class FakeTvAdapter(
     override val id: String = ID
     override val displayName: String = "Simulated TV"
 
-    /** Every key any session sent, as `KEY:ACTION`, and text as `TEXT:typed`, oldest first. */
+    /** Every key any session sent as `KEY:ACTION`, text as `TEXT:typed` and apps as `APP:id`, oldest first. */
     val received: MutableList<String> = CopyOnWriteArrayList()
 
     /** False simulates a TV that is off or off the network: connecting fails with Unreachable. */
@@ -109,7 +114,7 @@ class FakeTvAdapter(
         private val credentials: CredentialStore,
     ) : TvSession {
         override val capabilities: StateFlow<Set<Capability>> =
-            MutableStateFlow(setOf(Capability.KEYS, Capability.LONG_PRESS, Capability.TEXT_INPUT))
+            MutableStateFlow(setOf(Capability.KEYS, Capability.LONG_PRESS, Capability.TEXT_INPUT, Capability.APP_LAUNCH))
 
         val keyboard = MutableStateFlow(false)
         override val tvKeyboard: StateFlow<Boolean> = keyboard.asStateFlow()
@@ -166,6 +171,14 @@ class FakeTvAdapter(
             if (_state.value != ConnectionState.Connected) throw TvException(TvError.NotConnected)
             received += "TEXT:$text"
             keyboard.value = false
+        }
+
+        override suspend fun installedApps(): List<TvApp> = behaviour.installedApps
+
+        override suspend fun launchApp(appId: String) {
+            if (_state.value != ConnectionState.Connected) throw TvException(TvError.NotConnected)
+            if (behaviour.installedApps.none { it.id == appId }) throw TvException(TvError.AppNotInstalled)
+            received += "APP:$appId"
         }
 
         override suspend fun disconnect() {

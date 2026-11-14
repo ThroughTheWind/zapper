@@ -183,7 +183,10 @@ sealed interface ButtonAction {
         val key: RemoteKey,
     ) : ButtonAction
 
-    /** Opens an app on the TV. Needs [Capability.APP_LAUNCH]. */
+    /**
+     * Opens an app on the TV. [appId] is a [KnownApps] id, which the adapter translates, or an id
+     * the TV itself listed. Needs [Capability.APP_LAUNCH].
+     */
     @Serializable
     data class LaunchApp(
         val appId: String,

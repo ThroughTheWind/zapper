@@ -7,6 +7,7 @@ import io.github.throughthewind.zapper.core.model.TvDevice
 import io.github.throughthewind.zapper.core.remote.ConnectionState
 import io.github.throughthewind.zapper.core.remote.CredentialStore
 import io.github.throughthewind.zapper.core.remote.PairingRequest
+import io.github.throughthewind.zapper.core.remote.TvApp
 import io.github.throughthewind.zapper.core.remote.TvError
 import io.github.throughthewind.zapper.core.remote.TvException
 import io.github.throughthewind.zapper.core.remote.TvSession
@@ -18,6 +19,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.withTimeoutOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
@@ -32,9 +34,10 @@ internal class SamsungSession(
     private val scheme: String = "wss",
     private val port: Int = SamsungProtocol.SECURE_PORT,
     private val pairingTimeoutMs: Long = 60_000,
+    private val appsTimeoutMs: Long = 3_000,
 ) : TvSession {
     override val capabilities: StateFlow<Set<Capability>> =
-        MutableStateFlow(setOf(Capability.KEYS, Capability.LONG_PRESS, Capability.TEXT_INPUT)).asStateFlow()
+        MutableStateFlow(setOf(Capability.KEYS, Capability.LONG_PRESS, Capability.TEXT_INPUT, Capability.APP_LAUNCH)).asStateFlow()
 
     private val _tvKeyboard = MutableStateFlow(false)
     override val tvKeyboard: StateFlow<Boolean> = _tvKeyboard.asStateFlow()
@@ -43,6 +46,11 @@ internal class SamsungSession(
     override val state: StateFlow<ConnectionState> = _state.asStateFlow()
 
     @Volatile private var socket: WebSocket? = null
+
+    /** The TV's app list once asked; empty when it did not answer. */
+    @Volatile private var apps: List<SamsungProtocol.App>? = null
+
+    @Volatile private var appsReply: CompletableDeferred<List<SamsungProtocol.App>>? = null
 
     override suspend fun connect() {
         if (_state.value == ConnectionState.Connected) return
@@ -92,6 +100,10 @@ internal class SamsungSession(
 
                             SamsungProtocol.Event.KeyboardHidden -> {
                                 _tvKeyboard.value = false
+                            }
+
+                            is SamsungProtocol.Event.InstalledApps -> {
+                                appsReply?.complete(event.apps)
                             }
 
                             is SamsungProtocol.Event.Other -> {
@@ -168,6 +180,32 @@ internal class SamsungSession(
         if (!ws.send(SamsungProtocol.textInput(text)) || !ws.send(SamsungProtocol.textInputEnd())) {
             throw TvException(TvError.ConnectionLost())
         }
+    }
+
+    override suspend fun installedApps(): List<TvApp> = samsungApps().map { TvApp(it.id, it.name) }
+
+    /**
+     * Opens the app, picking the id the TV lists for a known app. A TV that lists nothing (some
+     * firmware never answers) gets the newest id (research §2.4).
+     */
+    override suspend fun launchApp(appId: String) {
+        val candidates = samsungAppIds(appId)
+        val installed = samsungApps()
+        val app = installed.firstOrNull { it.id in candidates }
+        if (installed.isNotEmpty() && app == null) throw TvException(TvError.AppNotInstalled)
+        val message = SamsungProtocol.launchApp(app?.id ?: candidates.first(), native = app?.native == true)
+        if (!connectedSocket().send(message)) throw TvException(TvError.ConnectionLost())
+    }
+
+    private suspend fun samsungApps(): List<SamsungProtocol.App> {
+        apps?.let { return it }
+        val reply = CompletableDeferred<List<SamsungProtocol.App>>()
+        appsReply = reply
+        if (!connectedSocket().send(SamsungProtocol.installedAppsRequest())) throw TvException(TvError.ConnectionLost())
+        val listed = withTimeoutOrNull(appsTimeoutMs) { reply.await() }.orEmpty()
+        // Asked once per connection: a TV that did not answer will not answer the next time either.
+        apps = listed
+        return listed
     }
 
     private fun connectedSocket(): WebSocket {

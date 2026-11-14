@@ -17,6 +17,7 @@ import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /** Reconnection, backoff and the no-queue rule (SPEC F3), against the simulated TV. */
@@ -174,7 +175,7 @@ class TvConnectionTest {
             runCurrent()
             assertTrue(connection.tvKeyboard.value)
 
-            assertTrue(connection.sendText("stranger"))
+            assertNull(connection.sendText("stranger"))
             runCurrent()
             assertEquals(listOf("TEXT:stranger"), tv.received)
             assertFalse(connection.tvKeyboard.value)
@@ -189,8 +190,22 @@ class TvConnectionTest {
             connection.connect(device)
             runCurrent()
 
-            assertFalse(connection.sendText("stranger"))
+            assertEquals(TvError.NotConnected, connection.sendText("stranger"))
             assertTrue(connection.capabilities.value.isEmpty())
             assertTrue(tv.received.isEmpty())
+        }
+
+    @Test
+    fun `an app shortcut opens the app, and one the TV lacks says so`() =
+        runTest {
+            paired()
+            val connection = connection()
+            connection.connect(device)
+            runCurrent()
+            assertTrue(Capability.APP_LAUNCH in connection.capabilities.value)
+
+            assertNull(connection.launchApp("netflix"))
+            assertEquals(TvError.AppNotInstalled, connection.launchApp("plex"))
+            assertEquals(listOf("APP:netflix"), tv.received)
         }
 }

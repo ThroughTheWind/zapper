@@ -20,6 +20,7 @@ The board. One row per live work item, grouped by status. Items live in
 | Id | Title | Type | Branch |
 | --- | --- | --- | --- |
 | [WI-008](items/WI-008-text-input.md) | Type into the TV from the phone keyboard | feature | `claude/project-thread-qlkfpf` |
+| [WI-009](items/WI-009-app-shortcuts.md) | Launch TV apps from shortcut buttons | feature | `claude/project-thread-qlkfpf` |
 
 ## Planned
 
@@ -31,7 +32,6 @@ The board. One row per live work item, grouped by status. Items live in
 
 | Id | Title | Type |
 | --- | --- | --- |
-| [WI-009](items/WI-009-app-shortcuts.md) | Launch TV apps from shortcut buttons | feature |
 | [WI-010](items/WI-010-power-on.md) | Turn the TV on and show its power state | feature |
 | [WI-011](items/WI-011-appearance-and-feedback-settings.md) | Let users pick theme, colors, key style and haptics | feature |
 | [WI-012](items/WI-012-layout-edit-mode.md) | Edit the remote: move, resize, add and remove buttons | feature |

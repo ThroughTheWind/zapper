@@ -21,8 +21,8 @@ the next HDMI input, is reported working on the same generation.
 ## Decision
 
 `accepted` — 2026-11-15, Antoine, by asking to investigate the HDMI shortcuts not working. The
-direction (replace the direct keys with a next-input key on Samsung) is put to Antoine on a decision
-card in the project thread; this item follows the recommended option until Antoine answers.
+direction was chosen by Antoine on 2026-11-15 from three options: replace the direct keys with a
+next-input key on Samsung (chosen), keep both, or a Source-menu macro per port.
 
 ## Plan
 

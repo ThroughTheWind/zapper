@@ -456,10 +456,13 @@ private fun MediaControl.key(): RemoteKey =
 internal fun RemoteKey?.emphasis(): KeyEmphasis =
     when (this) {
         RemoteKey.POWER -> KeyEmphasis.Power
+
         RemoteKey.OK -> KeyEmphasis.Primary
+
         RemoteKey.SOURCE, RemoteKey.HDMI_1, RemoteKey.HDMI_2, RemoteKey.HDMI_3, RemoteKey.HDMI_4,
         RemoteKey.HDMI_NEXT,
         -> KeyEmphasis.Tertiary
+
         else -> KeyEmphasis.Standard
     }
 

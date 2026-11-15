@@ -1,0 +1,131 @@
+name: Reproducible build
+
+# F-Droid builds Zapper from source. It can ship the APK we signed, under the same key as GitHub
+# Releases, only if its build matches ours byte for byte (docs/releasing.md, "Reproducible builds").
+#
+# This builds the unsigned release APK twice, in different environments, and fails if the two
+# differ:
+#   A. the release workflow's setup: Temurin JDK 21 on the runner;
+#   B. a Debian container with Debian's OpenJDK 21, like F-Droid's build server, from another
+#      checkout path and with its own Gradle home.
+# Run by hand with a tag, it also checks that A matches the APK published for that tag once the
+# signature is copied over: the check F-Droid itself runs.
+
+on:
+  pull_request:
+    paths:
+      - "**/*.gradle.kts"
+      - "gradle/**"
+      - "gradle.properties"
+      - "**/proguard-rules.pro"
+      - "**/src/main/**"
+      - ".github/workflows/reproducible.yml"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to compare with its published APK, for example v1.0.0. Empty: build the selected branch only."
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: reproducible-${{ github.ref }}-${{ inputs.tag }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    # Explicit bash runs every step with -e and -o pipefail.
+    shell: bash
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    env:
+      APK: app/build/outputs/apk/release/app-release-unsigned.apk
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.tag || github.sha }}
+          path: a
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.tag || github.sha }}
+          path: elsewhere/b
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: android-actions/setup-android@v4
+
+      # No signing variables, so assembleRelease leaves the APK unsigned. No build cache, so each
+      # build compiles everything itself.
+      - name: Build A (Temurin JDK on the runner)
+        working-directory: a
+        run: ./gradlew --no-daemon --no-build-cache :app:assembleRelease
+
+      # Build A has installed every SDK package the build needs, so the container reuses the SDK.
+      - name: Build B (Debian OpenJDK in a container)
+        run: |
+          docker run --rm \
+            -v "$ANDROID_HOME:/opt/android-sdk" \
+            -v "$GITHUB_WORKSPACE/elsewhere/b:/home/builder/zapper" \
+            -e ANDROID_HOME=/opt/android-sdk \
+            -e GRADLE_USER_HOME=/tmp/gradle-home \
+            -w /home/builder/zapper \
+            debian:trixie \
+            bash -euo pipefail -c '
+              apt-get update -qq
+              apt-get install -y -qq --no-install-recommends openjdk-21-jdk-headless ca-certificates > /dev/null
+              java -version
+              ./gradlew --no-daemon --no-build-cache :app:assembleRelease
+            '
+
+      - name: Compare A and B
+        run: |
+          a="a/$APK"
+          b="elsewhere/b/$APK"
+          sha256sum "$a" "$b"
+          if cmp -s "$a" "$b"; then
+            echo "Identical: the release build is reproducible across these two environments."
+            exit 0
+          fi
+          echo "::error::The two builds differ, so F-Droid could not ship the developer-signed APK. See the diffoscope report artifact."
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq --no-install-recommends diffoscope-minimal > /dev/null
+          # diffoscope exits 1 when it finds differences, which is the expected case here.
+          diffoscope --text diffoscope.txt --max-report-size 2000000 "$a" "$b" || true
+          head -n 200 diffoscope.txt
+          exit 1
+
+      - name: Compare A with the published APK
+        if: inputs.tag != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.tag }}
+        run: |
+          gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --pattern "zapper-*.apk" --dir published
+          published="$(ls published/zapper-*.apk)"
+          build_tools="$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -n 1)"
+          export PATH="$build_tools:$PATH"
+          pipx install apksigcopier
+          # Copies the published signature onto our unsigned build and verifies it: it passes only
+          # if everything but the signature is identical.
+          if apksigcopier compare --unsigned "$published" "a/$APK"; then
+            echo "Matches $published: F-Droid can ship the developer-signed APK for $TAG."
+          else
+            echo "::error::The build of $TAG does not match its published APK"
+            exit 1
+          fi
+
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: reproducibility-report
+          path: |
+            diffoscope.txt
+            a/${{ env.APK }}
+            elsewhere/b/${{ env.APK }}
+          if-no-files-found: ignore
+          retention-days: 14

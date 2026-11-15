@@ -86,12 +86,14 @@ jobs:
           base64 --decode <<< "$KEYSTORE_BASE64" > "$keystore"
           echo "ZAPPER_KEYSTORE_FILE=$keystore" >> "$GITHUB_ENV"
 
-      - name: Build the release APK
+      # The APK is what people install; the App Bundle (AAB) is what Google Play takes. Both are
+      # signed with the release key. Only the APK goes on the GitHub Release (docs/releasing.md).
+      - name: Build the release APK and App Bundle
         env:
           ZAPPER_KEYSTORE_PASSWORD: ${{ secrets.ZAPPER_KEYSTORE_PASSWORD }}
           ZAPPER_KEY_ALIAS: ${{ secrets.ZAPPER_KEY_ALIAS }}
           ZAPPER_KEY_PASSWORD: ${{ secrets.ZAPPER_KEY_PASSWORD }}
-        run: ./gradlew :app:assembleRelease
+        run: ./gradlew :app:assembleRelease :app:bundleRelease
 
       - name: Verify the APK and write the release notes
         env:
@@ -118,8 +120,22 @@ jobs:
             exit 1
           fi
 
+          # jarsigner, not apksigner, signs an AAB; check it carries a signature at all.
+          aab="app/build/outputs/bundle/release/app-release.aab"
+          if [[ ! -f "$aab" ]]; then
+            echo "::error::$aab was not produced"
+            exit 1
+          fi
+          # Into a variable first: grep -q exits early, and pipefail would then fail on unzip.
+          aab_entries="$(unzip -l "$aab")"
+          if ! grep -qE 'META-INF/[^/]+\.(RSA|EC|DSA)$' <<< "$aab_entries"; then
+            echo "::error::The App Bundle is not signed"
+            exit 1
+          fi
+
           mkdir dist
           cp "$apk" "dist/zapper-$VERSION.apk"
+          cp "$aab" "dist/zapper-$VERSION.aab"
           (cd dist && sha256sum "zapper-$VERSION.apk" > "zapper-$VERSION.apk.sha256")
           apk_sha256="$(cut -d ' ' -f 1 "dist/zapper-$VERSION.apk.sha256")"
           # apksigner's wording for this line differs between build-tools versions, so match loosely

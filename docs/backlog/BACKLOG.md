@@ -19,6 +19,7 @@ The board. One row per live work item, grouped by status. Items live in
 
 | Id | Title | Type | Branch |
 | --- | --- | --- | --- |
+| [WI-023](items/WI-023-store-distribution-prep.md) | Prepare releases for F-Droid and app stores | chore | `claude/project-thread-07pvc6` |
 | [WI-025](items/WI-025-preview-builds-for-testers.md) | Ship preview builds of unmerged branches to testers | chore | `claude/project-thread-2itz49` |
 
 ## Planned

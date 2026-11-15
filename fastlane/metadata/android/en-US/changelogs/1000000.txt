@@ -1,0 +1,1 @@
+Zapper 1.0: works with TalkBack and large text, says plainly when the TV cannot be reached (with Retry and Switch TV), and comes with a guide for adding your own TV brand.

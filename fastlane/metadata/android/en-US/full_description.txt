@@ -1,0 +1,22 @@
+Zapper is a free, open-source remote for your smart TV, with a modern design and buttons you can arrange the way you like.
+
+<b>What it does</b>
+<ul>
+<li>Finds your TV on the Wi-Fi and pairs once.</li>
+<li>All the usual keys: power, D-pad, volume, channels, media, numbers, source and HDMI inputs.</li>
+<li>Type into the TV from your phone's keyboard.</li>
+<li>Open TV apps from shortcut buttons.</li>
+<li>Turn the TV on over the network (Wake-on-LAN).</li>
+<li>Rearrange every key, add pages, pick colours and key styles, and keep one layout per TV. Export and import layouts as files.</li>
+<li>Works with TalkBack and large text.</li>
+</ul>
+
+<b>Supported TVs</b>
+Samsung smart TVs running Tizen (2016 and later). Other brands plug in through adapters, and more are planned.
+
+<b>Local only</b>
+Zapper talks to your TV over your home network and nothing else: no account, no ads, no analytics, no crash reporting. It needs no special permission besides network access. TVs use plain HTTP on the local network, so cleartext traffic is allowed, and Zapper only uses it toward addresses on your network.
+
+Zapper is not affiliated with or endorsed by Samsung.
+
+Licensed under GPL-3.0. Source code, issues and the guide for adding a TV brand: https://github.com/ThroughTheWind/zapper

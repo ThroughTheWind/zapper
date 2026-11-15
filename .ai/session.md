@@ -12,7 +12,8 @@ All four roadmap phases are merged and shipped: Phases 2 and 3 as 0.2.0, Phase 4
 
 ## In progress
 
-Nothing in progress. Every item that was in `review` (WI-008 to WI-016, WI-018, WI-022) was closed as `done` and archived on 2026-11-15 at Antoine's request; the on-device checks recorded as open in their Review sections were not run separately. WI-001 (reference TV spike) is the only open item. WI-025 (preview builds for testers) is in review; once merged, the preview key secrets in `docs/previews.md` must be added before the first preview run.
+- WI-023 prepares releases for F-Droid and app stores (store metadata, an App Bundle, a reproducible-build check). Submitting to a store is Antoine's call after it lands; the evaluation is in the project's "Zapper store distribution" doc.
+- Every item that was in `review` (WI-008 to WI-016, WI-018, WI-022) was closed as `done` and archived on 2026-11-15 at Antoine's request; the on-device checks recorded as open in their Review sections were not run separately. WI-001 (reference TV spike) is the only open item. WI-025 (preview builds for testers) is in review; once merged, the preview key secrets in `docs/previews.md` must be added before the first preview run.
 
 ## Resume from
 

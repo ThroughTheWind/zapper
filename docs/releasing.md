@@ -90,4 +90,14 @@ The workflow refuses a tag that does not match the version, a version without re
 changelog section, missing secrets, and an APK that is unsigned, debuggable or carries the wrong
 version.
 
+If the workflow failed **before publishing** (no release on the Releases page), fix it on `main`,
+then delete the tag and push it again on the fixed commit. Re-running the failed run does not help:
+it runs the workflow as it was at the tagged commit.
+
+```bash
+git push origin :refs/tags/vX.Y.Z && git tag -d vX.Y.Z
+git switch main && git pull
+git tag -a vX.Y.Z -m "Zapper X.Y.Z" && git push origin vX.Y.Z
+```
+
 If a release went out broken, do not move or reuse its tag: fix on `main` and release `X.Y.Z+1`.

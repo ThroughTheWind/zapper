@@ -110,7 +110,7 @@ Optional — uncomment if you want it. Not shipped active because it is a prefer
 | How a screen looks | [`docs/design/`](docs/design/README.md): build each component as its README under `docs/design/components/` specifies |
 | TV protocols | [`docs/research/tv-remote-protocols.md`](docs/research/tv-remote-protocols.md) |
 | Why a decision was made | [`docs/decisions/`](docs/decisions/README.md) |
-| Adding a TV brand | [`CONTRIBUTING.md`](CONTRIBUTING.md#adding-a-tv-brand) and [`.ai/rules/adapters.md`](.ai/rules/adapters.md) |
+| Adding a TV brand | [`docs/adapters.md`](docs/adapters.md) and [`.ai/rules/adapters.md`](.ai/rules/adapters.md) |
 
 <!-- rungs:begin instructions@1.4.0 -->
 ## Repo map

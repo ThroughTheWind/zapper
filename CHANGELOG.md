@@ -6,6 +6,21 @@ All notable changes to Zapper are listed here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- When the TV cannot be reached, a banner on the remote offers Retry and Switch TV, and tapping a
+  key says "Not connected" with Reconnect.
+- A guide for adding a TV brand, `docs/adapters.md`, starting from an example adapter that is
+  tested in CI.
+
+### Fixed
+
+- TalkBack can use the remote: each key is read once by its action, a double tap presses it, and
+  keys read as disabled while no TV is connected. The connection chip and banners are announced
+  when they change.
+- Key text follows the phone's font size and shrinks to fit its key instead of being cut off; the
+  welcome screen scrolls at large font sizes.
+
 ## [0.2.0] - 2026-11-15
 
 ### Added

@@ -9,7 +9,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.List
 import androidx.compose.material.icons.rounded.History
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import io.github.throughthewind.zapper.core.designsystem.theme.KeyType
@@ -63,7 +62,7 @@ fun NumberPad(
                         modifier = Modifier.weight(1f).fillMaxHeight(),
                     ) {
                         when (key) {
-                            is NumberPadKey.Digit -> Text(label, style = KeyType.numeral)
+                            is NumberPadKey.Digit -> KeyText(label, style = KeyType.numeral)
                             NumberPadKey.ChannelList -> Icon(Icons.AutoMirrored.Rounded.List, contentDescription = null)
                             NumberPadKey.PreviousChannel -> Icon(Icons.Rounded.History, contentDescription = null)
                         }

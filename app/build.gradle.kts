@@ -19,6 +19,15 @@ val zapperVersionCode: Int =
 // secrets (see docs/releasing.md). Without it, assembleRelease still builds an unsigned APK.
 val releaseKeystore = providers.environmentVariable("ZAPPER_KEYSTORE_FILE").orNull
 
+// Preview builds (docs/previews.md) are numbered by the workflow that publishes them, so each one
+// installs over the last. A local build without the property is preview 0.
+val previewNumber: Int =
+    providers
+        .gradleProperty("zapperPreviewNumber")
+        .orNull
+        ?.let { requireNotNull(it.toIntOrNull()?.takeIf { n -> n >= 0 }) { "zapperPreviewNumber must be a whole number, got $it" } }
+        ?: 0
+
 android {
     namespace = "io.github.throughthewind.zapper"
     compileSdk =
@@ -62,6 +71,16 @@ android {
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-dev"
         }
+        // A release build of an unmerged branch for testers, installed beside the release as
+        // "Zapper Preview". Built unsigned: the preview workflow signs it with the preview key
+        // after the build, so code from the branch never runs next to a signing secret.
+        create("preview") {
+            initWith(getByName("release"))
+            signingConfig = null
+            applicationIdSuffix = ".preview"
+            versionNameSuffix = "-preview.$previewNumber"
+            matchingFallbacks += "release"
+        }
     }
 
     compileOptions {
@@ -77,6 +96,14 @@ android {
     dependenciesInfo {
         includeInApk = false
         includeInBundle = false
+    }
+}
+
+// The preview version code is the preview number, so a newer preview always installs over an older
+// one whatever branch it came from. Previews are a separate app, so this never meets the release's.
+androidComponents {
+    onVariants(selector().withBuildType("preview")) { variant ->
+        variant.outputs.forEach { it.versionCode.set(previewNumber.coerceAtLeast(1)) }
     }
 }
 

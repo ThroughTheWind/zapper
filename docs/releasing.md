@@ -7,6 +7,7 @@ Zapper ships as a signed APK on [GitHub Releases](https://github.com/ThroughTheW
 (spec NFR-15). Pushing a tag `vX.Y.Z` runs [`release.yml`](../.github/workflows/release.yml), which
 tests, builds, signs and verifies the APK, then publishes it with its release notes. The `dev`
 pre-release is separate: CI refreshes it with a debug build on every push to `main`.
+Builds of unmerged branches for testers are [previews](previews.md), a separate app with its own key.
 
 ## Versions
 

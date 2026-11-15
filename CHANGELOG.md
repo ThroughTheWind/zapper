@@ -8,11 +8,20 @@ All notable changes to Zapper are listed here. The format follows
 
 ### Fixed
 
+- TalkBack can use the remote: each key is read once by its action, a double tap presses it, and
+  keys read as disabled while no TV is connected. The connection chip and banners are announced
+  when they change.
+- Key text follows the phone's font size and shrinks to fit its key instead of being cut off; the
+  welcome screen scrolls at large font sizes.
 - The remote fits under the top bar instead of scrolling.
 - TV names show characters such as `&` instead of `&amp;`.
 
 ### Added
 
+- When the TV cannot be reached, a banner on the remote offers Retry and Switch TV, and tapping a
+  key says "Not connected" with Reconnect.
+- A guide for adding a TV brand, `docs/adapters.md`, starting from an example adapter that is
+  tested in CI.
 - Source and HDMI 1 to 4 keys in the edit mode catalog (System group). HDMI keys switch
   straight to a port on Samsung TVs that support it; some models ignore them.
 - Edit mode, from the pencil on the remote: drag keys to move them, resize them with a handle,

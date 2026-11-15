@@ -28,6 +28,8 @@ The board. One row per live work item, grouped by status. Items live in
 | [WI-014](items/WI-014-layout-undo-reset-per-tv.md) | Undo edits, reset layouts and keep one layout per TV | feature | `claude/project-thread-n0w6sb` |
 | [WI-015](items/WI-015-layout-import-export.md) | Export and import layouts as files | feature | `claude/project-thread-n0w6sb` |
 | [WI-022](items/WI-022-source-and-hdmi-shortcuts.md) | Switch TV inputs from Source and HDMI shortcut keys | feature | `claude/project-thread-v05i3a` |
+| [WI-016](items/WI-016-accessibility-onboarding-polish.md) | Pass accessibility review and polish onboarding and errors | feature | `claude/project-thread-i8pmcn` |
+| [WI-018](items/WI-018-adapter-guide.md) | Write the guide for adding a TV brand | docs | `claude/project-thread-i8pmcn` |
 
 ## Planned
 
@@ -39,9 +41,7 @@ The board. One row per live work item, grouped by status. Items live in
 
 | Id | Title | Type |
 | --- | --- | --- |
-| [WI-016](items/WI-016-accessibility-onboarding-polish.md) | Pass accessibility review and polish onboarding and errors | feature |
 | [WI-017](items/WI-017-signed-release-on-tag.md) | Publish a signed APK to GitHub Releases on each tag | chore |
-| [WI-018](items/WI-018-adapter-guide.md) | Write the guide for adding a TV brand | docs |
 
 ## Proposed
 

@@ -55,7 +55,7 @@ The stack and the reasons for it are in [ADR-0001](docs/decisions/ADR-0001-kotli
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). Adding a TV brand is the most useful thing you can do if
-you own one.
+you own one: the [guide for adding a TV brand](docs/adapters.md) walks through it.
 
 ## License
 

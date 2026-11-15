@@ -20,6 +20,8 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
+import java.net.InetAddress
+import java.net.ServerSocket
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNotNull
@@ -58,8 +60,11 @@ class AndroidTvSessionTest : TvSessionContract() {
     @Test
     fun `probing an address without the service finds nothing`() =
         runBlocking {
-            tv.close()
-            assertNull(adapter.probe(FakeAndroidTv.HOST))
+            // A port nothing listens on. Closing the fake TV is not enough: its listening socket stays
+            // open until its accept thread wakes, which on a busy machine is after the probe.
+            val unused = ServerSocket(0, 1, InetAddress.getLoopbackAddress()).use { it.localPort }
+            val elsewhere = AndroidTvAdapter("Zapper test", { emptyFlow() }, unused, unused, wake = { _, _ -> })
+            assertNull(elsewhere.probe(FakeAndroidTv.HOST))
         }
 
     @Test

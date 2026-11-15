@@ -217,9 +217,7 @@ internal class AndroidTvSession(
         } catch (e: Exception) {
             // Before the TV says it started, a TLS error or a reset is the certificate being refused (TLS 1.3 refuses after the handshake).
             val error =
-                if (e is SSLException ||
-                    (e is SocketException && e !is SocketTimeoutException)
-                ) {
+                if (e is SSLException || e is SocketException) {
                     refused
                 } else {
                     TvError.ConnectionLost()

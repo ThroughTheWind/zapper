@@ -9,6 +9,8 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -18,18 +20,26 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.takeOrElse
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.disabled
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.onLongClick
 import androidx.compose.ui.semantics.role
-import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import io.github.throughthewind.zapper.core.designsystem.theme.LocalPowerColors
 import io.github.throughthewind.zapper.core.designsystem.theme.LocalRemoteMotion
 import io.github.throughthewind.zapper.core.designsystem.theme.RemoteGrid
@@ -85,6 +95,7 @@ fun RemoteKey(
     val scope = rememberCoroutineScope()
     val interaction = remember { MutableInteractionSource() }
     var pressed by remember { mutableStateOf(false) }
+    val disabledPress = LocalDisabledKeyPress.current
 
     val base = emphasis.colors()
     val stateLayer = if (pressed) base.content.copy(alpha = 0.10f) else Color.Transparent
@@ -104,11 +115,13 @@ fun RemoteKey(
             .background(container)
             .background(stateLayer)
             .then(if (emphasis == KeyEmphasis.Ghost) Modifier.border(1.dp, MaterialTheme.colorScheme.outline, shape) else Modifier)
-            .semantics {
-                contentDescription = label
-                role = Role.Button
-            }.pointerInput(enabled, repeatOnHold) {
-                if (!enabled) return@pointerInput
+            .keySemantics(label, enabled, onPress, onLongPress)
+            .pointerInput(enabled, repeatOnHold, disabledPress) {
+                if (!enabled) {
+                    // A disabled key still says why nothing happens (RemoteKey: Disabled).
+                    disabledPress?.let { tell -> detectTapGestures(onTap = { tell() }) }
+                    return@pointerInput
+                }
                 detectTapGestures(
                     onPress = {
                         pressed = true
@@ -151,4 +164,65 @@ fun RemoteKey(
     ) {
         CompositionLocalProvider(LocalContentColor provides contentColor, content = content)
     }
+}
+
+/**
+ * What a disabled key does when tapped, provided by the screen that knows why it is disabled: the
+ * remote shows "Not connected" with Reconnect. Null, as in edit mode, keeps disabled keys inert.
+ */
+val LocalDisabledKeyPress = staticCompositionLocalOf<(() -> Unit)?> { null }
+
+/**
+ * One TalkBack button per key (SPEC NFR-9): the label names the action, a double tap presses once
+ * even on keys that repeat while held, and a disabled key is announced as disabled. The key's own
+ * icon or text is not read twice.
+ */
+private fun Modifier.keySemantics(
+    label: String,
+    enabled: Boolean,
+    onPress: () -> Unit,
+    onLongPress: (() -> Unit)?,
+): Modifier =
+    clearAndSetSemantics {
+        contentDescription = label
+        role = Role.Button
+        if (enabled) {
+            onClick {
+                onPress()
+                true
+            }
+            onLongPress?.let { action ->
+                onLongClick {
+                    action()
+                    true
+                }
+            }
+        } else {
+            disabled()
+        }
+    }
+
+/** Smallest size a key's text shrinks to when the user's font size does not fit the key. */
+private val MinKeyText = 8.sp
+
+/**
+ * Text inside a key: follows the user's font size (SPEC NFR-9), and shrinks to fit when that is
+ * larger than the key, instead of being cut off.
+ */
+@Composable
+fun KeyText(
+    text: String,
+    style: TextStyle,
+    modifier: Modifier = Modifier,
+    color: Color = Color.Unspecified,
+) {
+    val ink = color.takeOrElse { style.color.takeOrElse { LocalContentColor.current } }
+    BasicText(
+        text = text,
+        modifier = modifier,
+        style = style.copy(color = ink, textAlign = TextAlign.Center),
+        softWrap = false,
+        maxLines = 1,
+        autoSize = TextAutoSize.StepBased(minFontSize = MinKeyText, maxFontSize = style.fontSize, stepSize = 1.sp),
+    )
 }

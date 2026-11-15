@@ -15,11 +15,13 @@ import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.PowerSettingsNew
+import androidx.compose.material.icons.rounded.WifiOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -79,6 +81,14 @@ fun RemoteScreen(
                 is RemoteFeedback.Failure -> {
                     haptics.perform(RemoteHaptic.Failure)
                     snackbar.showSnackbar(outcome.message)
+                }
+
+                RemoteFeedback.NotConnected -> {
+                    // One at a time: tapping five dead keys does not queue five snackbars.
+                    if (snackbar.currentSnackbarData == null) {
+                        val result = snackbar.showSnackbar("Not connected", actionLabel = "Reconnect")
+                        if (result == SnackbarResult.ActionPerformed) viewModel.retry()
+                    }
                 }
             }
         }
@@ -172,6 +182,19 @@ private fun RemoteContent(
                     body = help,
                 ) {
                     TextButton(onClick = viewModel::dismissPowerOnHelp) { Text("Got it") }
+                }
+            }
+            // ErrorsAndHelp: Offline. The chip turns red and the keys go disabled; this says why and
+            // what to do. A TV that is only asleep gets "TV off · Power on" in the chip instead.
+            if (chip == ConnectionChipState.Offline) {
+                Banner(
+                    kind = BannerKind.Error,
+                    icon = Icons.Rounded.WifiOff,
+                    title = "Can't reach ${device?.name ?: "the TV"}",
+                    body = "Check that the TV is on and on the same Wi-Fi as this phone.",
+                ) {
+                    TextButton(onClick = viewModel::retry) { Text("Retry") }
+                    TextButton(onClick = onChooseTv) { Text("Switch TV") }
                 }
             }
             layout?.let { RemoteCanvas(it, actions, modifier = Modifier.weight(1f)) }

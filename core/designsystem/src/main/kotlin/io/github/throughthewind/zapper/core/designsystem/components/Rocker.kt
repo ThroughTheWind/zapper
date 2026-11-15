@@ -14,10 +14,10 @@ import androidx.compose.material.icons.rounded.Remove
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.dp
 import io.github.throughthewind.zapper.core.designsystem.theme.KeyType
 
@@ -59,11 +59,12 @@ fun Rocker(
                 repeatOnHold = true,
                 modifier = Modifier.fillMaxWidth().weight(1f),
             ) { Icon(up, contentDescription = null, modifier = Modifier.size(28.dp)) }
-            Text(
+            // The halves already say "Volume up"; TalkBack skips the caption.
+            KeyText(
                 style.caption,
                 style = KeyType.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(vertical = 6.dp),
+                modifier = Modifier.padding(vertical = 6.dp).clearAndSetSemantics {},
             )
             RemoteKey(
                 label = style.downLabel,

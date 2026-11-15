@@ -2,10 +2,10 @@
 id: WI-017
 title: Publish a signed APK to GitHub Releases on each tag
 type: chore
-status: review
+status: done
 branch: claude/project-thread-vpshn1
 created: 2026-11-13
-updated: 2026-11-13
+updated: 2026-11-15
 related: [SPEC-AC-21, SPEC-NFR-15, ADR-0003]
 epic:
 children: []
@@ -88,8 +88,14 @@ release 0.1.0 at the end of Phase 1, and that release needs this pipeline.
   (`build` job, run 43504019119).
 - [x] `scripts/release-notes.sh`: prints the 0.1.0 notes; exits 1 naming the missing notes file
   or changelog section (run locally).
-- [ ] Dry run with the secrets set: waits on Antoine creating the key and secrets.
-- [ ] `v0.1.0` published with the APK and its `.sha256` (AC-21): waits on the tag.
-- [ ] Tag/version mismatch refused: shown by the first tag run's check step; not yet exercised.
+- [x] Dry run with the secrets set: the first one (2026-11-14) signed and verified the APK, then
+  failed to read the certificate digest from apksigner; fixed in PR #20 (looser match, value
+  validated, full output printed on a miss).
+- [x] `v0.1.0` published with `zapper-0.1.0.apk` and its `.sha256` (AC-21): Release run
+  43666993052, release at https://github.com/ThroughTheWind/zapper/releases/tag/v0.1.0.
+- [ ] Tag/version mismatch refused: the check ran and passed on the matching tag; the refusing
+  path has not been exercised on a real mismatched tag. Accepted as is: it is a plain string
+  comparison that fails the job before the build.
 
-Stays `review` until the first tag run publishes 0.1.0.
+Also during review: PR #18/#19 added a CI check that the release build does not link the
+simulated TV, and PR #20 made the release run build and test release variants only.

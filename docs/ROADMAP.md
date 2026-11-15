@@ -12,8 +12,8 @@ edits the same widgets instead of replacing them.
 | --- | --- | --- | --- |
 | 0. Foundations | Repo, stack, CI, adapter contract, theme | done (PR #1, #2) | AC-21 (build part) |
 | **1. Basic Samsung remote** | Find, pair and control the TV every day with a fixed default layout. Ships as **0.1.0** | WI-001 → WI-007, WI-017 | AC-1 → AC-8, AC-12, AC-18, AC-19, AC-21 |
-| 2. Samsung extras | Text input, app shortcuts, power on | WI-008 → WI-010 | AC-9 → AC-11 |
-| 3. Customization | Theme and haptics settings, edit mode, pages, reset, import/export | WI-011 → WI-015 | AC-13 → AC-17 |
+| 2. Samsung extras | Text input, app shortcuts, power on. Ships in **0.2.0** | WI-008 → WI-010 | AC-9 → AC-11 |
+| 3. Customization | Theme and haptics settings, edit mode, pages, reset, import/export. Ships in **0.2.0** | WI-011 → WI-015 | AC-13 → AC-17 |
 | 4. Release 1.0 | Accessibility, onboarding, adapter guide | WI-016, WI-018 | All ACs |
 
 This reorders the spec's milestones in one way: theming and haptic settings (F9, F10) move into
@@ -35,9 +35,9 @@ before the screens that use it.
 
 WI-003 to WI-005 can run in parallel once WI-002 is merged; WI-006 needs only WI-002.
 
-**Release 0.1.0.** Each phase ends with a release on GitHub Releases, so the signed-release
-pipeline ([WI-017](backlog/items/WI-017-signed-release-on-tag.md)) moved here from Phase 4. Phase 1
-is 0.1.0, Phase 2 0.2.0, Phase 3 0.3.0, and Phase 4 is 1.0.0. How to cut one is in
+**Releases.** Phases ship on GitHub Releases, so the signed-release pipeline
+([WI-017](backlog/items/WI-017-signed-release-on-tag.md)) moved here from Phase 4. Phase 1 is 0.1.0,
+Phases 2 and 3 ship together as 0.2.0 (decided by Antoine on 2026-11-15), and Phase 4 is 1.0.0. How to cut one is in
 [releasing](releasing.md).
 
 ## Phase 2 — Samsung extras

@@ -438,6 +438,7 @@ internal fun RemoteKey?.emphasis(): KeyEmphasis =
     when (this) {
         RemoteKey.POWER -> KeyEmphasis.Power
         RemoteKey.OK -> KeyEmphasis.Primary
+        RemoteKey.SOURCE, RemoteKey.HDMI_1, RemoteKey.HDMI_2, RemoteKey.HDMI_3, RemoteKey.HDMI_4 -> KeyEmphasis.Tertiary
         else -> KeyEmphasis.Standard
     }
 
@@ -468,6 +469,10 @@ internal fun RemoteKey.title(): String =
         RemoteKey.MUTE -> "Mute"
         RemoteKey.INFO -> "Info"
         RemoteKey.GUIDE -> "Guide"
+        RemoteKey.HDMI_1 -> "HDMI 1"
+        RemoteKey.HDMI_2 -> "HDMI 2"
+        RemoteKey.HDMI_3 -> "HDMI 3"
+        RemoteKey.HDMI_4 -> "HDMI 4"
         else -> name.lowercase().replace('_', ' ').replaceFirstChar { it.uppercase() }
     }
 

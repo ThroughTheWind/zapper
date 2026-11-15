@@ -11,6 +11,15 @@ enum class RemoteKey {
     EXIT,
     MENU,
     SOURCE,
+
+    /**
+     * Switches straight to an HDMI port. Not every TV has a key for this: an adapter that cannot
+     * send one reports it unsupported, and the catalog hides it (FR-4.5).
+     */
+    HDMI_1,
+    HDMI_2,
+    HDMI_3,
+    HDMI_4,
     SETTINGS,
     UP,
     DOWN,

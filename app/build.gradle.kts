@@ -83,11 +83,6 @@ android {
         }
     }
 
-    sourceSets {
-        // Same adapters as release: no simulated TV.
-        getByName("preview").java.srcDir("src/release/kotlin")
-    }
-
     compileOptions {
         sourceCompatibility = JavaVersion.toVersion(libs.versions.jvmTarget.get())
         targetCompatibility = JavaVersion.toVersion(libs.versions.jvmTarget.get())

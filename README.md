@@ -39,7 +39,7 @@ To get updates automatically, add `https://github.com/ThroughTheWind/zapper` to
 | Brand | Status |
 | --- | --- |
 | Samsung (Tizen, 2016+) | Supported since 0.1.0 |
-| Others | Planned. Open a [TV support request](.github/ISSUE_TEMPLATE/tv_support.md) |
+| Others | Planned. [Vote for the next brand](https://github.com/ThroughTheWind/zapper/issues/36) with a 👍, or open a [TV support request](https://github.com/ThroughTheWind/zapper/issues/new?template=tv_support.md) |
 
 ## Building
 
@@ -51,7 +51,7 @@ You need JDK 17 or newer and the Android SDK (Android Studio installs both).
 ./gradlew spotlessApply          # format
 ```
 
-Releases are built, signed and published by CI from a tag; see [releasing](docs/releasing.md).
+Releases are built, signed and published by CI from a tag; see [releasing](docs/releasing.md). Unmerged changes can be shipped to testers as [preview builds](docs/previews.md).
 The stack and the reasons for it are in [ADR-0001](docs/decisions/ADR-0001-kotlin-compose-multi-module.md).
 
 ## Project layout

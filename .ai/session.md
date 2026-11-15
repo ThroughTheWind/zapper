@@ -12,12 +12,12 @@ All four roadmap phases are merged and shipped: Phases 2 and 3 as 0.2.0, Phase 4
 
 ## In progress
 
-- WI-008 to WI-016, WI-018 and WI-022 are merged and released but stay in `review`: their phone and TV acceptance criteria (AC-9 to AC-17, the TalkBack, large-font, TV-unplugged and cold-start checks) have not been run on the reference RU7020.
 - WI-023 prepares releases for F-Droid and app stores (store metadata, an App Bundle, a reproducible-build check). Submitting to a store is Antoine's call after it lands; the evaluation is in the project's "Zapper store distribution" doc.
+- Every item that was in `review` (WI-008 to WI-016, WI-018, WI-022) was closed as `done` and archived on 2026-11-15 at Antoine's request; the on-device checks recorded as open in their Review sections were not run separately. WI-001 (reference TV spike) is the only open item. WI-025 (preview builds for testers) is in review; once merged, the preview key secrets in `docs/previews.md` must be added before the first preview run.
 
 ## Resume from
 
-Antoine tries 1.0.0 on the phone and the RU7020, and the results go into each item's Review; items whose checks pass move to `done`.
+The [After 1.0](../docs/ROADMAP.md#after-10) list. Report anything Antoine finds on the RU7020 with 1.0.0 as a finding or a new item.
 
 ## Up next
 

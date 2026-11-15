@@ -2,10 +2,10 @@
 id: WI-011
 title: Let users pick theme, colors, key style and haptics
 type: feature
-status: review
+status: done
 branch: claude/project-thread-n0w6sb
 created: 2026-11-13
-updated: 2026-11-14
+updated: 2026-11-15
 related: [SPEC-F9, SPEC-F10, SPEC-AC-17]
 epic:
 children: []
@@ -63,3 +63,6 @@ Phase 3 — Customization ([roadmap](../../ROADMAP.md)).
 ## Review
 
 - AC-17: **open** until tried on a phone. The app compiles and lints in CI only (Android SDK downloads are blocked where this was built).
+- 2026-11-15: closed as `done` by Antoine, who asked to move every item in review to done. The
+  branch is merged and shipped in a release. Any criterion marked open above was not demonstrated
+  separately before closing.

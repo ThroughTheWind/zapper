@@ -2,10 +2,10 @@
 id: WI-010
 title: Turn the TV on and show its power state
 type: feature
-status: review
+status: done
 branch: claude/project-thread-qlkfpf
 created: 2026-11-13
-updated: 2026-11-14
+updated: 2026-11-15
 related: [WI-001, SPEC-F7, SPEC-AC-11]
 epic:
 children: []
@@ -64,3 +64,6 @@ Phase 2 — Samsung extras ([roadmap](../../ROADMAP.md)).
 
 - Unit criteria: the JVM tests above pass locally. The app module compiles and lints in CI only.
 - AC-11: **open** until it is tried on the reference TV. The research notes third-party apps already woke this set over Wi-Fi.
+- 2026-11-15: closed as `done` by Antoine, who asked to move every item in review to done. The
+  branch is merged and shipped in a release. Any criterion marked open above was not demonstrated
+  separately before closing.

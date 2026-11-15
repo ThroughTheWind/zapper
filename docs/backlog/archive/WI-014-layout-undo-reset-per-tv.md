@@ -2,10 +2,10 @@
 id: WI-014
 title: Undo edits, reset layouts and keep one layout per TV
 type: feature
-status: review
+status: done
 branch: claude/project-thread-n0w6sb
 created: 2026-11-13
-updated: 2026-11-14
+updated: 2026-11-15
 related: [WI-012, SPEC-FR-8.6, SPEC-FR-8.7, SPEC-AC-15]
 epic:
 children: []
@@ -58,3 +58,6 @@ Phase 3 — Customization ([roadmap](../../ROADMAP.md)).
 ## Review
 
 - Unit criteria pass locally. AC-15 and the per-TV criterion: **open** until tried on a phone (the second needs two saved TVs; the debug build's fake TV can be the second).
+- 2026-11-15: closed as `done` by Antoine, who asked to move every item in review to done. The
+  branch is merged and shipped in a release. Any criterion marked open above was not demonstrated
+  separately before closing.

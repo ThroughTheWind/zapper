@@ -2,10 +2,10 @@
 id: WI-022
 title: Switch TV inputs from Source and HDMI shortcut keys
 type: feature
-status: review
+status: done
 branch: claude/project-thread-v05i3a
 created: 2026-11-14
-updated: 2026-11-14
+updated: 2026-11-15
 related: [WI-012, SPEC-F4]
 epic:
 children: []
@@ -69,3 +69,6 @@ check.
 
 - Unit criteria: written; the JVM tests run in CI (no Android toolchain in the build session).
 - Reference TV: **open** until the HDMI keys are tried on the RU7020.
+- 2026-11-15: closed as `done` by Antoine, who asked to move every item in review to done. The
+  branch is merged and shipped in a release. Any criterion marked open above was not demonstrated
+  separately before closing.

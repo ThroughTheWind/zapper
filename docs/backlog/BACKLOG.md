@@ -6,7 +6,7 @@
 The board. One row per live work item, grouped by status. Items live in
 [`items/`](items/); finished work moves to [`archive/`](archive/).
 
-<!-- NEXT-ID: WI-024 -->
+<!-- NEXT-ID: WI-026 -->
 <!-- Claim from this marker and bump it on your own branch. `node .ai/rungs.mjs check` refuses a duplicate. -->
 
 ## In progress
@@ -20,17 +20,7 @@ The board. One row per live work item, grouped by status. Items live in
 | Id | Title | Type | Branch |
 | --- | --- | --- | --- |
 | [WI-023](items/WI-023-store-distribution-prep.md) | Prepare releases for F-Droid and app stores | chore | `claude/project-thread-07pvc6` |
-| [WI-008](items/WI-008-text-input.md) | Type into the TV from the phone keyboard | feature | `claude/project-thread-qlkfpf` |
-| [WI-009](items/WI-009-app-shortcuts.md) | Launch TV apps from shortcut buttons | feature | `claude/project-thread-qlkfpf` |
-| [WI-010](items/WI-010-power-on.md) | Turn the TV on and show its power state | feature | `claude/project-thread-qlkfpf` |
-| [WI-011](items/WI-011-appearance-and-feedback-settings.md) | Let users pick theme, colors, key style and haptics | feature | `claude/project-thread-n0w6sb` |
-| [WI-012](items/WI-012-layout-edit-mode.md) | Edit the remote: move, resize, add and remove buttons | feature | `claude/project-thread-n0w6sb` |
-| [WI-013](items/WI-013-layout-pages.md) | Add, rename and reorder remote pages | feature | `claude/project-thread-n0w6sb` |
-| [WI-014](items/WI-014-layout-undo-reset-per-tv.md) | Undo edits, reset layouts and keep one layout per TV | feature | `claude/project-thread-n0w6sb` |
-| [WI-015](items/WI-015-layout-import-export.md) | Export and import layouts as files | feature | `claude/project-thread-n0w6sb` |
-| [WI-022](items/WI-022-source-and-hdmi-shortcuts.md) | Switch TV inputs from Source and HDMI shortcut keys | feature | `claude/project-thread-v05i3a` |
-| [WI-016](items/WI-016-accessibility-onboarding-polish.md) | Pass accessibility review and polish onboarding and errors | feature | `claude/project-thread-i8pmcn` |
-| [WI-018](items/WI-018-adapter-guide.md) | Write the guide for adding a TV brand | docs | `claude/project-thread-i8pmcn` |
+| [WI-025](items/WI-025-preview-builds-for-testers.md) | Ship preview builds of unmerged branches to testers | chore | `claude/project-thread-2itz49` |
 
 ## Planned
 

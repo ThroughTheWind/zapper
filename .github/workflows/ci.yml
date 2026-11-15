@@ -49,6 +49,10 @@ jobs:
       # R8 shrinking and release lint break a pull request, not a release tag.
       - name: Release APK (unsigned)
         run: ./gradlew :app:assembleRelease
+      # The preview build type is only published by hand (preview.yml), so build it here to keep a
+      # broken build type from surfacing on the day a tester is waiting.
+      - name: Preview APK (unsigned)
+        run: ./gradlew :app:assemblePreview
       # The simulated TV is for development only. Prove the release build does not link it, and
       # that the check can fail by finding it in the debug build.
       - name: No simulated TV in release builds

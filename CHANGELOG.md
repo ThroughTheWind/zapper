@@ -6,11 +6,6 @@ All notable changes to Zapper are listed here. The format follows
 
 ## [Unreleased]
 
-### Fixed
-
-- The remote fits under the top bar instead of scrolling.
-- TV names show characters such as `&` instead of `&amp;`.
-
 ### Added
 
 - Power turns the TV on when it is off, with Wake-on-LAN. The status chip says when the TV is off
@@ -20,6 +15,11 @@ All notable changes to Zapper are listed here. The format follows
   shortcut to an app the TV lacks says so.
 - A Keyboard key opens the phone keyboard to type into the TV's search fields. It also opens by
   itself when the TV shows its own keyboard.
+
+## [0.1.0] - 2026-11-13
+
+### Added
+
 - An app icon, with a monochrome version for themed icons.
 - Discovery also sweeps the phone's Wi-Fi subnet, so the TV is found on routers that block
   multicast.
@@ -37,7 +37,8 @@ All notable changes to Zapper are listed here. The format follows
   pairs again by itself when the TV forgets the phone.
 - Pairing secrets are encrypted with a key kept in the Android Keystore, and the TV's certificate
   is pinned on first pairing, so another device cannot pretend to be the TV.
-- A simulated TV in debug builds, reachable by IP at `192.0.2.1`, for trying the app without a TV, and a
-  second one at `192.0.2.2` that pairs with the code `1234`.
 - Project scaffold: Kotlin and Jetpack Compose app, brand adapter contract, and a first Samsung
   Tizen adapter that pairs and sends keys.
+
+[Unreleased]: https://github.com/ThroughTheWind/zapper/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/ThroughTheWind/zapper/releases/tag/v0.1.0

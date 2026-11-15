@@ -12,7 +12,7 @@ All four roadmap phases are merged and shipped: Phases 2 and 3 as 0.2.0, Phase 4
 
 ## In progress
 
-Nothing in progress. Every item that was in `review` (WI-008 to WI-016, WI-018, WI-022) was closed as `done` and archived on 2026-11-15 at Antoine's request; the on-device checks recorded as open in their Review sections were not run separately. WI-001 (reference TV spike) is the only open item. WI-025 (preview builds for testers) is in review; once merged, the preview key secrets in `docs/previews.md` must be added before the first preview run.
+WI-024 (Samsung TVs from 2008 to 2013, legacy port 55000) is in review on `claude/project-thread-d061jb`; it needs a real 2008–2013 TV, which Antoine does not have. Every item that was in `review` (WI-008 to WI-016, WI-018, WI-022) was closed as `done` and archived on 2026-11-15 at Antoine's request; the on-device checks recorded as open in their Review sections were not run separately. WI-001 (reference TV spike) is the only open item. WI-025 (preview builds for testers) is in review; once merged, the preview key secrets in `docs/previews.md` must be added before the first preview run.
 
 ## Resume from
 
@@ -47,6 +47,7 @@ The [After 1.0](../docs/ROADMAP.md#after-10) list. Report anything Antoine finds
 - The Android toolchain versions in `gradle/libs.versions.toml` (AGP 9.5.0, Compose BOM 2026.09.00, compileSdk 37) were chosen from release notes and not built locally; CI is the first real build.
 - The Samsung key codes are the commonly documented Tizen ones and have not been tried on a real TV.
 - Samsung `SendInputString` is sent once on Send, then `SendInputEnd`, because whether each send appends or replaces the field is unconfirmed (WI-008). If it replaces, live typing is a small change.
+- The legacy Samsung protocol (WI-024) follows samsungctl and samsung-tv-control and has never met a real 2008–2013 TV; `KEY_CONTENTS` for Home and `KEY_POWEROFF` for Power are the least certain.
 - The 2019 set lists its apps with `ed.installedApp.get`; if it does not, Netflix opens under the newest id `3201907018807`, which may not be the one a 2019 TV has (WI-009).
 
 ## Open questions

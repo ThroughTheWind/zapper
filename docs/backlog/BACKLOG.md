@@ -19,6 +19,7 @@ The board. One row per live work item, grouped by status. Items live in
 
 | Id | Title | Type | Branch |
 | --- | --- | --- | --- |
+| [WI-024](items/WI-024-legacy-samsung.md) | Support Samsung TVs from 2008 to 2013 | feature | `claude/project-thread-d061jb` |
 | [WI-025](items/WI-025-preview-builds-for-testers.md) | Ship preview builds of unmerged branches to testers | chore | `claude/project-thread-2itz49` |
 
 ## Planned

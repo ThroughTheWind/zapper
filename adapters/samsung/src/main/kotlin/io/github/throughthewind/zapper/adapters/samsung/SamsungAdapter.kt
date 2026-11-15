@@ -18,9 +18,14 @@ import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import java.net.InetSocketAddress
+import java.net.Socket
 import java.util.concurrent.TimeUnit
 
-/** Samsung Tizen smart TVs (2016 and later) over the local WebSocket remote API. */
+/**
+ * Samsung smart TVs: Tizen (2016 and later) over the local WebSocket remote API, and 2008–2013
+ * models over the legacy TCP protocol on port 55000 ([LegacyProtocol]).
+ */
 class SamsungAdapter internal constructor(
     private val httpClient: OkHttpClient,
     private val appName: String,
@@ -28,6 +33,7 @@ class SamsungAdapter internal constructor(
     private val infoPort: Int,
     private val subnetHosts: () -> Flow<String> = { SubnetScan(infoPort).hosts() },
     private val wake: suspend (mac: String, host: String) -> Unit = WakeOnLan::send,
+    private val legacyPort: Int = LegacyProtocol.PORT,
 ) : TvAdapter {
     constructor(
         httpClient: OkHttpClient = OkHttpClient(),
@@ -48,24 +54,52 @@ class SamsungAdapter internal constructor(
     /**
      * SSDP for the search targets a Samsung TV answers, plus a sweep of the phone's subnet for the
      * TV's info port, for networks that drop multicast. Every candidate is confirmed by the TV's
-     * info endpoint (SPEC FR-1.2), once per host.
+     * info endpoint (SPEC FR-1.2), once per host. A host whose SSDP answer names Samsung but has
+     * no info endpoint is a 2008–2013 TV if it accepts the legacy port.
      */
     override fun discover(): Flow<DiscoveredTv> {
         val asked = mutableSetOf<String>()
         val seen = mutableSetOf<String>()
-        return merge(ssdpSearch(SEARCH_TARGETS).map { it.host }, subnetHosts())
-            .filter { synchronized(asked) { asked.add(it) } }
-            .mapNotNull { probe(it) }
-            .filter { synchronized(seen) { seen.add(it.identity) } }
+        return merge(ssdpSearch(SEARCH_TARGETS).map { it.host to it }, subnetHosts().map { it to null })
+            .filter { (host, _) -> synchronized(asked) { asked.add(host) } }
+            .mapNotNull { (host, ssdp) ->
+                tizenProbe(host) ?: ssdp?.takeIf { it.isSamsung() }?.let { legacyProbe(host, it.uuid()) }
+            }.filter { synchronized(seen) { seen.add(it.identity) } }
     }
 
-    override suspend fun probe(host: String): DiscoveredTv? =
+    /** The info endpoint first; failing that, a TV that accepts the legacy port is taken as a 2008–2013 Samsung. */
+    override suspend fun probe(host: String): DiscoveredTv? = tizenProbe(host) ?: legacyProbe(host, uniqueId = null)
+
+    private suspend fun tizenProbe(host: String): DiscoveredTv? =
         withContext(Dispatchers.IO) {
             runCatching {
                 probeClient.newCall(Request.Builder().url(SamsungDeviceInfo.url(host, infoPort)).build()).execute().use { response ->
                     if (!response.isSuccessful) null else SamsungDeviceInfo.parse(host, response.body.string())
                 }
             }.getOrNull()
+        }
+
+    /**
+     * A 2008–2013 TV has no info endpoint, so an open legacy port is all there is to go on: no
+     * model, no MAC, and so no power-on.
+     */
+    private suspend fun legacyProbe(
+        host: String,
+        uniqueId: String?,
+    ): DiscoveredTv? {
+        if (!acceptsLegacyPort(host)) return null
+        return DiscoveredTv(
+            adapterId = ID,
+            host = host,
+            name = LEGACY_NAME,
+            uniqueId = uniqueId,
+            properties = mapOf(PROPERTY_PROTOCOL to PROTOCOL_LEGACY),
+        )
+    }
+
+    private suspend fun acceptsLegacyPort(host: String): Boolean =
+        withContext(Dispatchers.IO) {
+            runCatching { Socket().use { it.connect(InetSocketAddress(host, legacyPort), PROBE_TIMEOUT_MS.toInt()) } }.isSuccess
         }
 
     override fun canPowerOn(device: TvDevice): Boolean = device.macAddress != null
@@ -81,7 +115,9 @@ class SamsungAdapter internal constructor(
      * on; one that does not answer is unknown (research §2.5).
      */
     override suspend fun powerState(device: TvDevice): PowerState? {
-        val info = probe(device.host) ?: return null
+        // A 2008–2013 TV drops off the network in standby: answering means on.
+        if (device.isLegacy()) return if (acceptsLegacyPort(device.host)) PowerState.ON else null
+        val info = tizenProbe(device.host) ?: return null
         return when (info.properties[SamsungDeviceInfo.PROPERTY_POWER_STATE]?.lowercase()) {
             "standby" -> PowerState.STANDBY
             else -> PowerState.ON
@@ -96,6 +132,7 @@ class SamsungAdapter internal constructor(
         device: TvDevice,
         credentials: CredentialStore,
     ): TvSession {
+        if (device.isLegacy()) return LegacySamsungSession(device, credentials, appName, legacyPort)
         // 2016–2017 TVs speak plain ws:// on 8001 without a token (research §2.1).
         val legacy = device.properties[SamsungDeviceInfo.PROPERTY_TOKEN_AUTH] == "false"
         return SamsungSession(
@@ -119,5 +156,19 @@ class SamsungAdapter internal constructor(
                 "urn:schemas-upnp-org:device:MediaRenderer:1",
             )
         private const val PROBE_TIMEOUT_MS = 2_000L
+
+        /** Which remote protocol a saved TV speaks; absent on Tizen TVs, including every TV saved before 2008–2013 support. */
+        internal const val PROPERTY_PROTOCOL = "protocol"
+        internal const val PROTOCOL_LEGACY = "legacy"
+        internal const val LEGACY_NAME = "Samsung TV"
+
+        private fun TvDevice.isLegacy() = properties[PROPERTY_PROTOCOL] == PROTOCOL_LEGACY
+
+        /** Samsung's UPnP stack names itself in the SERVER header, for example `SHP, UPnP/1.0, Samsung UPnP SDK/1.0`. */
+        internal fun Ssdp.Response.isSamsung(): Boolean =
+            listOf("SERVER", "ST", "USN").any { headers[it]?.contains("samsung", ignoreCase = true) == true }
+
+        /** The device's UUID from `USN: uuid:…::urn:…`, so the TV is merged when it answers several search targets. */
+        internal fun Ssdp.Response.uuid(): String? = headers["USN"]?.substringBefore("::")?.takeIf { it.startsWith("uuid:") }
     }
 }

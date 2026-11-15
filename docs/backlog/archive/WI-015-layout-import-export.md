@@ -2,10 +2,10 @@
 id: WI-015
 title: Export and import layouts as files
 type: feature
-status: review
+status: done
 branch: claude/project-thread-n0w6sb
 created: 2026-11-13
-updated: 2026-11-14
+updated: 2026-11-15
 related: [WI-012, SPEC-F12, SPEC-AC-16]
 epic:
 children: []
@@ -58,3 +58,6 @@ Phase 3 — Customization ([roadmap](../../ROADMAP.md)).
 ## Review
 
 - Unit criteria pass locally. AC-16: **open** until tried on a phone.
+- 2026-11-15: closed as `done` by Antoine, who asked to move every item in review to done. The
+  branch is merged and shipped in a release. Any criterion marked open above was not demonstrated
+  separately before closing.

@@ -2,10 +2,10 @@
 id: WI-009
 title: Launch TV apps from shortcut buttons
 type: feature
-status: review
+status: done
 branch: claude/project-thread-qlkfpf
 created: 2026-11-13
-updated: 2026-11-14
+updated: 2026-11-15
 related: [WI-001, SPEC-F6, SPEC-AC-10]
 epic:
 children: []
@@ -66,3 +66,6 @@ Phase 2 — Samsung extras ([roadmap](../../ROADMAP.md)).
 
 - Unit criteria: the JVM tests above pass locally. The app module compiles and lints in CI only.
 - AC-10: **open** until it is tried on the reference TV.
+- 2026-11-15: closed as `done` by Antoine, who asked to move every item in review to done. The
+  branch is merged and shipped in a release. Any criterion marked open above was not demonstrated
+  separately before closing.

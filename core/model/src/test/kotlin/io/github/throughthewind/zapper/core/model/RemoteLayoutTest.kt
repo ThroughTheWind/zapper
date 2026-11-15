@@ -48,6 +48,14 @@ class RemoteLayoutTest {
         assertEquals(Capability.KEYS, ButtonAction.Key(RemoteKey.OK).requiredCapability)
         assertEquals(Capability.KEYS, ButtonAction.Macro(emptyList()).requiredCapability)
         assertEquals(Capability.APP_LAUNCH, ButtonAction.LaunchApp("youtube").requiredCapability)
+        assertEquals(Capability.TEXT_INPUT, ButtonAction.OpenKeyboard.requiredCapability)
+    }
+
+    @Test
+    fun `the keyboard button survives a JSON round trip`() {
+        val button = LayoutButton("keyboard", ButtonAction.OpenKeyboard, column = 2, row = 0)
+
+        assertEquals(button, json.decodeFromString<LayoutWidget>(json.encodeToString<LayoutWidget>(button)))
     }
 }
 
@@ -102,9 +110,31 @@ class DefaultLayoutsTest {
     }
 
     @Test
-    fun `numbers are on their own page`() {
-        assertEquals(listOf("main", "numbers"), layout.pages.map { it.id })
-        assertTrue(layout.pages[1].widgets.single() is NumberPadWidget)
+    fun `the main page has a keyboard button`() {
+        assertTrue(
+            layout.pages
+                .first()
+                .widgets
+                .any { it is LayoutButton && it.action == ButtonAction.OpenKeyboard },
+        )
+    }
+
+    @Test
+    fun `pages are Main, Apps and Numbers, with numbers on their own`() {
+        assertEquals(listOf("main", "apps", "numbers"), layout.pages.map { it.id })
+        assertTrue(layout.pages[2].widgets.single() is NumberPadWidget)
+    }
+
+    @Test
+    fun `Netflix and YouTube sit on the Main page and every known app on the Apps page`() {
+        fun apps(page: RemotePage) = page.widgets.mapNotNull { ((it as? LayoutButton)?.action as? ButtonAction.LaunchApp)?.appId }
+
+        assertEquals(listOf("netflix", "youtube"), apps(layout.pages[0]))
+        assertEquals(KnownApps.all.map { it.id }, apps(layout.pages[1]))
+        layout.pages.flatMap { it.widgets }.filterIsInstance<LayoutButton>().filter { it.action is ButtonAction.LaunchApp }.forEach {
+            assertEquals(2, it.columnSpan, it.id)
+            assertEquals(KnownApps.named(it.id)?.name, it.label)
+        }
     }
 }
 

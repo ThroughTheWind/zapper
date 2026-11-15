@@ -94,6 +94,12 @@ class ZapperRepository internal constructor(
         store.updateData { it.copy(hardwareVolumeKeys = enabled) }
     }
 
+    val powerOnHelpSeen: Flow<Boolean> = store.data.map { it.powerOnHelpSeen }
+
+    suspend fun setPowerOnHelpSeen() {
+        store.updateData { it.copy(powerOnHelpSeen = true) }
+    }
+
     suspend fun saveLayout(layout: RemoteLayout) {
         store.updateData { state -> state.copy(layouts = state.layouts.filterNot { it.id == layout.id } + layout) }
     }

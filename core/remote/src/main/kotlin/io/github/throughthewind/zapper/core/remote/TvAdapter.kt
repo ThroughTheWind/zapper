@@ -24,12 +24,30 @@ interface TvAdapter {
     /** Asks [host] whether it is one of this brand's TVs. Null when it is not, or does not answer. */
     suspend fun probe(host: String): DiscoveredTv? = null
 
+    /** Whether [powerOn] can wake [device] from standby, for example because its MAC address is known. */
+    fun canPowerOn(device: TvDevice): Boolean = false
+
+    /**
+     * Sends [device] the wake-up, usually Wake-on-LAN, and returns once it is sent: the TV takes
+     * seconds to answer. Works while disconnected (SPEC FR-7.1).
+     */
+    suspend fun powerOn(device: TvDevice): Unit = throw TvException(TvError.Unsupported("turning the TV on"))
+
+    /** What [device] says about its power, without pairing. Null when it does not answer or does not say (FR-7.3). */
+    suspend fun powerState(device: TvDevice): PowerState? = null
+
+    /** How to let this brand's TVs be turned on from the phone, shown once when power-on fails (FR-7.2). */
+    val powerOnHelp: String? get() = null
+
     /** Creates a session for [device]. Does not connect; call [TvSession.connect]. */
     fun createSession(
         device: TvDevice,
         credentials: CredentialStore,
     ): TvSession
 }
+
+/** A TV's power as it reports it. */
+enum class PowerState { ON, STANDBY }
 
 /** A TV found by discovery or by probing an address, claimed by the adapter [adapterId]. */
 data class DiscoveredTv(

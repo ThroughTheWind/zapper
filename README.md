@@ -36,6 +36,7 @@ the signing certificate's fingerprint.
 | Brand | Status |
 | --- | --- |
 | Samsung (Tizen, 2016+) | Supported since 0.1.0 |
+| Roku (Roku TVs by TCL, Hisense, Sharp…, and Roku players) | Built, waiting for testing on a real Roku ([#26](https://github.com/ThroughTheWind/zapper/issues/26)) |
 | Others | Planned. [Vote for the next brand](https://github.com/ThroughTheWind/zapper/issues/36) with a 👍, or open a [TV support request](https://github.com/ThroughTheWind/zapper/issues/new?template=tv_support.md) |
 
 ## Building
@@ -61,6 +62,7 @@ The stack and the reasons for it are in [ADR-0001](docs/decisions/ADR-0001-kotli
 | `core/data` | Saved TVs, layouts and pairing tokens |
 | `core/designsystem` | The Compose theme and shared components |
 | `adapters/samsung` | Samsung Tizen adapter (pure Kotlin) |
+| `adapters/roku` | Roku adapter, over Roku's External Control Protocol (pure Kotlin) |
 
 ## Contributing
 

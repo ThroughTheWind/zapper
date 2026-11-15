@@ -12,7 +12,7 @@ All four roadmap phases are merged and shipped: Phases 2 and 3 as 0.2.0, Phase 4
 
 ## In progress
 
-Nothing in progress. Every item that was in `review` (WI-008 to WI-016, WI-018, WI-022) was closed as `done` and archived on 2026-11-15 at Antoine's request; the on-device checks recorded as open in their Review sections were not run separately. WI-001 (reference TV spike) is the only open item. WI-025 (preview builds for testers) is in review; once merged, the preview key secrets in `docs/previews.md` must be added before the first preview run.
+Nothing in progress. Every item that was in `review` (WI-008 to WI-016, WI-018, WI-022) was closed as `done` and archived on 2026-11-15 at Antoine's request; the on-device checks recorded as open in their Review sections were not run separately. WI-001 (reference TV spike) is the only open item. WI-025 (preview builds for testers) is in review; once merged, the preview key secrets in `docs/previews.md` must be added before the first preview run. WI-026 (Roku adapter, issue #26) is in review on `claude/project-thread-7m3mmq`; it was written from Roku's documentation and needs a tester with a Roku, through a preview build.
 
 ## Resume from
 
@@ -47,6 +47,7 @@ The [After 1.0](../docs/ROADMAP.md#after-10) list. Report anything Antoine finds
 - The Android toolchain versions in `gradle/libs.versions.toml` (AGP 9.5.0, Compose BOM 2026.09.00, compileSdk 37) were chosen from release notes and not built locally; CI is the first real build.
 - The Samsung key codes are the commonly documented Tizen ones and have not been tried on a real TV.
 - Samsung `SendInputString` is sent once on Send, then `SendInputEnd`, because whether each send appends or replaces the field is unconfirmed (WI-008). If it replaces, live typing is a small change.
+- The Roku key names, `power-mode` values and channel ids come from Roku's ECP documentation and community libraries; none has been tried on a real Roku (WI-026).
 - The 2019 set lists its apps with `ed.installedApp.get`; if it does not, Netflix opens under the newest id `3201907018807`, which may not be the one a 2019 TV has (WI-009).
 
 ## Open questions

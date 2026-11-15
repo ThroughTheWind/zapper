@@ -1,6 +1,7 @@
 package io.github.throughthewind.zapper
 
 import android.app.Application
+import io.github.throughthewind.zapper.adapters.roku.RokuAdapter
 import io.github.throughthewind.zapper.adapters.samsung.SamsungAdapter
 import io.github.throughthewind.zapper.connection.MulticastLock
 import io.github.throughthewind.zapper.connection.NetworkMonitor
@@ -42,6 +43,7 @@ class AppContainer(
         AdapterRegistry(
             listOf(
                 SamsungAdapter(),
+                RokuAdapter(),
             ) + buildTypeAdapters(),
         )
 

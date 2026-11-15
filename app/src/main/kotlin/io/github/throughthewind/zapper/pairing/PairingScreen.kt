@@ -247,6 +247,10 @@ private fun TvError.explain(): Pair<String, String> =
             "Can't reach the TV" to "Check that the TV is on and on the same Wi-Fi as this phone."
         }
 
+        is TvError.ControlDisabled -> {
+            "The TV blocks phone remotes" to message
+        }
+
         else -> {
             "Couldn't connect" to message
         }

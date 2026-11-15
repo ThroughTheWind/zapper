@@ -126,6 +126,14 @@ sealed interface TvError {
         override val message: String = "The connection to the TV was lost",
     ) : TvError
 
+    /**
+     * A setting on the TV forbids control from phones. Not retried: nothing changes until someone
+     * changes the setting. [message] says which one, in the brand's words.
+     */
+    data class ControlDisabled(
+        override val message: String,
+    ) : TvError
+
     data object NotConnected : TvError {
         override val message = "Not connected to a TV"
     }

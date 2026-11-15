@@ -36,6 +36,7 @@ the signing certificate's fingerprint.
 | Brand | Status |
 | --- | --- |
 | Samsung (Tizen, 2016+) | Supported since 0.1.0 |
+| Samsung (2008–2013, series A to F) | Unreleased, keys only, not yet tested on a real TV ([#33](https://github.com/ThroughTheWind/zapper/issues/33)) |
 | Others | Planned. [Vote for the next brand](https://github.com/ThroughTheWind/zapper/issues/36) with a 👍, or open a [TV support request](https://github.com/ThroughTheWind/zapper/issues/new?template=tv_support.md) |
 
 ## Building

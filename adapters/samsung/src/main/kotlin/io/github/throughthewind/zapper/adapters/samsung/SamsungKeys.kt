@@ -57,3 +57,17 @@ internal fun RemoteKey.samsungCode(): String? =
         RemoteKey.YELLOW -> "KEY_YELLOW"
         RemoteKey.BLUE -> "KEY_CYAN"
     }
+
+/**
+ * Key codes for Samsung TVs from 2008 to 2013 ([LegacyProtocol]). Mostly the Tizen names, with the
+ * differences the open legacy implementations document: there is no Home key (Smart Hub is
+ * `KEY_CONTENTS`), and power only turns the TV off, since the TV drops off the network in standby.
+ * Keys no legacy implementation lists map to null.
+ */
+internal fun RemoteKey.legacySamsungCode(): String? =
+    when (this) {
+        RemoteKey.POWER -> "KEY_POWEROFF"
+        RemoteKey.HOME -> "KEY_CONTENTS"
+        RemoteKey.PLAY_PAUSE, RemoteKey.SETTINGS -> null
+        else -> samsungCode()
+    }

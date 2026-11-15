@@ -63,7 +63,7 @@ Samsung model codes encode the year: e.g. `UE55`**`AU`**`7100`, `QE65`**`Q`**`80
 
 | Years | Series letters | OS | Remote protocol | Notes |
 |---|---|---|---|---|
-| 2008–2013 | A, B, C, D, E, F | Orsay / pre-Tizen | Legacy TCP `:55000` ("iapp.samsung", base64 framed) | No auth beyond an on-TV allow prompt. Out of scope for MVP. |
+| 2008–2013 | A, B, C, D, E, F | Orsay / pre-Tizen | Legacy TCP `:55000` ("iapp.samsung", base64 framed) | No auth beyond an on-TV allow prompt. Supported since WI-024, see §2.9. |
 | 2014–2015 | H, J (some) | Orsay / Tizen 2.3 | Encrypted pairing (`:8080` PIN + AES "SmartView 1" handshake), then WebSocket | Complex crypto. Only openHAB implements it fully. Skip for MVP. |
 | 2016–2017 | K, M | Tizen 2.4–3.0 | **WebSocket `ws://IP:8001`**, no token | Allow prompt on first connect. |
 | 2018–2025+ | N/NU, R, T, AU, BU, CU, DU, **QE/UE…F** (2025) | Tizen 4.0–9 | **WebSocket `wss://IP:8002` + token** | Same API. `TokenAuthSupport: "true"` in device info. |
@@ -149,6 +149,18 @@ Separate channel `com.samsung.art-app` on `:8002`, with art-mode status/toggle a
 | [tavicu/homebridge-samsung-tizen](https://github.com/tavicu/homebridge-samsung-tizen) | JS | MIT ⚠️ | Good real-world quirk handling (power, WoL, art mode). |
 | [Ape/samsungctl](https://github.com/Ape/samsungctl) | Python | MIT | Legacy `:55000` + early WebSocket. Mostly historical. |
 | [Home Assistant samsungtv](https://github.com/home-assistant/core/tree/dev/homeassistant/components/samsungtv) | Python | Apache-2.0 | Discovery, UPnP volume, power-state handling. |
+
+### 2.9 Legacy protocol (2008–2013, port 55000)
+
+Implemented in `adapters/samsung` (`LegacyProtocol.kt`, `LegacySamsungSession.kt`) from the layout documented by the MIT-licensed samsungctl and samsung-tv-control. **Not yet tried on a real TV.**
+
+- **Transport:** one TCP connection to port 55000. No TLS, no HTTP, no info endpoint: the only sign of a legacy TV is the open port, plus an SSDP answer whose `SERVER` names Samsung (`SHP, UPnP/1.0, Samsung UPnP SDK/1.0`).
+- **Framing:** every packet is `[type: 1 byte][app: string][payload: string]`, a string being a 16-bit little-endian length then its bytes. The phone sends type `0x00` and app `iphone..iapp.samsung`.
+- **Handshake payload:** `64 00`, then base64 strings of the phone's IP, a remote id, and the name the prompt shows. The TV remembers the **id**, so reusing it skips the prompt; there is no token.
+- **Answers:** `64 00 01 00` granted, `64 00 00 00` denied (also for an id removed in the TV's settings), first byte `0a` prompt showing (wait), first byte `65` prompt dismissed or timed out, `00 00 00 00` key accepted.
+- **Key payload:** `00 00 00`, then the base64 key name (`KEY_VOLUP`). Click only: there is no press and release, so no long press.
+- **Key differences from Tizen:** no `KEY_HOME` (Smart Hub is `KEY_CONTENTS`); power is `KEY_POWEROFF`, since the TV leaves the network in standby and cannot be woken.
+- **2014–2015 TVs** may still accept the connection on 55000 but close it without answering the handshake. Zapper reports that as "not supported yet".
 
 ---
 

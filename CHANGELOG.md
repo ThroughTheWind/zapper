@@ -6,6 +6,12 @@ All notable changes to Zapper are listed here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- Samsung TVs from 2008 to 2013 (series A to F): add one by IP address or find it on the Wi-Fi,
+  allow the phone on the TV once, then use the remote's keys. Not yet tried on a real TV. Samsung
+  TVs from 2014 and 2015 say they are not supported yet instead of timing out.
+
 ## [1.0.0] - 2026-11-15
 
 ### Added

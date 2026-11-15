@@ -6,7 +6,7 @@
 The board. One row per live work item, grouped by status. Items live in
 [`items/`](items/); finished work moves to [`archive/`](archive/).
 
-<!-- NEXT-ID: WI-021 -->
+<!-- NEXT-ID: WI-022 -->
 <!-- Claim from this marker and bump it on your own branch. `node .ai/rungs.mjs check` refuses a duplicate. -->
 
 ## In progress
@@ -19,6 +19,8 @@ The board. One row per live work item, grouped by status. Items live in
 
 | Id | Title | Type | Branch |
 | --- | --- | --- | --- |
+| [WI-021](items/WI-021-landing-page.md) | Publish the landing page on GitHub Pages | docs | `claude/project-thread-238rhr` |
+| [WI-017](items/WI-017-signed-release-on-tag.md) | Publish a signed APK to GitHub Releases on each tag | chore | `claude/project-thread-vpshn1` |
 | [WI-008](items/WI-008-text-input.md) | Type into the TV from the phone keyboard | feature | `claude/project-thread-qlkfpf` |
 | [WI-009](items/WI-009-app-shortcuts.md) | Launch TV apps from shortcut buttons | feature | `claude/project-thread-qlkfpf` |
 | [WI-010](items/WI-010-power-on.md) | Turn the TV on and show its power state | feature | `claude/project-thread-qlkfpf` |
@@ -39,7 +41,6 @@ The board. One row per live work item, grouped by status. Items live in
 | Id | Title | Type |
 | --- | --- | --- |
 | [WI-016](items/WI-016-accessibility-onboarding-polish.md) | Pass accessibility review and polish onboarding and errors | feature |
-| [WI-017](items/WI-017-signed-release-on-tag.md) | Publish a signed APK to GitHub Releases on each tag | chore |
 | [WI-018](items/WI-018-adapter-guide.md) | Write the guide for adding a TV brand | docs |
 
 ## Proposed

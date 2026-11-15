@@ -29,6 +29,20 @@ fast_budget_ms = 30000
 # command = "pwsh ./scripts/validate-doc-links.ps1"
 # why     = "Adopted 2026-01-01; predates rungs and is owned by this repo."
 
+[[gates]]
+id      = "site-tokens"
+kind    = "command"
+tier    = "fast"
+command = "node site/tools/tokens.mjs --check"
+why     = "The landing page's tokens.css is generated from docs/design/web/tokens.json; a hand edit there drifts from the design system silently."
+
+[[gates]]
+id      = "site-icons"
+kind    = "command"
+tier    = "fast"
+command = "node site/tools/icons.mjs --check"
+why     = "An icon the page names but the sprite lacks renders as an empty box, with no error anywhere."
+
 # ── module gates ──────────────────────────────────────────────────────────────
 # Generated. Edit the owning module's parameters, not these entries.
 

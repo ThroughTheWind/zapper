@@ -6,6 +6,8 @@ All notable changes to Zapper are listed here. The format follows
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-11-15
+
 ### Added
 
 - Source and HDMI 1 to 4 keys in the edit mode catalog (System group). HDMI keys switch
@@ -35,7 +37,7 @@ All notable changes to Zapper are listed here. The format follows
   opens Settings.
 - Volume and channel keys placed on their own repeat while held, like the rockers.
 
-## [0.1.0] - 2026-11-13
+## [0.1.0] - 2026-11-15
 
 ### Added
 
@@ -59,5 +61,6 @@ All notable changes to Zapper are listed here. The format follows
 - Project scaffold: Kotlin and Jetpack Compose app, brand adapter contract, and a first Samsung
   Tizen adapter that pairs and sends keys.
 
-[Unreleased]: https://github.com/ThroughTheWind/zapper/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/ThroughTheWind/zapper/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/ThroughTheWind/zapper/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/ThroughTheWind/zapper/releases/tag/v0.1.0

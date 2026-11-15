@@ -7,7 +7,7 @@ Things noticed while doing something else. **A finding is the observation; a wor
 decision.** Recording one must cost almost nothing, or it will not happen — so a finding is a
 **row**, not a file. Items are files; findings are rows. The asymmetry is deliberate.
 
-<!-- NEXT-ID: F-004 -->
+<!-- NEXT-ID: F-005 -->
 
 ## Open
 
@@ -15,6 +15,7 @@ decision.** Recording one must cost almost nothing, or it will not happen — so
 | --- | --- | --- | --- | --- | --- | --- |
 | F-002 | medium | someday | Android 16+ local network protection will require a runtime permission once the app targets SDK 37; discovery and every TV connection would fail without it. | `gradle/libs.versions.toml` targetSdk = 36; docs/research/tv-remote-protocols.md §1 | Before raising targetSdk to 37 | Check the permission's final name, request it in context on the discovery screen, and explain it as in OnboardingFlow. |
 | F-003 | medium | next | The app module has no UI test setup, so Compose widgets (D-pad, rockers, number pad, media bar) are only checked by compiling; WI-006's "each widget sends the right action" criterion cannot be shown. | `app/build.gradle.kts` has no test dependencies; CI builds but cannot run Android here | Before Phase 3 edit mode changes the widgets | Add Robolectric with `compose-ui-test-junit4` to `app` unit tests (runs in CI without an emulator), then test each widget against the fake adapter. |
+| F-004 | low | someday | SSDP search is copied in `adapters/samsung` and `adapters/roku`, because adapters cannot depend on each other; a fix in one will be missed in the other. | `adapters/*/src/main/kotlin/**/Ssdp.kt`, WI-026 | When a third adapter needs SSDP, or either copy needs a fix | Move `Ssdp` to `core/remote` (pure JVM, no new dependency) and have both adapters use it. |
 
 ## Closed
 

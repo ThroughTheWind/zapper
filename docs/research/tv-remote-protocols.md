@@ -226,6 +226,15 @@ Covers: **Sony Bravia (2015+), TCL & Hisense Google TV models, Philips Android T
 - **Power on:** `PowerOn` keypress works on Roku TVs with "Fast TV start" enabled; otherwise WoL. Roku sticks have no power concept.
 - **No live events** (poll `active-app` if needed).
 
+**What Zapper's adapter does** (`adapters/roku`, [WI-026](../backlog/items/WI-026-roku-adapter.md); written from Roku's documentation, not yet checked on a real Roku):
+
+- **Device info** gives `udn` (the identity discovery merges on), `is-tv`, `vendor-name` and `model-name`, `user-device-name`, `network-type` with `wifi-mac` or `ethernet-mac` (the MAC of the active link is kept for Wake-on-LAN), and `power-mode`: `PowerOn` while the screen is on, `DisplayOff`, `Ready` or `Headless` in standby. A player has no power to report, so its power mode is ignored.
+- **Power** has no toggle key; the adapter reads `power-mode` and sends `PowerOff` or `PowerOn`. Turning on while disconnected sends `PowerOn`, then Wake-on-LAN if the TV does not answer at all.
+- **Players** (`is-tv` false) get no power, volume, channel or input keys: they have no speaker, tuner or inputs of their own. Whether a player forwards `VolumeUp` to the TV over HDMI-CEC is unconfirmed.
+- **Text:** `Lit_` followed by the character's UTF-8 bytes, each percent-encoded (`Lit_%2B` for `+`, `Lit_%C3%A9` for `é`), then `Enter`.
+- **App ids** do not vary by year or region: Netflix `12`, Prime Video `13`, YouTube `837`, Plex `13535`, Spotify `22297`, Disney+ `291097`, Apple TV `551012`. `/query/apps` also lists inputs (`type="tvin"`) and menus, which are left out. A launch that answers 404 is taken as "not installed"; whether a real Roku answers that way is unconfirmed.
+- **"Control by mobile apps":** any 403 means the setting blocks this phone. Connecting asks for `/query/apps` as well as device-info, because device-info may still answer when commands are blocked.
+
 | Library | Lang | License |
 |---|---|---|
 | [ctalkington/python-rokuecp](https://github.com/ctalkington/python-rokuecp) | Python | MIT |

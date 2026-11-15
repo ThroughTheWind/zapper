@@ -16,6 +16,7 @@ paths:
 - Declare only capabilities the TV really has. A key you cannot confirm maps to `null` and is not
   sent: a wrong code fails silently on the TV.
 - Every adapter's session test extends `TvSessionContract` (`core/remote/src/testFixtures`) and adds
-  its own cases for pairing, a refused pairing and a rejected token.
+  its own cases for pairing, a refused pairing and a rejected token. A TV with no pairing (Roku)
+  tests instead that connecting stores nothing and that a TV refusing phones fails with the reason.
 - Throw `TvException` with a `TvError`, never a raw exception: the UI explains errors by type.
 - No adapter talks to anything but the TV on the local network (ADR-0003).

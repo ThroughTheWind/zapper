@@ -6,6 +6,14 @@ All notable changes to Zapper are listed here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- Roku TVs (TCL, Hisense, Sharp and others) and Roku players: found on the Wi-Fi or added by IP,
+  with no pairing. Keys, holding a key, typing, the TV's own app list and opening apps, and on a
+  Roku TV power, volume, channels and HDMI 1 to 4. A Roku TV turns on from the phone with Fast TV
+  start, or with Wake-on-LAN. When the Roku's "Control by mobile apps" setting blocks phones, the
+  app says where to change it.
+
 ## [1.0.0] - 2026-11-15
 
 ### Added

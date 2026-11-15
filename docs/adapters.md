@@ -17,7 +17,9 @@ is the smallest adapter that passes the shared contract, and
 [`ExampleAdapterTest.kt`](../core/remote/src/test/kotlin/io/github/throughthewind/zapper/core/remote/example/ExampleAdapterTest.kt)
 tests it. Both are compiled and run in CI, so they always match the contract. The Samsung adapter
 ([`adapters/samsung`](../adapters/samsung/)) is the full reference; the simulated TV
-([`adapters/fake`](../adapters/fake/)) shows every optional feature without a network.
+([`adapters/fake`](../adapters/fake/)) shows every optional feature without a network. For a TV
+that speaks plain HTTP and needs no pairing, the Roku adapter ([`adapters/roku`](../adapters/roku/))
+is the smaller model.
 
 ## 1. Create the module
 
@@ -72,7 +74,8 @@ Disconnected ── connect() ──▶ Connecting ──▶ Connected
   grow after connecting once the model is known.
 - **Errors.** Throw `TvException(TvError.…)`, never a raw exception. Map a timeout or refused socket
   to `Unreachable`, a dropped connection to `ConnectionLost`, a "no" on the TV to `PairingRefused`,
-  and a saved token the TV no longer accepts to `TokenRejected`. The app explains each one by type
+  a saved token the TV no longer accepts to `TokenRejected`, and a TV setting that forbids phones to
+  `ControlDisabled`, whose message names the setting in the brand's words. The app explains each one by type
   and reopens pairing for `TokenRejected` and `CertificateChanged`.
 - **Local network only.** Talk to `device.host` and nothing else: no cloud API, no analytics, no
   update check (ADR-0003).
@@ -94,7 +97,8 @@ Every adapter's session test extends
 which checks what the UI relies on whatever the brand: connecting reaches `Connected`, keys are
 supported, sending before connecting fails with `NotConnected`, and so on. Add your own cases for
 **pairing once then reusing the token**, **a refused pairing** and **a rejected token**, as
-`ExampleAdapterTest` does.
+`ExampleAdapterTest` does. A TV with no pairing at all (Roku) tests instead that connecting stores
+nothing and that a TV which refuses phones fails with the reason.
 
 Test against your real protocol, not a mock of your own classes: start a fake TV on localhost and
 let the session connect to it. `SamsungSessionTest` does this with OkHttp's MockWebServer for

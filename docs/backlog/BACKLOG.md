@@ -19,6 +19,7 @@ The board. One row per live work item, grouped by status. Items live in
 
 | Id | Title | Type | Branch |
 | --- | --- | --- | --- |
+| [WI-017](items/WI-017-signed-release-on-tag.md) | Publish a signed APK to GitHub Releases on each tag | chore | `claude/project-thread-vpshn1` |
 | [WI-008](items/WI-008-text-input.md) | Type into the TV from the phone keyboard | feature | `claude/project-thread-qlkfpf` |
 | [WI-009](items/WI-009-app-shortcuts.md) | Launch TV apps from shortcut buttons | feature | `claude/project-thread-qlkfpf` |
 | [WI-010](items/WI-010-power-on.md) | Turn the TV on and show its power state | feature | `claude/project-thread-qlkfpf` |
@@ -41,7 +42,7 @@ The board. One row per live work item, grouped by status. Items live in
 
 | Id | Title | Type |
 | --- | --- | --- |
-| [WI-017](items/WI-017-signed-release-on-tag.md) | Publish a signed APK to GitHub Releases on each tag | chore |
+| — | | |
 
 ## Proposed
 

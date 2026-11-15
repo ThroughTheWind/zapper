@@ -14,9 +14,13 @@ import io.github.throughthewind.zapper.core.remote.DiscoveredTv
 import io.github.throughthewind.zapper.core.remote.TvError
 import io.github.throughthewind.zapper.discovery.DiscoveryScreen
 import io.github.throughthewind.zapper.discovery.DiscoveryViewModel
+import io.github.throughthewind.zapper.layout.EditLayoutScreen
+import io.github.throughthewind.zapper.layout.LayoutEditorViewModel
 import io.github.throughthewind.zapper.pairing.PairingScreen
 import io.github.throughthewind.zapper.remote.RemoteScreen
 import io.github.throughthewind.zapper.remote.RemoteViewModel
+import io.github.throughthewind.zapper.settings.SettingsScreen
+import io.github.throughthewind.zapper.settings.SettingsViewModel
 import io.github.throughthewind.zapper.welcome.WelcomeScreen
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -35,6 +39,11 @@ sealed interface Screen {
     data object Pairing : Screen
 
     data object Remote : Screen
+
+    data object Settings : Screen
+
+    /** Edit mode for the current TV's layout (SPEC F8). */
+    data object EditLayout : Screen
 }
 
 class AppViewModel(
@@ -92,6 +101,18 @@ class AppViewModel(
         _screen.value = Screen.Remote
     }
 
+    fun openSettings() {
+        _screen.value = Screen.Settings
+    }
+
+    fun editLayout() {
+        _screen.value = Screen.EditLayout
+    }
+
+    fun showRemote() {
+        _screen.value = if (container.connection.device.value != null) Screen.Remote else Screen.Welcome
+    }
+
     fun retryPairing() {
         container.connection.device.value
             ?.let(container.connection::connect)
@@ -111,7 +132,7 @@ class AppViewModel(
     fun back(): Boolean =
         when (_screen.value) {
             Screen.Discovery -> {
-                _screen.value = if (container.connection.device.value != null) Screen.Remote else Screen.Welcome
+                showRemote()
                 true
             }
 
@@ -177,6 +198,26 @@ fun ZapperApp(container: AppContainer) {
                 brandName = { id -> container.adapters[id]?.displayName ?: id },
                 onAddTv = app::findTv,
                 onNoTvLeft = app::noTvLeft,
+                onEdit = app::editLayout,
+                onSettings = app::openSettings,
+            )
+        }
+
+        Screen.Settings -> {
+            SettingsScreen(
+                viewModel = viewModel(factory = SettingsViewModel.factory(container)),
+                brandName = { id -> container.adapters[id]?.displayName ?: id },
+                onBack = app::showRemote,
+                onEditLayout = app::editLayout,
+                onAddTv = app::findTv,
+                onNoTvLeft = app::noTvLeft,
+            )
+        }
+
+        Screen.EditLayout -> {
+            EditLayoutScreen(
+                viewModel = viewModel(factory = LayoutEditorViewModel.factory(container)),
+                onClose = app::showRemote,
             )
         }
     }

@@ -5,9 +5,12 @@ import android.view.KeyEvent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.throughthewind.zapper.core.designsystem.theme.ZapperTheme
 import io.github.throughthewind.zapper.core.model.RemoteKey
 import io.github.throughthewind.zapper.core.remote.ConnectionState
+import io.github.throughthewind.zapper.settings.toPrefs
 
 class MainActivity : ComponentActivity() {
     private val container get() = (application as ZapperApplication).container
@@ -16,7 +19,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            ZapperTheme {
+            val appearance by container.appearance.collectAsStateWithLifecycle()
+            ZapperTheme(appearance.toPrefs()) {
                 ZapperApp(container)
             }
         }

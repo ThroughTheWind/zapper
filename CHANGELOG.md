@@ -8,6 +8,17 @@ All notable changes to Zapper are listed here. The format follows
 
 ### Added
 
+- Edit mode, from the pencil on the remote: drag keys to move them, resize them with a handle,
+  remove them with the badge or the trash zone, and add keys, rockers, the D-pad, app shortcuts,
+  spacers and labels from a catalog. Each key can get a label, an icon, a colour and repeat while
+  held. Undo reverts edits one at a time; Done saves, Back asks before discarding.
+- Pages: add, rename, reorder and delete them in edit mode.
+- Each TV keeps its own layout, which can be reset to the default or copied from another TV.
+- Export a layout as a `.json` file through the share sheet, and import one. Buttons this version
+  cannot run are kept as placeholders.
+- Settings: theme (System, Light, Dark, OLED black), colour (Dynamic or six presets), key shape,
+  haptics (Off, Light, Strong), click sound, repeat speed, saved TVs, layout and About. Changes
+  apply at once.
 - Power turns the TV on when it is off, with Wake-on-LAN. The status chip says when the TV is off
   or in standby, and a one-time tip explains the TV setting to enable when it does not wake.
 - App shortcuts: Netflix and YouTube on the main page, and an Apps page with Prime Video,
@@ -15,6 +26,12 @@ All notable changes to Zapper are listed here. The format follows
   shortcut to an app the TV lacks says so.
 - A Keyboard key opens the phone keyboard to type into the TV's search fields. It also opens by
   itself when the TV shows its own keyboard.
+
+### Changed
+
+- The phone volume keys switch moved from the TV sheet to Settings > Controls; the sheet now
+  opens Settings.
+- Volume and channel keys placed on their own repeat while held, like the rockers.
 
 ## [0.1.0] - 2026-11-13
 

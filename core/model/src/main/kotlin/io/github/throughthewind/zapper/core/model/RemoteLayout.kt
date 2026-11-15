@@ -2,6 +2,7 @@ package io.github.throughthewind.zapper.core.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonObject
 
 /**
  * A user-editable remote: pages of widgets on a grid the user can add to, move, resize and relabel
@@ -56,8 +57,20 @@ data class LayoutButton(
     override val columnSpan: Int = 1,
     override val rowSpan: Int = 1,
     val label: String? = null,
+    /** A [KeyIcons] name; null keeps the action's own icon. */
     val icon: String? = null,
-) : LayoutWidget
+    /** A theme role, never a free colour, so every theme stays legible (theming-and-customisation). */
+    val color: KeyColor? = null,
+    /** Sends again while held. Null follows [ButtonAction.repeatsByDefault]. */
+    val repeat: Boolean? = null,
+) : LayoutWidget {
+    /** Whether holding the key sends it again and again. */
+    val repeats: Boolean get() = action.canRepeat && (repeat ?: action.repeatsByDefault)
+}
+
+/** The colour of a key, as a theme role (docs/design/components/ButtonConfig). Null is the action's default. */
+@Serializable
+enum class KeyColor { STANDARD, PRIMARY, SECONDARY, TERTIARY, GHOST, POWER }
 
 /** The directional pad with OK in the middle. Always square: 3x3 or 4x4 (docs/design/components/DPad). */
 @Serializable
@@ -129,6 +142,56 @@ data class MediaBarWidget(
     }
 }
 
+/** Empty room that keeps keys apart: invisible on the remote, outlined in edit mode (LayoutExtras). */
+@Serializable
+@SerialName("spacer")
+data class SpacerWidget(
+    override val id: String,
+    override val column: Int,
+    override val row: Int,
+    override val columnSpan: Int = 1,
+) : LayoutWidget {
+    override val rowSpan: Int get() = 1
+
+    init {
+        require(columnSpan in 1..4) { "a spacer is 1x1 to 4x1, was ${columnSpan}x1" }
+    }
+}
+
+/** A caption that groups keys, such as "Streaming" (docs/design/components/LayoutExtras). */
+@Serializable
+@SerialName("label")
+data class LabelWidget(
+    override val id: String,
+    val text: String,
+    override val column: Int,
+    override val row: Int,
+    override val columnSpan: Int = 4,
+) : LayoutWidget {
+    override val rowSpan: Int get() = 1
+
+    init {
+        require(columnSpan in 1..4) { "a label is 1x1 to 4x1, was ${columnSpan}x1" }
+    }
+}
+
+/**
+ * A widget this version cannot run, kept rather than dropped (SPEC FR-12.2): an imported button
+ * with an unknown type or key. Shown as a disabled placeholder (LayoutExtras) and written back
+ * unchanged on export, so a newer Zapper can read it again.
+ */
+@Serializable
+@SerialName("unsupported")
+data class UnsupportedWidget(
+    override val id: String,
+    override val column: Int,
+    override val row: Int,
+    override val columnSpan: Int = 1,
+    override val rowSpan: Int = 1,
+    /** The widget as it was written. */
+    val original: JsonObject = JsonObject(emptyMap()),
+) : LayoutWidget
+
 /** Every key a widget can send, so the UI can tell which are unsupported. */
 val LayoutWidget.keys: List<RemoteKey>
     get() =
@@ -155,6 +218,10 @@ val LayoutWidget.keys: List<RemoteKey>
 
             is MediaBarWidget -> {
                 listOf(RemoteKey.REWIND, RemoteKey.PLAY_PAUSE, RemoteKey.FAST_FORWARD)
+            }
+
+            is SpacerWidget, is LabelWidget, is UnsupportedWidget -> {
+                emptyList()
             }
         }
 
@@ -202,6 +269,30 @@ sealed interface ButtonAction {
     @Serializable
     data object OpenKeyboard : ButtonAction
 }
+
+/** Keys that make sense to send again while held: volume, channel, navigation and seeking (ButtonConfig). */
+val REPEATABLE_KEYS: Set<RemoteKey> =
+    setOf(
+        RemoteKey.VOLUME_UP,
+        RemoteKey.VOLUME_DOWN,
+        RemoteKey.CHANNEL_UP,
+        RemoteKey.CHANNEL_DOWN,
+        RemoteKey.UP,
+        RemoteKey.DOWN,
+        RemoteKey.LEFT,
+        RemoteKey.RIGHT,
+        RemoteKey.REWIND,
+        RemoteKey.FAST_FORWARD,
+    )
+
+/** Whether "Repeat while held" is offered for this action. */
+val ButtonAction.canRepeat: Boolean get() = this is ButtonAction.Key && key in REPEATABLE_KEYS
+
+/** Volume and channel repeat unless the user turns it off; other keys only when turned on. */
+val ButtonAction.repeatsByDefault: Boolean
+    get() =
+        this is ButtonAction.Key &&
+            key in setOf(RemoteKey.VOLUME_UP, RemoteKey.VOLUME_DOWN, RemoteKey.CHANNEL_UP, RemoteKey.CHANNEL_DOWN)
 
 /** The capability a button needs to be usable on a given TV. */
 val ButtonAction.requiredCapability: Capability

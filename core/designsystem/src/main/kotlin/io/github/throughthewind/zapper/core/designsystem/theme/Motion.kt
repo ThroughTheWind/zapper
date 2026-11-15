@@ -7,7 +7,10 @@ import androidx.compose.runtime.staticCompositionLocalOf
 
 /** M3 Expressive-style springs. Spatial = position/scale (may overshoot); Effects = color/alpha (no overshoot). */
 @Immutable
-class RemoteMotion {
+class RemoteMotion(
+    /** Time between repeats of a held key; Settings > Controls sets it from 150 (slow) to 45 ms (fast). */
+    val repeatIntervalMs: Long = 90L,
+) {
     fun <T> fastSpatial(): FiniteAnimationSpec<T> = spring(dampingRatio = 0.6f, stiffness = 800f)
 
     fun <T> defaultSpatial(): FiniteAnimationSpec<T> = spring(dampingRatio = 0.8f, stiffness = 380f)
@@ -25,9 +28,10 @@ class RemoteMotion {
 
     /** Hold-to-repeat (volume, channel, d-pad). */
     val repeatInitialDelayMs = 400L
-    val repeatIntervalMs = 90L
     val repeatAccelerateAfterMs = 1500L
-    val repeatFastIntervalMs = 45L
+
+    /** After [repeatAccelerateAfterMs], twice as fast. */
+    val repeatFastIntervalMs: Long get() = repeatIntervalMs / 2
 }
 
 val LocalRemoteMotion = staticCompositionLocalOf { RemoteMotion() }

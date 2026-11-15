@@ -2,6 +2,7 @@ package io.github.throughthewind.zapper.core.data
 
 import androidx.datastore.core.CorruptionException
 import androidx.datastore.core.Serializer
+import io.github.throughthewind.zapper.core.model.AppearanceSettings
 import io.github.throughthewind.zapper.core.model.RemoteLayout
 import io.github.throughthewind.zapper.core.model.TvDevice
 import kotlinx.serialization.Serializable
@@ -20,7 +21,12 @@ internal data class StoredState(
     val lastDeviceId: String? = null,
     /** The TV the app opens on, when the user picked one; otherwise the last used (SPEC FR-3.3). */
     val defaultDeviceId: String? = null,
+    /** Unused: no build wrote it. Kept so the field name is not reused with another meaning. */
     val layouts: List<RemoteLayout> = emptyList(),
+    /** Each TV's own layout, by TV id (SPEC FR-8.7). A TV without one uses the default. */
+    val deviceLayouts: Map<String, RemoteLayout> = emptyMap(),
+    /** Settings > Appearance, Feedback and Controls (SPEC F9, F10). */
+    val appearance: AppearanceSettings = AppearanceSettings(),
     /** The phone's volume keys change the TV volume while the remote is open (SPEC FR-4.4). */
     val hardwareVolumeKeys: Boolean = true,
     /** The user dismissed the one-time explanation of how to let the phone turn the TV on (SPEC FR-7.2). */
@@ -38,6 +44,9 @@ internal object StoredStateSerializer : Serializer<StoredState> {
         Json {
             ignoreUnknownKeys = true
             encodeDefaults = false
+            // A value an older build does not know, such as a new theme, reads as the default
+            // rather than making the whole file unreadable.
+            coerceInputValues = true
         }
 
     override val defaultValue: StoredState = StoredState()

@@ -13,7 +13,10 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.PowerSettingsNew
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -48,12 +51,13 @@ fun RemoteScreen(
     brandName: (String) -> String,
     onAddTv: () -> Unit,
     onNoTvLeft: () -> Unit,
+    onEdit: () -> Unit,
+    onSettings: () -> Unit,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val device by viewModel.device.collectAsStateWithLifecycle()
     val saved by viewModel.savedDevices.collectAsStateWithLifecycle()
     val defaultId by viewModel.defaultDeviceId.collectAsStateWithLifecycle()
-    val volumeKeys by viewModel.hardwareVolumeKeys.collectAsStateWithLifecycle()
     val capabilities by viewModel.capabilities.collectAsStateWithLifecycle()
     val textInput by viewModel.textInput.collectAsStateWithLifecycle()
     val tvKeyboard by viewModel.tvKeyboard.collectAsStateWithLifecycle()
@@ -86,6 +90,7 @@ fun RemoteScreen(
             chip = chip,
             actions = remember(state, capabilities) { viewModel.actions(connected = !offline, capabilities = capabilities) },
             onChooseTv = { switcher = true },
+            onEdit = onEdit,
         )
         if (textInput) {
             TextInputOverlay(
@@ -114,8 +119,10 @@ fun RemoteScreen(
                 switcher = false
                 onAddTv()
             },
-            volumeKeys = volumeKeys,
-            onVolumeKeysChange = viewModel::setHardwareVolumeKeys,
+            onSettings = {
+                switcher = false
+                onSettings()
+            },
             onDismiss = { switcher = false },
         )
     }
@@ -127,6 +134,7 @@ private fun RemoteContent(
     chip: ConnectionChipState,
     actions: RemoteActions,
     onChooseTv: () -> Unit,
+    onEdit: () -> Unit,
 ) {
     val layout by viewModel.layout.collectAsStateWithLifecycle()
     val device by viewModel.device.collectAsStateWithLifecycle()
@@ -152,6 +160,8 @@ private fun RemoteContent(
                     Text(device?.name ?: "No TV", style = MaterialTheme.typography.titleLarge)
                 }
                 ConnectionStatusChip(state = chip, onRetry = viewModel::retry, onPowerOn = viewModel::turnOn)
+                // Edit mode opens only from here, never by a long press (SPEC FR-8.2).
+                IconButton(onClick = onEdit) { Icon(Icons.Rounded.Edit, contentDescription = "Edit layout") }
             }
             // FR-7.2: shown once, at the top of the canvas, pushing the keys down (Banner).
             powerOnHelp?.let { help ->

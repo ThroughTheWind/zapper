@@ -16,6 +16,7 @@ import io.github.throughthewind.zapper.core.remote.ConnectionState
 import io.github.throughthewind.zapper.core.remote.PowerState
 import io.github.throughthewind.zapper.core.remote.TvConnection
 import io.github.throughthewind.zapper.core.remote.TvError
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -24,7 +25,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -34,8 +37,14 @@ class RemoteViewModel(
     private val repository: ZapperRepository,
     private val connection: TvConnection,
 ) : ViewModel() {
+    /** The current TV's own layout (SPEC FR-8.7). */
+    @OptIn(ExperimentalCoroutinesApi::class)
     val layout: StateFlow<RemoteLayout?> =
-        repository.layouts.map { it.firstOrNull() }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
+        connection.device
+            .map { it?.id }
+            .distinctUntilChanged()
+            .flatMapLatest { repository.layoutFor(it) }
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 
     val savedDevices: StateFlow<List<TvDevice>> =
         repository.devices.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
@@ -153,13 +162,6 @@ class RemoteViewModel(
         _feedback.emit(if (error == null) RemoteFeedback.Success else RemoteFeedback.Failure(error.message))
     }
 
-    val hardwareVolumeKeys: StateFlow<Boolean> =
-        repository.hardwareVolumeKeys.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), true)
-
-    fun setHardwareVolumeKeys(enabled: Boolean) {
-        viewModelScope.launch { repository.setHardwareVolumeKeys(enabled) }
-    }
-
     /** Not known, so the first press of a toggle-less TV pauses: people reach for it mid-show. */
     private var playing = true
 
@@ -196,6 +198,10 @@ class RemoteViewModel(
                     is ButtonAction.Macro -> action.keys.all { isEnabled(it) }
                     else -> connected && action.requiredCapability in capabilities
                 }
+
+            override fun notSupported() {
+                _feedback.tryEmit(RemoteFeedback.Failure("Not supported on this TV"))
+            }
 
             override fun isEnabled(key: RemoteKey): Boolean {
                 // Power stays usable while the TV is off, to wake it (ErrorsAndHelp).

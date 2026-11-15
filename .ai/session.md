@@ -8,21 +8,20 @@ Keep it short. This document is read at the start of every session, and a long o
 
 ## Current objective
 
-Phase 3 of the [roadmap](../docs/ROADMAP.md), customization, is built and waiting on a phone (PR #16). Phase 2 (PR #15) is merged into `main`; 0.2.0 is being prepared. Phase 4 (release 1.0) is next.
+All four roadmap phases are merged and shipped: Phases 2 and 3 as 0.2.0, Phase 4 (PR #22) as 1.0.0. Next is the [After 1.0](../docs/ROADMAP.md#after-10) list, starting with the Android TV / Google TV adapter.
 
 ## In progress
 
-- WI-011 to WI-015 are in `review` in PR #16. Their unit criteria pass; AC-13 to AC-17 need a phone.
-- WI-008 to WI-010 are merged but still in `review`: AC-9, AC-10 and AC-11 need the reference TV.
+- WI-008 to WI-016, WI-018 and WI-022 are merged and released but stay in `review`: their phone and TV acceptance criteria (AC-9 to AC-17, the TalkBack, large-font, TV-unplugged and cold-start checks) have not been run on the reference RU7020.
 
 ## Resume from
 
-Antoine tries the PR #16 debug APK (it includes Phase 2): the TV checks from PR #15, then edit mode, pages, reset, export/import and the theme switch (AC-13 to AC-17). Results go into each item's Review.
+Antoine tries 1.0.0 on the phone and the RU7020, and the results go into each item's Review; items whose checks pass move to `done`.
 
 ## Up next
 
 1. F-003: Compose UI tests in `app` (Robolectric), now that edit mode exists.
-2. Phase 4: WI-016 accessibility, onboarding and polish; WI-018 adapter guide.
+2. The first adapter after 1.0 (Android TV / Google TV), following `docs/adapters.md`.
 
 ## Active constraints — do not reopen
 

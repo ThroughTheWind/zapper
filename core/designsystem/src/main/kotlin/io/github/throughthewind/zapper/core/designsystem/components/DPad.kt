@@ -4,6 +4,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.aspectRatio
@@ -18,7 +19,6 @@ import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material.icons.rounded.KeyboardArrowUp
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,10 +37,11 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.disabled
 import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.role
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import io.github.throughthewind.zapper.core.designsystem.theme.KeyType
 import io.github.throughthewind.zapper.core.designsystem.theme.LocalRemoteMotion
@@ -79,12 +80,16 @@ fun DPad(
     var pressed by remember { mutableStateOf<DPadDirection?>(null) }
     val okScale by animateFloatAsState(if (pressed == DPadDirection.Ok) motion.pressScale else 1f, motion.fastSpatial(), label = "ok")
     val content = if (enabled) colors.onSurfaceVariant else colors.onSurface.copy(alpha = 0.38f)
+    val disabledPress = LocalDisabledKeyPress.current
 
     Box(
         modifier
             .aspectRatio(1f)
-            .pointerInput(enabled) {
-                if (!enabled) return@pointerInput
+            .pointerInput(enabled, disabledPress) {
+                if (!enabled) {
+                    disabledPress?.let { tell -> detectTapGestures(onTap = { tell() }) }
+                    return@pointerInput
+                }
                 awaitEachGesture {
                     val down = awaitFirstDown()
                     val center = Offset(size.width / 2f, size.height / 2f)
@@ -176,7 +181,7 @@ fun DPad(
                 .fillMaxWidth(OK_RATIO)
                 .aspectRatio(1f)
                 .scale(okScale)
-                .semantics {
+                .clearAndSetSemantics {
                     contentDescription = "OK"
                     role = Role.Button
                     if (enabled) {
@@ -184,6 +189,8 @@ fun DPad(
                             onPress(DPadDirection.Ok)
                             true
                         }
+                    } else {
+                        disabled()
                     }
                 },
             contentAlignment = Alignment.Center,
@@ -192,7 +199,7 @@ fun DPad(
                 drawCircle(body, size.minDimension / 2f)
                 drawCircle(if (enabled) colors.primary else colors.onSurface.copy(alpha = 0.12f), size.minDimension / 2f - 8.dp.toPx())
             }
-            Text("OK", style = KeyType.label, color = if (enabled) colors.onPrimary else content)
+            KeyText("OK", style = KeyType.label, color = if (enabled) colors.onPrimary else content)
         }
     }
 }
@@ -206,26 +213,28 @@ private fun BoxScope.Chevron(
     enabled: Boolean,
     onPress: () -> Unit,
 ) {
-    Icon(
-        icon,
-        contentDescription = null,
-        tint = tint,
-        modifier =
-            Modifier
-                .align(alignment)
-                .padding(18.dp)
-                .size(28.dp)
-                .semantics {
-                    contentDescription = label
-                    role = Role.Button
-                    if (enabled) {
-                        onClick {
-                            onPress()
-                            true
-                        }
+    // A 48 dp TalkBack target centred where the 28 dp chevron sits, 18 dp from the edge (SPEC NFR-9).
+    Box(
+        Modifier
+            .align(alignment)
+            .padding(8.dp)
+            .size(48.dp)
+            .clearAndSetSemantics {
+                contentDescription = label
+                role = Role.Button
+                if (enabled) {
+                    onClick {
+                        onPress()
+                        true
                     }
-                },
-    )
+                } else {
+                    disabled()
+                }
+            },
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(icon, contentDescription = null, tint = tint, modifier = Modifier.size(28.dp))
+    }
 }
 
 /** Which part of the pad a point at [position] falls in, for a pad of [radius] centred on [center]. */

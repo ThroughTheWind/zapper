@@ -11,6 +11,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -19,8 +20,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import io.github.throughthewind.zapper.core.designsystem.theme.RemoteHaptic
@@ -89,12 +92,29 @@ fun ConnectionStatusChip(
         shape = CircleShape,
         modifier =
             modifier
-                .semantics(mergeDescendants = true) { contentDescription = description }
-                .then(
+                // Announced when it changes, so TalkBack users hear the TV drop or come back.
+                .semantics(mergeDescendants = true) {
+                    contentDescription = description
+                    liveRegion = LiveRegionMode.Polite
+                }.then(
                     when (state) {
-                        ConnectionChipState.Offline -> Modifier.clickable(role = Role.Button, onClick = onRetry)
-                        ConnectionChipState.TvOff -> Modifier.clickable(role = Role.Button, onClick = onPowerOn)
-                        else -> Modifier
+                        ConnectionChipState.Offline -> {
+                            Modifier.minimumInteractiveComponentSize().clickable(
+                                role = Role.Button,
+                                onClick = onRetry,
+                            )
+                        }
+
+                        ConnectionChipState.TvOff -> {
+                            Modifier.minimumInteractiveComponentSize().clickable(
+                                role = Role.Button,
+                                onClick = onPowerOn,
+                            )
+                        }
+
+                        else -> {
+                            Modifier
+                        }
                     },
                 ),
     ) {

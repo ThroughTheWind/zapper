@@ -199,6 +199,10 @@ class RemoteViewModel(
                     else -> connected && action.requiredCapability in capabilities
                 }
 
+            override fun disabledPressed() {
+                _feedback.tryEmit(if (connected) RemoteFeedback.Failure("Not supported on this TV") else RemoteFeedback.NotConnected)
+            }
+
             override fun notSupported() {
                 _feedback.tryEmit(RemoteFeedback.Failure("Not supported on this TV"))
             }
@@ -252,6 +256,9 @@ class RemoteViewModel(
 /** What became of something the user asked the TV to do. */
 sealed interface RemoteFeedback {
     data object Success : RemoteFeedback
+
+    /** A key was tapped while no TV is connected: offer to reconnect (ErrorsAndHelp: Offline). */
+    data object NotConnected : RemoteFeedback
 
     data class Failure(
         val message: String,

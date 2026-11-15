@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -47,6 +48,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -64,6 +66,8 @@ import io.github.throughthewind.zapper.core.designsystem.components.AppShortcutC
 import io.github.throughthewind.zapper.core.designsystem.components.DPad
 import io.github.throughthewind.zapper.core.designsystem.components.DPadDirection
 import io.github.throughthewind.zapper.core.designsystem.components.KeyEmphasis
+import io.github.throughthewind.zapper.core.designsystem.components.KeyText
+import io.github.throughthewind.zapper.core.designsystem.components.LocalDisabledKeyPress
 import io.github.throughthewind.zapper.core.designsystem.components.MediaControl
 import io.github.throughthewind.zapper.core.designsystem.components.MediaControls
 import io.github.throughthewind.zapper.core.designsystem.components.NumberPad
@@ -104,6 +108,9 @@ interface RemoteActions {
 
     /** A placeholder for a button this version cannot run was tapped (LayoutExtras). */
     fun notSupported() = Unit
+
+    /** A disabled key was tapped: say why nothing happens (RemoteKey: Disabled). */
+    fun disabledPressed() = Unit
 }
 
 /** Actions for drawing widgets that do nothing, as in edit mode and the catalog. */
@@ -128,6 +135,18 @@ fun RemoteCanvas(
     modifier: Modifier = Modifier,
 ) {
     val pager = rememberPagerState { layout.pages.size }
+    CompositionLocalProvider(LocalDisabledKeyPress provides actions::disabledPressed) {
+        RemotePages(layout, pager, actions, modifier)
+    }
+}
+
+@Composable
+private fun RemotePages(
+    layout: RemoteLayout,
+    pager: PagerState,
+    actions: RemoteActions,
+    modifier: Modifier,
+) {
     Column(modifier) {
         HorizontalPager(pager, modifier = Modifier.weight(1f).fillMaxWidth(), key = { layout.pages[it].id }) { index ->
             RemotePageGrid(layout.pages[index], layout.columns, actions)
@@ -348,7 +367,7 @@ private fun ButtonWidget(
             icon != null && label != null && button.columnSpan > 1 -> {
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     Icon(icon, contentDescription = null)
-                    Text(label.uppercase(), style = KeyType.label, maxLines = 1)
+                    KeyText(label.uppercase(), style = KeyType.label)
                 }
             }
 
@@ -357,7 +376,7 @@ private fun ButtonWidget(
             }
 
             else -> {
-                Text(title.uppercase(), style = KeyType.label, maxLines = 1, overflow = TextOverflow.Clip)
+                KeyText(title.uppercase(), style = KeyType.label)
             }
         }
     }

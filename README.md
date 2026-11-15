@@ -4,9 +4,10 @@ A free, open-source TV remote for Android phones, with a modern design and butto
 you can arrange the way you like. Samsung smart TVs come first; other brands plug in through
 adapters.
 
-> **Status:** 0.2.0. It finds a Samsung TV (2016 or later) on the Wi-Fi, pairs once, types into
-> it, opens apps, turns it on, and lets you rearrange every key, page and colour. Accessibility,
-> onboarding and the guide for adding TV brands come next, for 1.0 ([roadmap](docs/ROADMAP.md)).
+> **Status:** 1.0.0. It finds a Samsung TV (2016 or later) on the Wi-Fi, pairs once, types into
+> it, opens apps, turns it on, and lets you rearrange every key, page and colour. It works with
+> TalkBack and large text, and other TV brands can be added with the
+> [adapter guide](docs/adapters.md). More brands come next ([roadmap](docs/ROADMAP.md)).
 
 ## Install
 
@@ -64,7 +65,7 @@ The stack and the reasons for it are in [ADR-0001](docs/decisions/ADR-0001-kotli
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). Adding a TV brand is the most useful thing you can do if
-you own one.
+you own one: the [guide for adding a TV brand](docs/adapters.md) walks through it.
 
 ## License
 

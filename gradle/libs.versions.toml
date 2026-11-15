@@ -1,7 +1,7 @@
 [versions]
 # The app version. The version code is derived from it in app/build.gradle.kts, and a release
 # tag must be "v" + this value (checked by .github/workflows/release.yml).
-zapper = "0.2.0"
+zapper = "1.0.0"
 
 # SDK levels. compileSdk 37 is required by Compose 1.12+.
 minSdk = "26"

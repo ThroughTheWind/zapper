@@ -12,11 +12,11 @@ All four roadmap phases are merged and shipped: Phases 2 and 3 as 0.2.0, Phase 4
 
 ## In progress
 
-- WI-008 to WI-016, WI-018 and WI-022 are merged and released but stay in `review`: their phone and TV acceptance criteria (AC-9 to AC-17, the TalkBack, large-font, TV-unplugged and cold-start checks) have not been run on the reference RU7020.
+Nothing in progress. Every item that was in `review` (WI-008 to WI-016, WI-018, WI-022) was closed as `done` and archived on 2026-11-15 at Antoine's request; the on-device checks recorded as open in their Review sections were not run separately. WI-001 (reference TV spike) is the only open item.
 
 ## Resume from
 
-Antoine tries 1.0.0 on the phone and the RU7020, and the results go into each item's Review; items whose checks pass move to `done`.
+The [After 1.0](../docs/ROADMAP.md#after-10) list. Report anything Antoine finds on the RU7020 with 1.0.0 as a finding or a new item.
 
 ## Up next
 

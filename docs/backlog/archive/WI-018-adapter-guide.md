@@ -2,7 +2,7 @@
 id: WI-018
 title: Write the guide for adding a TV brand
 type: docs
-status: review
+status: done
 branch: claude/project-thread-i8pmcn
 created: 2026-11-13
 updated: 2026-11-15
@@ -65,3 +65,6 @@ Phase 4 — Release 1.0 ([roadmap](../../ROADMAP.md)).
 - Example adapter test: runs in CI with `:core:remote:test`.
 - Links: `node .ai/rungs.mjs check` passes.
 - Reviewer walkthrough: **open** for Antoine's review of the pull request.
+- 2026-11-15: closed as `done` by Antoine, who asked to move every item in review to done. The
+  branch is merged and shipped in a release. Any criterion marked open above was not demonstrated
+  separately before closing.

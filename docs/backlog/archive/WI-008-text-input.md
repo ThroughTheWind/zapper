@@ -2,10 +2,10 @@
 id: WI-008
 title: Type into the TV from the phone keyboard
 type: feature
-status: review
+status: done
 branch: claude/project-thread-qlkfpf
 created: 2026-11-13
-updated: 2026-11-14
+updated: 2026-11-15
 related: [SPEC-F5, SPEC-AC-9]
 epic:
 children: []
@@ -64,3 +64,6 @@ Phase 2 — Samsung extras ([roadmap](../../ROADMAP.md)).
 
 - Unit criteria: the JVM tests above pass locally (`:core:model`, `:core:remote`, `:adapters:samsung`, `:adapters:fake`). The app module compiles and lints in CI only (no Android SDK in the authoring environment).
 - AC-9: **open** until it is tried on the reference TV.
+- 2026-11-15: closed as `done` by Antoine, who asked to move every item in review to done. The
+  branch is merged and shipped in a release. Any criterion marked open above was not demonstrated
+  separately before closing.

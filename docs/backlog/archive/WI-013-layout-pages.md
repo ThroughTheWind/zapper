@@ -2,10 +2,10 @@
 id: WI-013
 title: Add, rename and reorder remote pages
 type: feature
-status: review
+status: done
 branch: claude/project-thread-n0w6sb
 created: 2026-11-13
-updated: 2026-11-14
+updated: 2026-11-15
 related: [WI-012, SPEC-FR-8.5, SPEC-AC-14]
 epic:
 children: []
@@ -56,3 +56,6 @@ Phase 3 — Customization ([roadmap](../../ROADMAP.md)).
 ## Review
 
 - Unit criteria pass locally. AC-14: **open** until tried on a phone.
+- 2026-11-15: closed as `done` by Antoine, who asked to move every item in review to done. The
+  branch is merged and shipped in a release. Any criterion marked open above was not demonstrated
+  separately before closing.

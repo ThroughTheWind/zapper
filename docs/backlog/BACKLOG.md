@@ -6,14 +6,14 @@
 The board. One row per live work item, grouped by status. Items live in
 [`items/`](items/); finished work moves to [`archive/`](archive/).
 
-<!-- NEXT-ID: WI-023 -->
+<!-- NEXT-ID: WI-024 -->
 <!-- Claim from this marker and bump it on your own branch. `node .ai/rungs.mjs check` refuses a duplicate. -->
 
 ## In progress
 
 | Id | Title | Type | Branch |
 | --- | --- | --- | --- |
-| — | *nothing in flight* | | |
+| [WI-023](items/WI-023-store-distribution-prep.md) | Prepare releases for F-Droid and app stores | chore | `claude/project-thread-07pvc6` |
 
 ## Review
 

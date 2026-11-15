@@ -15,6 +15,9 @@ Download the latest `zapper-X.Y.Z.apk` from [Releases](https://github.com/Throug
 on your phone and open it. Needs Android 8.0 or later. Each release lists the APK's SHA-256 and
 the signing certificate's fingerprint.
 
+To get updates automatically, add `https://github.com/ThroughTheWind/zapper` to
+[Obtainium](https://github.com/ImranR98/Obtainium), which installs straight from these releases.
+
 ## Principles
 
 - **Free and open source**, under [GPL-3.0](LICENSE).

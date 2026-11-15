@@ -13,6 +13,7 @@ All four roadmap phases are merged and shipped: Phases 2 and 3 as 0.2.0, Phase 4
 ## In progress
 
 - WI-008 to WI-016, WI-018 and WI-022 are merged and released but stay in `review`: their phone and TV acceptance criteria (AC-9 to AC-17, the TalkBack, large-font, TV-unplugged and cold-start checks) have not been run on the reference RU7020.
+- WI-023 prepares releases for F-Droid and app stores (store metadata, an App Bundle, a reproducible-build check). Submitting to a store is Antoine's call after it lands; the evaluation is in the project's "Zapper store distribution" doc.
 
 ## Resume from
 

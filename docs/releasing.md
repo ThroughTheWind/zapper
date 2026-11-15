@@ -101,3 +101,30 @@ git tag -a vX.Y.Z -m "Zapper X.Y.Z" && git push origin vX.Y.Z
 ```
 
 If a release went out broken, do not move or reuse its tag: fix on `main` and release `X.Y.Z+1`.
+
+## The App Bundle
+
+The release workflow also builds `zapper-X.Y.Z.aab`, signed with the same key, for Google Play. It
+is attached to the workflow run (*Actions → Release → the run → Artifacts*, kept 30 days), not to
+the GitHub Release: people installing by hand need the APK only.
+
+## Store metadata
+
+`fastlane/metadata/android/en-US/` holds the store listing: title, short and full description,
+icon, and one changelog per version named by its `versionCode` (`changelogs/1000000.txt` is
+1.0.0). F-Droid and other stores read it from the repository. When cutting a release, add
+`changelogs/<versionCode>.txt` (500 characters at most) next to the release notes. Phone
+screenshots go in `images/phoneScreenshots/`, taken on a real phone.
+
+## Reproducible builds
+
+F-Droid builds the app from source. When its build matches ours byte for byte, it can publish the
+APK we signed instead of signing its own, so F-Droid, GitHub and Obtainium installs share one key
+and update each other. [`reproducible.yml`](../.github/workflows/reproducible.yml) checks this:
+
+- on pull requests that touch the build or app sources, it builds the unsigned release APK in two
+  environments (the release runner's JDK, and Debian's OpenJDK in a container, like F-Droid) and
+  fails if they differ, with a diffoscope report as an artifact;
+- run by hand with a tag (*Actions → Reproducible build → Run workflow*, `tag: vX.Y.Z`), it also
+  checks the build against the APK published for that tag with `apksigcopier compare`, the same
+  check F-Droid runs.

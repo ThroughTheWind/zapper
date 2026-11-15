@@ -2,10 +2,10 @@
 id: WI-021
 title: Publish the landing page on GitHub Pages
 type: docs
-status: review
+status: done
 branch: claude/project-thread-238rhr
 created: 2026-11-13
-updated: 2026-11-14
+updated: 2026-11-15
 related: [WI-017]
 epic:
 children: []
@@ -72,3 +72,5 @@ the live label still comes from the latest release.
 ## Review
 
 Checked with Playwright in Chromium: desktop dark and light, phone dark; demo D-pad, OK and volume.
+
+Merged as PR #14 on 2026-11-15; the Pages workflow's first run deployed the site.

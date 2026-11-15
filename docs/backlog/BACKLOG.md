@@ -19,7 +19,6 @@ The board. One row per live work item, grouped by status. Items live in
 
 | Id | Title | Type | Branch |
 | --- | --- | --- | --- |
-| [WI-021](items/WI-021-landing-page.md) | Publish the landing page on GitHub Pages | docs | `claude/project-thread-238rhr` |
 | [WI-017](items/WI-017-signed-release-on-tag.md) | Publish a signed APK to GitHub Releases on each tag | chore | `claude/project-thread-vpshn1` |
 
 ## Planned

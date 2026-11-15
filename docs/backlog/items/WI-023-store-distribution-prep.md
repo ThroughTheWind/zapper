@@ -2,7 +2,7 @@
 id: WI-023
 title: Prepare releases for F-Droid and app stores
 type: chore
-status: in_progress
+status: review
 branch: claude/project-thread-07pvc6
 created: 2026-11-15
 updated: 2026-11-15
@@ -85,3 +85,10 @@ evaluation. Submitting to any store is a separate decision and not part of this 
   work may push only to that branch.
 
 ## Review
+
+- Two environments produce identical APKs: PR #39's `Reproducible build` run built the unsigned
+  release APK with Temurin on the runner and with Debian's OpenJDK 21.0.13 in `debian:trixie`, and
+  both came out as SHA-256 `bd0a77fba4944f9646f21f1cec09d45fdeacdc889e1d93fb1909323a6f177cbd`.
+- Not yet checked: the comparison with the published `v1.0.0` APK (needs the workflow on `main`
+  and a run with `tag: v1.0.0`), and the signed AAB (needs a release dry run).
+- `node .ai/rungs.mjs check` passes.

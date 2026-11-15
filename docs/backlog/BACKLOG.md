@@ -13,12 +13,13 @@ The board. One row per live work item, grouped by status. Items live in
 
 | Id | Title | Type | Branch |
 | --- | --- | --- | --- |
-| [WI-023](items/WI-023-store-distribution-prep.md) | Prepare releases for F-Droid and app stores | chore | `claude/project-thread-07pvc6` |
+| — | *nothing in flight* | | |
 
 ## Review
 
 | Id | Title | Type | Branch |
 | --- | --- | --- | --- |
+| [WI-023](items/WI-023-store-distribution-prep.md) | Prepare releases for F-Droid and app stores | chore | `claude/project-thread-07pvc6` |
 | [WI-008](items/WI-008-text-input.md) | Type into the TV from the phone keyboard | feature | `claude/project-thread-qlkfpf` |
 | [WI-009](items/WI-009-app-shortcuts.md) | Launch TV apps from shortcut buttons | feature | `claude/project-thread-qlkfpf` |
 | [WI-010](items/WI-010-power-on.md) | Turn the TV on and show its power state | feature | `claude/project-thread-qlkfpf` |

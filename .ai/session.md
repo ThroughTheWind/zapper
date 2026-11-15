@@ -12,7 +12,7 @@ All four roadmap phases are merged and shipped: Phases 2 and 3 as 0.2.0, Phase 4
 
 ## In progress
 
-[WI-023](../docs/backlog/items/WI-023-android-tv-adapter.md), the Android TV / Google TV adapter, is in review on `claude/project-thread-s72b34` (issue #24). Its tests pass against a fake TV; nobody has tried it on a real Android TV yet. Every item that was in `review` (WI-008 to WI-016, WI-018, WI-022) was closed as `done` and archived on 2026-11-15 at Antoine's request; the on-device checks recorded as open in their Review sections were not run separately. WI-001 (reference TV spike) is the only open item.
+[WI-023](../docs/backlog/items/WI-023-android-tv-adapter.md), the Android TV / Google TV adapter, is in review on `claude/project-thread-s72b34` (issue #24). Its tests pass against a fake TV; nobody has tried it on a real Android TV yet. Every item that was in `review` (WI-008 to WI-016, WI-018, WI-022) was closed as `done` and archived on 2026-11-15 at Antoine's request; the on-device checks recorded as open in their Review sections were not run separately. WI-001 (reference TV spike) is the only open item. WI-025 (preview builds for testers) is in review; once merged, the preview key secrets in `docs/previews.md` must be added before the first preview run.
 
 ## Resume from
 

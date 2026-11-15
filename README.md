@@ -48,7 +48,7 @@ You need JDK 17 or newer and the Android SDK (Android Studio installs both).
 ./gradlew spotlessApply          # format
 ```
 
-Releases are built, signed and published by CI from a tag; see [releasing](docs/releasing.md).
+Releases are built, signed and published by CI from a tag; see [releasing](docs/releasing.md). Unmerged changes can be shipped to testers as [preview builds](docs/previews.md).
 The stack and the reasons for it are in [ADR-0001](docs/decisions/ADR-0001-kotlin-compose-multi-module.md).
 
 ## Project layout

@@ -117,7 +117,7 @@ The pointer only works in apps that show a cursor (e.g. the browser).
 - Well-known app IDs (vary by region/year, so keep the table data-driven): Netflix `3201907018807` (older: `11101200001`), YouTube `111299001912`, Prime Video `3201910019365` (older: `3201512006785`), Disney+ `3201901017640`, Spotify `3201606009684`, Apple TV `3201807016597`, Plex `3201512006963`.
 
 **Common keys** (`DataOfCmd`)
-`KEY_POWER` (toggle), `KEY_POWEROFF`, `KEY_HOME`, `KEY_MENU`, `KEY_SOURCE`, `KEY_HDMI`, `KEY_UP/DOWN/LEFT/RIGHT`, `KEY_ENTER`, `KEY_RETURN`, `KEY_EXIT`, `KEY_VOLUP/VOLDOWN/MUTE`, `KEY_CHUP/CHDOWN`, `KEY_PRECH`, `KEY_0`–`KEY_9`, `KEY_PLAY`, `KEY_PAUSE`, `KEY_STOP`, `KEY_FF`, `KEY_REWIND`, `KEY_REC`, `KEY_INFO`, `KEY_GUIDE`, `KEY_CH_LIST`, `KEY_TOOLS`, `KEY_RED/GREEN/YELLOW/CYAN`, `KEY_CAPTION`/`KEY_SUBTITLE`, `KEY_AD`, `KEY_PICTURE_SIZE`, `KEY_AMBIENT` (Ambient Mode, 2018+), `KEY_MULTI_VIEW`, `KEY_HDMI1`–`KEY_HDMI4` (⚠️ not on all models).
+`KEY_POWER` (toggle), `KEY_POWEROFF`, `KEY_HOME`, `KEY_MENU`, `KEY_SOURCE`, `KEY_HDMI`, `KEY_UP/DOWN/LEFT/RIGHT`, `KEY_ENTER`, `KEY_RETURN`, `KEY_EXIT`, `KEY_VOLUP/VOLDOWN/MUTE`, `KEY_CHUP/CHDOWN`, `KEY_PRECH`, `KEY_0`–`KEY_9`, `KEY_PLAY`, `KEY_PAUSE`, `KEY_STOP`, `KEY_FF`, `KEY_REWIND`, `KEY_REC`, `KEY_INFO`, `KEY_GUIDE`, `KEY_CH_LIST`, `KEY_TOOLS`, `KEY_RED/GREEN/YELLOW/CYAN`, `KEY_CAPTION`/`KEY_SUBTITLE`, `KEY_AD`, `KEY_PICTURE_SIZE`, `KEY_AMBIENT` (Ambient Mode, 2018+), `KEY_MULTI_VIEW`, `KEY_HDMI1`–`KEY_HDMI4` (⚠️ ignored by Tizen TVs from 2018 on, including the reference RU7020; use `KEY_HDMI`, which switches to the next HDMI input, or `KEY_SOURCE`). Choosing a specific port works only through the SmartThings cloud API, which is out of scope (ADR-0003).
 
 ### 2.5 Power, volume and state
 

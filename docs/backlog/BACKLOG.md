@@ -6,14 +6,14 @@
 The board. One row per live work item, grouped by status. Items live in
 [`items/`](items/); finished work moves to [`archive/`](archive/).
 
-<!-- NEXT-ID: WI-026 -->
+<!-- NEXT-ID: WI-027 -->
 <!-- Claim from this marker and bump it on your own branch. `node .ai/rungs.mjs check` refuses a duplicate. -->
 
 ## In progress
 
 | Id | Title | Type | Branch |
 | --- | --- | --- | --- |
-| — | *nothing in flight* | | |
+| [WI-026](items/WI-026-samsung-hdmi-next-input.md) | Switch HDMI inputs on Samsung TVs that ignore the direct HDMI keys | feature | `claude/project-thread-ylideg` |
 
 ## Review
 

@@ -252,14 +252,14 @@ class ButtonCatalogTest {
 
     @Test
     fun `source and HDMI shortcuts are offered and hidden on a TV without direct HDMI keys`() {
-        val inputs = listOf(RemoteKey.SOURCE, RemoteKey.HDMI_1, RemoteKey.HDMI_2, RemoteKey.HDMI_3, RemoteKey.HDMI_4)
+        val inputs = listOf(RemoteKey.SOURCE, RemoteKey.HDMI_1, RemoteKey.HDMI_2, RemoteKey.HDMI_3, RemoteKey.HDMI_4, RemoteKey.HDMI_NEXT)
         val items = ButtonCatalog.items()
 
         assertEquals(inputs, items.keys().filter { it in inputs })
         assertEquals(listOf("HDMI 1", "HDMI 2", "HDMI 3", "HDMI 4"), items.filter { it.title.startsWith("HDMI") }.map { it.title })
 
-        val sourceOnly = ButtonCatalog.available(items, setOf(Capability.KEYS)) { it == RemoteKey.SOURCE }
-        assertEquals(listOf(RemoteKey.SOURCE), sourceOnly.keys().filter { it in inputs })
+        val cycleOnly = ButtonCatalog.available(items, setOf(Capability.KEYS)) { it == RemoteKey.SOURCE || it == RemoteKey.HDMI_NEXT }
+        assertEquals(listOf(RemoteKey.SOURCE, RemoteKey.HDMI_NEXT), cycleOnly.keys().filter { it in inputs })
     }
 
     @Test

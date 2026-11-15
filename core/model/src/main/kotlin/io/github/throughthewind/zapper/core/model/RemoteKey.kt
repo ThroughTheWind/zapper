@@ -20,6 +20,12 @@ enum class RemoteKey {
     HDMI_2,
     HDMI_3,
     HDMI_4,
+
+    /**
+     * Switches to the next HDMI input, for TVs that ignore the direct [HDMI_1] to [HDMI_4] keys
+     * but cycle through their HDMI inputs on one key.
+     */
+    HDMI_NEXT,
     SETTINGS,
     UP,
     DOWN,

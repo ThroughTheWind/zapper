@@ -6,6 +6,13 @@ All notable changes to Zapper are listed here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- Android TV and Google TV support (Sony, TCL, Hisense, Philips, Chromecast with Google TV, Nvidia
+  Shield and others), over the Android TV Remote protocol v2: found on the network or added by IP
+  address, paired once with the 6-character code the TV shows, then keys with long press, typing
+  into the TV and app shortcuts. Not yet tried on a real device (#24).
+
 ## [1.0.0] - 2026-11-15
 
 ### Added

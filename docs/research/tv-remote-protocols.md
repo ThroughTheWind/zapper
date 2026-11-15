@@ -173,6 +173,12 @@ Covers: **Sony Bravia (2015+), TCL & Hisense Google TV models, Philips Android T
 - **Power on:** `KEYCODE_POWER` / `KEYCODE_WAKEUP` works while the TV is in network standby (most Google TVs keep the service alive). Otherwise use WoL.
 - **Quirks:** some TVs need the "Google TV" or "Android TV Remote Service" app updated. The pairing cert is per-phone, so re-installing the app means re-pairing. The client name shows in TV settings → Remote & accessories.
 
+**What building the adapter (WI-023, `adapters/androidtv`) added:**
+- The TV's certificate subject names it and carries its MAC: `CN=atvremote/<board>/<device>/<model>/<MAC>`, or on older devices the model in a `dnQualifier`. A TLS handshake on 6467 is enough to read it, which makes a fast probe for "Add by IP" and gives a MAC for Wake-on-LAN.
+- The client sends `RemoteConfigure` and `RemoteSetActive` only as answers to the TV's own; the TV is ready for keys once it sends `RemoteStart`.
+- A TV that does not know the client certificate may end the handshake with a reset or broken pipe rather than a TLS alert, and with TLS 1.3 only after the handshake; all of these mean "pair again".
+- Neither Wire nor Bouncy Castle is needed: the protobuf fields and the self-signed certificate are small enough to write against the JDK. Unconfirmed on a real device as of WI-023.
+
 **ADB over network (optional power-user adapter):** port 5555 / Android 11+ wireless debugging with a pairing code. It allows listing installed packages, launching any app (`am start`), screenshots and arbitrary key events. It requires enabling Developer options, which is not end-user friendly. Library: **[mobile-dev-inc/dadb](https://github.com/mobile-dev-inc/dadb)** (Kotlin, Apache-2.0).
 
 **Legacy:** Google TV 2010–2013 "Anymote" (v1, ports 9551/9552). Ignore it.

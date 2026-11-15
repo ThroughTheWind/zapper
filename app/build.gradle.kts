@@ -86,6 +86,7 @@ dependencies {
     implementation(project(":core:data"))
     implementation(project(":core:designsystem"))
     implementation(project(":adapters:samsung"))
+    implementation(project(":adapters:androidtv"))
     debugImplementation(project(":adapters:fake"))
 
     implementation(libs.androidx.core.ktx)

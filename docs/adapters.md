@@ -16,7 +16,8 @@ and their tests run without an emulator.
 is the smallest adapter that passes the shared contract, and
 [`ExampleAdapterTest.kt`](../core/remote/src/test/kotlin/io/github/throughthewind/zapper/core/remote/example/ExampleAdapterTest.kt)
 tests it. Both are compiled and run in CI, so they always match the contract. The Samsung adapter
-([`adapters/samsung`](../adapters/samsung/)) is the full reference; the simulated TV
+([`adapters/samsung`](../adapters/samsung/)) is the full reference, and the Android TV adapter
+([`adapters/androidtv`](../adapters/androidtv/)) shows pairing by a code the TV displays; the simulated TV
 ([`adapters/fake`](../adapters/fake/)) shows every optional feature without a network.
 
 ## 1. Create the module

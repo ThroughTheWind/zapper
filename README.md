@@ -61,6 +61,7 @@ The stack and the reasons for it are in [ADR-0001](docs/decisions/ADR-0001-kotli
 | `core/data` | Saved TVs, layouts and pairing tokens |
 | `core/designsystem` | The Compose theme and shared components |
 | `adapters/samsung` | Samsung Tizen adapter (pure Kotlin) |
+| `adapters/androidtv` | Android TV / Google TV adapter, Remote protocol v2 (pure Kotlin) |
 
 ## Contributing
 

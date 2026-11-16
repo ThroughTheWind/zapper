@@ -31,6 +31,8 @@ data class FakeTvBehaviour(
     val discoveryDelayMs: Long = 800,
     val pairingDelayMs: Long = 1_500,
     val refusePairing: Boolean = false,
+    /** How long connecting to a TV that is off takes to fail, as a real socket's timeout does. */
+    val unreachableDelayMs: Long = 0,
     val unsupportedKeys: Set<RemoteKey> = setOf(RemoteKey.GUIDE),
     /** Whether Wake-on-LAN brings the TV back online. */
     val wakesOnLan: Boolean = true,
@@ -149,6 +151,7 @@ class FakeTvAdapter(
             connectAttempts++
             _state.value = ConnectionState.Connecting
             if (!online) {
+                delay(behaviour.unreachableDelayMs)
                 val error = TvError.Unreachable()
                 _state.value = ConnectionState.Failed(error)
                 throw TvException(error)

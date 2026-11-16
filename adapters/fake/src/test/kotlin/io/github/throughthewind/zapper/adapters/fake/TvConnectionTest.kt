@@ -11,7 +11,9 @@ import io.github.throughthewind.zapper.core.remote.TvConnection
 import io.github.throughthewind.zapper.core.remote.TvError
 import io.github.throughthewind.zapper.core.remote.saveToken
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
@@ -74,6 +76,88 @@ class TvConnectionTest {
 
             tv.online = true
             advanceTimeBy(4_001)
+            assertEquals(ConnectionState.Connected, connection.state.value)
+        }
+
+    /** A TV that is off, where each attempt takes a while to fail, as a real socket does. */
+    private fun TestScope.offTv(): Pair<FakeTvAdapter, TvConnection> {
+        val off = FakeTvAdapter(FakeTvBehaviour(discoveryDelayMs = 0, pairingDelayMs = 0, unreachableDelayMs = 500))
+        off.online = false
+        return off to
+            TvConnection(
+                adapters = AdapterRegistry(listOf(off)),
+                credentials = credentials,
+                scope = backgroundScope,
+                retryDelaysMs = listOf(1_000, 2_000, 4_000),
+            )
+    }
+
+    private fun TestScope.record(connection: TvConnection): List<ConnectionState> {
+        val seen = mutableListOf<ConnectionState>()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { connection.state.collect { seen += it } }
+        return seen
+    }
+
+    @Test
+    fun `a TV that stays off reads as failed, without flickering through Connecting`() =
+        runTest {
+            paired()
+            val (off, connection) = offTv()
+            val seen = record(connection)
+
+            connection.connect(device)
+            advanceTimeBy(30_000)
+
+            assertTrue(off.connectAttempts > 3, "it kept retrying in the background")
+            val firstFailure = seen.indexOfFirst { it is ConnectionState.Failed }
+            assertTrue(firstFailure > 0)
+            assertEquals(
+                listOf<ConnectionState>(ConnectionState.Failed(TvError.Unreachable())),
+                seen.drop(firstFailure).distinct(),
+            )
+        }
+
+    @Test
+    fun `a retry the user asks for shows Connecting again`() =
+        runTest {
+            paired()
+            val (_, connection) = offTv()
+            connection.connect(device)
+            advanceTimeBy(600)
+            assertTrue(connection.state.value is ConnectionState.Failed)
+
+            connection.connect(device)
+
+            assertEquals(ConnectionState.Connecting, connection.state.value)
+        }
+
+    @Test
+    fun `the network returning while the TV is off stays quiet`() =
+        runTest {
+            paired()
+            val (off, connection) = offTv()
+            connection.connect(device)
+            advanceTimeBy(600)
+            val seen = record(connection)
+
+            connection.networkAvailable()
+            advanceTimeBy(600)
+
+            assertEquals(2, off.connectAttempts)
+            assertEquals(listOf<ConnectionState>(ConnectionState.Failed(TvError.Unreachable())), seen.distinct())
+        }
+
+    @Test
+    fun `a TV that comes on after a quiet retry connects`() =
+        runTest {
+            paired()
+            val (off, connection) = offTv()
+            connection.connect(device)
+            advanceTimeBy(600)
+
+            off.online = true
+            advanceTimeBy(2_000)
+
             assertEquals(ConnectionState.Connected, connection.state.value)
         }
 

@@ -6,6 +6,11 @@ All notable changes to Zapper are listed here. The format follows
 
 ## [Unreleased]
 
+### Fixed
+
+- With the TV off, the status no longer flickers between "TV off" and "Connecting" while the
+  app keeps checking for it in the background. It connects as soon as the TV answers.
+
 ## [1.0.0] - 2026-11-15
 
 ### Added

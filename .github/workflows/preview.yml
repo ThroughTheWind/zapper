@@ -27,8 +27,11 @@ on:
 permissions:
   contents: read
 
+# One run per source at a time. A single shared group would not queue several previews: GitHub
+# keeps one pending run per group and cancels the others, so starting previews of three branches
+# in a row built only the first and the last.
 concurrency:
-  group: preview
+  group: preview-${{ inputs.ref }}
   cancel-in-progress: false
 
 defaults:
@@ -153,6 +156,13 @@ jobs:
             fi
           done
           base64 --decode <<< "$KEYSTORE_BASE64" > "$RUNNER_TEMP/zapper-preview.jks"
+
+          # apksigner only says the entry "does not contain a key". Name the likely cause instead.
+          if ! keytool -list -keystore "$RUNNER_TEMP/zapper-preview.jks" -storepass:env KEYSTORE_PASSWORD \
+              -alias "$KEY_ALIAS" 2> /dev/null | grep -q PrivateKeyEntry; then
+            echo "::error::The keystore has no private key under ZAPPER_PREVIEW_KEY_ALIAS, or ZAPPER_PREVIEW_KEYSTORE_PASSWORD is wrong. Check the alias for a trailing newline or space, and compare it with 'keytool -list -keystore zapper-preview.jks'."
+            exit 1
+          fi
 
       - name: Sign and verify the APK
         env:

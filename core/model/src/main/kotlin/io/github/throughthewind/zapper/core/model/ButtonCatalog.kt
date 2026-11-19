@@ -114,6 +114,7 @@ object ButtonCatalog {
                 key(CatalogGroup.SYSTEM, RemoteKey.HDMI_2, "HDMI 2"),
                 key(CatalogGroup.SYSTEM, RemoteKey.HDMI_3, "HDMI 3"),
                 key(CatalogGroup.SYSTEM, RemoteKey.HDMI_4, "HDMI 4"),
+                key(CatalogGroup.SYSTEM, RemoteKey.HDMI_NEXT, "Next HDMI"),
                 key(CatalogGroup.SYSTEM, RemoteKey.SETTINGS, "Settings"),
                 key(CatalogGroup.SYSTEM, RemoteKey.INFO, "Info"),
                 key(CatalogGroup.SYSTEM, RemoteKey.GUIDE, "Guide"),

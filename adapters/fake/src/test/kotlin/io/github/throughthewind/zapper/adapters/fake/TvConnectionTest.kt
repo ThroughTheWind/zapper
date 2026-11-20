@@ -327,6 +327,57 @@ class TvConnectionTest {
         }
 
     @Test
+    fun `power on wakes a TV connected in standby that ignores its Power key`() =
+        runTest {
+            paired()
+            val connection = connection()
+            connection.connect(device.copy(macAddress = "02:00:00:00:00:01"))
+            runCurrent()
+            tv.standby = true
+            assertEquals(PowerState.STANDBY, connection.checkPower())
+            assertEquals(ConnectionState.Connected, connection.state.value)
+
+            assertTrue(connection.powerOn())
+
+            assertEquals(listOf("POWER:CLICK"), tv.received)
+            assertTrue(tv.wakeUps >= 1, "sent ${tv.wakeUps} wake-ups")
+            assertEquals(PowerState.ON, connection.power.value)
+        }
+
+    @Test
+    fun `power on of a TV in standby without a MAC address relies on its Power key`() =
+        runTest {
+            paired()
+            val keyWakes = FakeTvAdapter(FakeTvBehaviour(pairingDelayMs = 0, powerKeyWakes = true))
+            val connection = TvConnection(AdapterRegistry(listOf(keyWakes)), credentials, backgroundScope)
+            connection.connect(device)
+            runCurrent()
+            keyWakes.standby = true
+            connection.checkPower()
+
+            assertFalse(connection.canPowerOn())
+            assertTrue(connection.powerOn())
+            assertEquals(0, keyWakes.wakeUps)
+            assertEquals(PowerState.ON, connection.power.value)
+        }
+
+    @Test
+    fun `checking the power replaces a stale answer`() =
+        runTest {
+            paired()
+            val connection = connection()
+            connection.connect(device)
+            runCurrent()
+            advanceTimeBy(1)
+            assertEquals(PowerState.ON, connection.power.value)
+
+            tv.standby = true
+
+            assertEquals(PowerState.STANDBY, connection.checkPower())
+            assertEquals(PowerState.STANDBY, connection.power.value)
+        }
+
+    @Test
     fun `a TV without a MAC address cannot be powered on`() =
         runTest {
             val connection = connection()

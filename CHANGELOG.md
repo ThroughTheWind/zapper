@@ -6,6 +6,13 @@ All notable changes to Zapper are listed here. The format follows
 
 ## [Unreleased]
 
+### Fixed
+
+- Power on now works for a TV that is still connected but in standby. It used to send only the
+  Power key, which many Samsung TVs ignore in standby; it now also sends the wake-up used when the
+  TV is not connected, and waits for the TV to come on. The Power key also asks the TV whether it
+  is on first, so a TV turned off with its own remote is woken instead of sent another Power key.
+
 ## [1.1.0] - 2026-11-20
 
 ### Added

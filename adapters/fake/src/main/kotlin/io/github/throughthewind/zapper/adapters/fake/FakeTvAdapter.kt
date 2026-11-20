@@ -36,6 +36,8 @@ data class FakeTvBehaviour(
     val unsupportedKeys: Set<RemoteKey> = setOf(RemoteKey.GUIDE),
     /** Whether Wake-on-LAN brings the TV back online. */
     val wakesOnLan: Boolean = true,
+    /** Whether the Power key wakes the TV from [FakeTvAdapter.standby]; many Samsung sets ignore it there. */
+    val powerKeyWakes: Boolean = false,
     /** Every bundled app but Plex, so the debug build shows a shortcut failing too. */
     val installedApps: List<TvApp> =
         KnownApps.all.filter { it.id != "plex" }.map { TvApp(it.id, it.name) },
@@ -57,6 +59,12 @@ class FakeTvAdapter(
 
     /** False simulates a TV that is off or off the network: connecting fails with Unreachable. */
     @Volatile var online: Boolean = true
+
+    /**
+     * True simulates network standby: the screen is off but the TV stays online and connected, and
+     * says it is in standby. The Power key toggles it only with [FakeTvBehaviour.powerKeyWakes].
+     */
+    @Volatile var standby: Boolean = false
 
     /** How many wake-ups were sent. */
     @Volatile var wakeUps: Int = 0
@@ -117,11 +125,19 @@ class FakeTvAdapter(
 
     override suspend fun powerOn(device: TvDevice) {
         wakeUps++
-        if (behaviour.wakesOnLan) online = true
+        if (behaviour.wakesOnLan) {
+            online = true
+            standby = false
+        }
     }
 
-    /** On when online; a TV that is off the network says nothing. */
-    override suspend fun powerState(device: TvDevice): PowerState? = if (online) PowerState.ON else null
+    /** On when online and awake; a TV that is off the network says nothing. */
+    override suspend fun powerState(device: TvDevice): PowerState? =
+        when {
+            !online -> null
+            standby -> PowerState.STANDBY
+            else -> PowerState.ON
+        }
 
     override val powerOnHelp: String = "The simulated TV wakes up unless its behaviour says otherwise."
 
@@ -187,6 +203,8 @@ class FakeTvAdapter(
             if (_state.value != ConnectionState.Connected) throw TvException(TvError.NotConnected)
             if (!supports(key)) return
             received += "${key.name}:${action.name}"
+            // On, the Power key sends the TV to standby; in standby only some TVs heed it.
+            if (key == RemoteKey.POWER && (!standby || behaviour.powerKeyWakes)) standby = !standby
         }
 
         override suspend fun sendText(text: String) {

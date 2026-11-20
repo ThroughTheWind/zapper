@@ -143,9 +143,22 @@ class RemoteViewModel(
         }
     }
 
-    /** The status chip's "Power on": a connected TV in standby gets its Power key, any other is woken. */
-    fun turnOn() {
-        if (connection.state.value == ConnectionState.Connected) connection.send(RemoteKey.POWER) else powerOn()
+    /** The status chip's "Power on": it only shows for a TV that is off, connected in standby or not. */
+    fun turnOn() = powerOn()
+
+    /**
+     * The Power key on a connected TV. The TV is asked first, because a set turned off with its own
+     * remote can stay connected in standby: only a TV that says it is on gets the Power key to turn
+     * it off; any other is turned on, which wakes it even where the key alone would not.
+     */
+    private fun powerKey() {
+        if (_poweringOn.value) return
+        viewModelScope.launch {
+            val power = connection.checkPower()
+            // A TV that cannot be woken and did not answer keeps the old toggle: the key is all there is.
+            val turnOff = power == PowerState.ON || (power == null && !connection.canPowerOn())
+            if (turnOff) connection.send(RemoteKey.POWER) else powerOn()
+        }
     }
 
     fun dismissPowerOnHelp() {
@@ -174,6 +187,8 @@ class RemoteViewModel(
             override fun send(key: RemoteKey) {
                 if (key == RemoteKey.POWER && !connected) {
                     powerOn()
+                } else if (key == RemoteKey.POWER) {
+                    powerKey()
                 } else if (key == RemoteKey.PLAY_PAUSE && !connection.supports(RemoteKey.PLAY_PAUSE)) {
                     // A TV with separate Play and Pause keys: alternate between them.
                     connection.send(if (playing) RemoteKey.PAUSE else RemoteKey.PLAY)

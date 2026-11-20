@@ -6,6 +6,18 @@ All notable changes to Zapper are listed here. The format follows
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-11-20
+
+### Added
+
+- A Next HDMI key in the edit mode catalog (System group), labelled "HDMI" on the remote. On
+  Samsung TVs it switches to the next HDMI input.
+
+### Changed
+
+- Samsung TVs no longer offer the HDMI 1 to 4 keys, because TVs from 2018 on ignore them. Keys
+  already placed stay in the layout, greyed out with the reason; Next HDMI replaces them.
+
 ### Fixed
 
 - With the TV off, the status no longer flickers between "TV off" and "Connecting" while the
@@ -83,7 +95,8 @@ All notable changes to Zapper are listed here. The format follows
 - Project scaffold: Kotlin and Jetpack Compose app, brand adapter contract, and a first Samsung
   Tizen adapter that pairs and sends keys.
 
-[Unreleased]: https://github.com/ThroughTheWind/zapper/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/ThroughTheWind/zapper/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/ThroughTheWind/zapper/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/ThroughTheWind/zapper/compare/v0.2.0...v1.0.0
 [0.2.0]: https://github.com/ThroughTheWind/zapper/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/ThroughTheWind/zapper/releases/tag/v0.1.0

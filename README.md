@@ -4,7 +4,7 @@ A free, open-source TV remote for Android phones, with a modern design and butto
 you can arrange the way you like. Samsung smart TVs come first; other brands plug in through
 adapters.
 
-> **Status:** 1.0.0. It finds a Samsung TV (2016 or later) on the Wi-Fi, pairs once, types into
+> **Status:** 1.1.0. It finds a Samsung TV (2016 or later) on the Wi-Fi, pairs once, types into
 > it, opens apps, turns it on, and lets you rearrange every key, page and colour. It works with
 > TalkBack and large text, and other TV brands can be added with the
 > [adapter guide](docs/adapters.md). More brands come next ([roadmap](docs/ROADMAP.md)).

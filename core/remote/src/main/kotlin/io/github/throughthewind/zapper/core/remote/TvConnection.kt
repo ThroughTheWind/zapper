@@ -119,18 +119,37 @@ class TvConnection(
     fun powerOnHelp(): String? = _device.value?.let { adapters.adapterFor(it).powerOnHelp }
 
     /**
+     * Asks the current TV for its power now and remembers the answer. The last answer can be stale:
+     * a TV turned off with its own remote keeps its socket open in network standby, so the
+     * connection still reads Connected and the Power key cannot tell on from off without asking.
+     */
+    suspend fun checkPower(): PowerState? {
+        val device = _device.value ?: return null
+        val reported = quietly { adapters.adapterFor(device).powerState(device) }
+        if (_device.value == device) _power.value = reported
+        return reported
+    }
+
+    /**
      * Wakes the current TV and waits for it to say it is on, sending the wake-up again every few
      * seconds in case a packet was lost. True once the TV is on; it then connects as usual.
+     *
+     * A TV still connected in standby gets its Power key first, but only some sets honour it there
+     * (research §2.5), so the wake-up follows as for a TV that is not connected. Without a wake-up
+     * the key is all there is, and this only waits to see whether it worked.
      */
     suspend fun powerOn(timeoutMs: Long = POWER_ON_TIMEOUT_MS): Boolean {
         val device = _device.value ?: return false
         val adapter = adapters.adapterFor(device)
-        if (!adapter.canPowerOn(device)) return false
+        val standby = _state.value == ConnectionState.Connected && _power.value == PowerState.STANDBY
+        val canWake = adapter.canPowerOn(device)
+        if (!canWake && !standby) return false
+        if (standby) attempt { it.send(RemoteKey.POWER, KeyAction.CLICK) }
         val on =
             withTimeoutOrNull(timeoutMs) {
                 var reported: PowerState? = null
                 while (reported != PowerState.ON) {
-                    quietly { adapter.powerOn(device) }
+                    if (canWake) quietly { adapter.powerOn(device) }
                     var checks = 0
                     while (reported != PowerState.ON && checks++ < POWER_CHECKS_PER_WAKE) {
                         delay(POWER_CHECK_MS)

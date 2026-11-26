@@ -11,6 +11,8 @@ import androidx.compose.material.icons.rounded.History
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import io.github.throughthewind.zapper.core.designsystem.R
 import io.github.throughthewind.zapper.core.designsystem.theme.KeyType
 import io.github.throughthewind.zapper.core.designsystem.theme.RemoteGrid
 
@@ -51,8 +53,8 @@ fun NumberPad(
                     val label =
                         when (key) {
                             is NumberPadKey.Digit -> "${key.value}"
-                            NumberPadKey.ChannelList -> "Channel list"
-                            NumberPadKey.PreviousChannel -> "Previous channel"
+                            NumberPadKey.ChannelList -> stringResource(R.string.ds_channel_list)
+                            NumberPadKey.PreviousChannel -> stringResource(R.string.ds_previous_channel)
                         }
                     RemoteKey(
                         label = label,

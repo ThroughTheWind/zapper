@@ -35,7 +35,7 @@ The [After 1.0](../docs/ROADMAP.md#after-10) list. Report anything Antoine finds
 - The stack is native Kotlin, Compose and a multi-module Gradle build, fixed by [ADR-0001](../docs/decisions/ADR-0001-kotlin-compose-multi-module.md).
 - Brands are adapters behind capabilities, fixed by [ADR-0002](../docs/decisions/ADR-0002-brand-adapters.md).
 - GPL-3.0, no proprietary dependencies, local network only, fixed by [ADR-0003](../docs/decisions/ADR-0003-gpl-no-proprietary-dependencies.md).
-- The app is named Zapper, package `io.github.throughthewind.zapper`. English only, no crash reporting, distributed through GitHub Releases.
+- The app is named Zapper, package `io.github.throughthewind.zapper`. Ships in English, French, Spanish, German and Polish (WI-027, [`docs/translations.md`](../docs/translations.md)); no crash reporting; distributed through GitHub Releases.
 - Delivery order is basics first, customization later ([roadmap](../docs/ROADMAP.md)), decided by Antoine on 2026-11-13. Every screen follows the design system's component specs in `docs/design/components/`.
 - rungs is development tooling installed into this repo. It is not a runtime dependency and is not shipped in the app.
 

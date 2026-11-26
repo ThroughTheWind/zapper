@@ -96,7 +96,7 @@ Optional — uncomment if you want it. Not shipped active because it is a prefer
 - Commit messages: conventional prefixes (`feat:`, `fix:`, `docs:`, `chore:`…).
 - Every version and SDK level lives in `gradle/libs.versions.toml`. Never hard-code one in a build file.
 - Package root is `io.github.throughthewind.zapper`; module packages append the module path (`…zapper.core.model`).
-- English only, no translations until the spec says otherwise.
+- User-facing text lives in string resources, translated into French, Spanish, German and Polish: [`docs/translations.md`](docs/translations.md).
 - No dependency injection framework until the container passes about thirty bindings (ADR-0001).
 
 ## Routing

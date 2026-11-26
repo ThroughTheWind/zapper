@@ -1,5 +1,6 @@
 package io.github.throughthewind.zapper.layout
 
+import android.content.res.Resources
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -38,7 +39,9 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -49,6 +52,7 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import io.github.throughthewind.zapper.R
 import io.github.throughthewind.zapper.core.designsystem.theme.RemoteGrid
 import io.github.throughthewind.zapper.core.designsystem.theme.RemoteHaptic
 import io.github.throughthewind.zapper.core.designsystem.theme.rememberRemoteHaptics
@@ -279,6 +283,7 @@ private fun EditableWidget(
     val resizeEnd by rememberUpdatedState(onResizeEnd)
     var coordinates by remember { mutableStateOf<LayoutCoordinates?>(null) }
     val title = widgetTitle(widget)
+    val resources = LocalContext.current.resources
 
     Box(
         Modifier
@@ -318,7 +323,7 @@ private fun EditableWidget(
                             drag(amount, finger)
                         },
                     )
-                }.editSemantics(title, current, actions),
+                }.editSemantics(title, current, actions, resources),
         )
         RemoveBadge(onRemove = { actions.remove(widget.id) }, title = title, modifier = Modifier.align(Alignment.TopStart))
         if (selected && LayoutEditing.allowedSpans(widget).size > 1) {
@@ -354,21 +359,22 @@ private fun Modifier.editSemantics(
     title: String,
     widget: LayoutWidget,
     actions: EditCanvasActions,
+    resources: Resources,
 ): Modifier =
     clearAndSetSemantics {
-        contentDescription = "$title, column ${widget.column + 1}, row ${widget.row + 1}"
+        contentDescription = resources.getString(R.string.edit_widget_position, title, widget.column + 1, widget.row + 1)
         role = Role.Button
-        onClick(label = "Options") {
+        onClick(label = resources.getString(R.string.edit_options)) {
             actions.select(widget.id)
             true
         }
         customActions =
             listOf(
-                CustomAccessibilityAction("Move left") { actions.nudge(widget.id, -1, 0) },
-                CustomAccessibilityAction("Move right") { actions.nudge(widget.id, 1, 0) },
-                CustomAccessibilityAction("Move up") { actions.nudge(widget.id, 0, -1) },
-                CustomAccessibilityAction("Move down") { actions.nudge(widget.id, 0, 1) },
-                CustomAccessibilityAction("Remove") {
+                CustomAccessibilityAction(resources.getString(R.string.action_move_left)) { actions.nudge(widget.id, -1, 0) },
+                CustomAccessibilityAction(resources.getString(R.string.action_move_right)) { actions.nudge(widget.id, 1, 0) },
+                CustomAccessibilityAction(resources.getString(R.string.action_move_up)) { actions.nudge(widget.id, 0, -1) },
+                CustomAccessibilityAction(resources.getString(R.string.action_move_down)) { actions.nudge(widget.id, 0, 1) },
+                CustomAccessibilityAction(resources.getString(R.string.action_remove)) {
                     actions.remove(widget.id)
                     true
                 },
@@ -383,12 +389,13 @@ private fun RemoveBadge(
 ) {
     val colors = MaterialTheme.colorScheme
     val remove by rememberUpdatedState(onRemove)
+    val description = stringResource(R.string.edit_remove_widget, title)
     Box(
         modifier
             .size(32.dp)
             .pointerInput(Unit) { detectTapGestures(onTap = { remove() }) }
             .clearAndSetSemantics {
-                contentDescription = "Remove $title"
+                contentDescription = description
                 role = Role.Button
                 onClick {
                     onRemove()

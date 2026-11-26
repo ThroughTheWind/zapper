@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Design system copy. Every string here has a translation in values-de, -es, -fr and -pl; lint (MissingTranslation) fails the build when one is missing. -->
+<resources>
+    <string name="ds_up">Up</string>
+    <string name="ds_down">Down</string>
+    <string name="ds_left">Left</string>
+    <string name="ds_right">Right</string>
+    <string name="ds_ok">OK</string>
+    <string name="ds_channel_list">Channel list</string>
+    <string name="ds_previous_channel">Previous channel</string>
+    <string name="ds_rewind">Rewind</string>
+    <string name="ds_play_or_pause">Play or pause</string>
+    <string name="ds_fast_forward">Fast forward</string>
+    <!-- Short caption between the halves of the volume rocker, shown in capitals. Four letters at most. -->
+    <string name="ds_rocker_volume_caption">VOL</string>
+    <!-- Short caption between the halves of the channel rocker, shown in capitals. Three letters at most. -->
+    <string name="ds_rocker_channel_caption">CH</string>
+    <string name="ds_volume_up">Volume up</string>
+    <string name="ds_volume_down">Volume down</string>
+    <string name="ds_channel_up">Channel up</string>
+    <string name="ds_channel_down">Channel down</string>
+    <!-- Accessibility label of a TV card. %1$s is the TV name, %2$s its model, address and brand. -->
+    <string name="ds_device_card_description">%1$s, %2$s, connect</string>
+    <!-- Badge on the TV the app opens first. -->
+    <string name="ds_default">Default</string>
+    <!-- Accessibility label of an app shortcut. %1$s is the app name, such as Netflix. -->
+    <string name="ds_open_app">Open %1$s</string>
+    <!-- Connection chip. Refers to the TV. -->
+    <string name="ds_connected">Connected</string>
+    <string name="ds_connecting">Connecting</string>
+    <string name="ds_offline_description">Offline, tap to retry</string>
+    <string name="ds_tv_off_description">TV off, tap to turn it on</string>
+    <string name="ds_offline_retry">Offline · Retry</string>
+    <string name="ds_tv_off_power_on">TV off · Power on</string>
+    <string name="ds_text_for_tv">Text for the TV</string>
+    <string name="ds_send_to_tv">Send to the TV</string>
+    <string name="ds_looking_for_tvs">Looking for TVs</string>
+    <!-- Accessibility label of the TV drawing. %1$s is the prompt the TV shows. -->
+    <string name="ds_your_tv_shows">Your TV shows: %1$s</string>
+    <!-- The two buttons of the approval prompt drawn on the TV, as the TV labels them. -->
+    <string name="ds_deny">Deny</string>
+    <string name="ds_allow">Allow</string>
+    <string name="ds_step_done">Done</string>
+    <string name="ds_paired">Paired</string>
+    <string name="ds_not_paired">Not paired</string>
+    <plurals name="ds_code_description">
+        <item quantity="one">Code shown on the TV, %d character</item>
+        <item quantity="other">Code shown on the TV, %d characters</item>
+    </plurals>
+</resources>

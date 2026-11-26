@@ -6,6 +6,17 @@ All notable changes to Zapper are listed here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- Zapper speaks French, Spanish, German and Polish as well as English. It follows the phone's
+  language, and on Android 13 and later Settings > Language opens the system's per-app language
+  choice.
+
+### Fixed
+
+- A single digit key from the catalog showed "DIGIT 1" on the remote and "DIG" in the catalog;
+  it now shows the digit.
+
 ## [1.1.0] - 2026-11-20
 
 ### Added

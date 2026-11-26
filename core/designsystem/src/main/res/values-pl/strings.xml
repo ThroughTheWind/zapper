@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Translation of ../values/strings.xml. Keep the keys and placeholders in step with it. -->
+<resources>
+    <string name="ds_up">W górę</string>
+    <string name="ds_down">W dół</string>
+    <string name="ds_left">W lewo</string>
+    <string name="ds_right">W prawo</string>
+    <string name="ds_ok">OK</string>
+    <string name="ds_channel_list">Lista kanałów</string>
+    <string name="ds_previous_channel">Poprzedni kanał</string>
+    <string name="ds_rewind">Przewiń do tyłu</string>
+    <string name="ds_play_or_pause">Odtwórz lub wstrzymaj</string>
+    <string name="ds_fast_forward">Przewiń do przodu</string>
+    <string name="ds_rocker_volume_caption">GŁOŚ</string>
+    <string name="ds_rocker_channel_caption">KAN</string>
+    <string name="ds_volume_up">Głośniej</string>
+    <string name="ds_volume_down">Ciszej</string>
+    <string name="ds_channel_up">Następny kanał</string>
+    <string name="ds_channel_down">Poprzedni kanał</string>
+    <string name="ds_device_card_description">%1$s, %2$s, połącz</string>
+    <string name="ds_default">Domyślny</string>
+    <string name="ds_open_app">Otwórz %1$s</string>
+    <string name="ds_connected">Połączono</string>
+    <string name="ds_connecting">Łączenie</string>
+    <string name="ds_offline_description">Offline, dotknij, aby ponowić</string>
+    <string name="ds_tv_off_description">Telewizor wyłączony, dotknij, aby włączyć</string>
+    <string name="ds_offline_retry">Offline · Ponów</string>
+    <string name="ds_tv_off_power_on">TV wył. · Włącz</string>
+    <string name="ds_text_for_tv">Tekst dla telewizora</string>
+    <string name="ds_send_to_tv">Wyślij do telewizora</string>
+    <string name="ds_looking_for_tvs">Szukanie telewizorów</string>
+    <string name="ds_your_tv_shows">Telewizor wyświetla: %1$s</string>
+    <string name="ds_deny">Odmów</string>
+    <string name="ds_allow">Zezwól</string>
+    <string name="ds_step_done">Gotowe</string>
+    <string name="ds_paired">Sparowano</string>
+    <string name="ds_not_paired">Nie sparowano</string>
+    <plurals name="ds_code_description">
+        <item quantity="one">Kod na telewizorze, %d znak</item>
+        <item quantity="few">Kod na telewizorze, %d znaki</item>
+        <item quantity="many">Kod na telewizorze, %d znaków</item>
+        <item quantity="other">Kod na telewizorze, %d znaku</item>
+    </plurals>
+</resources>

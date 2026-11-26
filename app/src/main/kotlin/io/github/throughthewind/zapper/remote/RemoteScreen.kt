@@ -1,6 +1,7 @@
 package io.github.throughthewind.zapper.remote
 
 import androidx.activity.compose.BackHandler
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -34,8 +35,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import io.github.throughthewind.zapper.R
 import io.github.throughthewind.zapper.core.designsystem.components.Banner
 import io.github.throughthewind.zapper.core.designsystem.components.BannerKind
 import io.github.throughthewind.zapper.core.designsystem.components.ConnectionChipState
@@ -70,6 +75,7 @@ fun RemoteScreen(
     val offline = state is ConnectionState.Failed || state == ConnectionState.Disconnected
     val snackbar = remember { SnackbarHostState() }
     val haptics = rememberRemoteHaptics()
+    val resources = LocalContext.current.resources
 
     LaunchedEffect(viewModel) {
         viewModel.feedback.collect { outcome ->
@@ -80,13 +86,17 @@ fun RemoteScreen(
 
                 is RemoteFeedback.Failure -> {
                     haptics.perform(RemoteHaptic.Failure)
-                    snackbar.showSnackbar(outcome.message)
+                    snackbar.showSnackbar(outcome.message.resolve(resources))
                 }
 
                 RemoteFeedback.NotConnected -> {
                     // One at a time: tapping five dead keys does not queue five snackbars.
                     if (snackbar.currentSnackbarData == null) {
-                        val result = snackbar.showSnackbar("Not connected", actionLabel = "Reconnect")
+                        val result =
+                            snackbar.showSnackbar(
+                                resources.getString(R.string.error_not_connected),
+                                actionLabel = resources.getString(R.string.action_reconnect),
+                            )
                         if (result == SnackbarResult.ActionPerformed) viewModel.retry()
                     }
                 }
@@ -117,7 +127,7 @@ fun RemoteScreen(
         TvSwitcher(
             devices = saved,
             activeId = device?.id,
-            activeStatus = chip.label(),
+            activeStatus = stringResource(chip.label()),
             defaultId = defaultId,
             brandName = brandName,
             onSelect = {
@@ -158,7 +168,7 @@ private fun RemoteContent(
                 Column(
                     Modifier
                         .weight(1f)
-                        .clickable(onClickLabel = "Choose a TV", onClick = onChooseTv),
+                        .clickable(onClickLabel = stringResource(R.string.remote_choose_tv), onClick = onChooseTv),
                 ) {
                     device?.model?.let {
                         Text(
@@ -167,21 +177,21 @@ private fun RemoteContent(
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
-                    Text(device?.name ?: "No TV", style = MaterialTheme.typography.titleLarge)
+                    Text(device?.name ?: stringResource(R.string.remote_no_tv), style = MaterialTheme.typography.titleLarge)
                 }
                 ConnectionStatusChip(state = chip, onRetry = viewModel::retry, onPowerOn = viewModel::turnOn)
                 // Edit mode opens only from here, never by a long press (SPEC FR-8.2).
-                IconButton(onClick = onEdit) { Icon(Icons.Rounded.Edit, contentDescription = "Edit layout") }
+                IconButton(onClick = onEdit) { Icon(Icons.Rounded.Edit, contentDescription = stringResource(R.string.edit_layout)) }
             }
             // FR-7.2: shown once, at the top of the canvas, pushing the keys down (Banner).
             powerOnHelp?.let { help ->
                 Banner(
                     kind = BannerKind.Info,
                     icon = Icons.Rounded.PowerSettingsNew,
-                    title = "The TV did not turn on",
-                    body = help,
+                    title = stringResource(R.string.remote_power_on_failed),
+                    body = help.forLanguage(LocalConfiguration.current.locales[0].toLanguageTag()),
                 ) {
-                    TextButton(onClick = viewModel::dismissPowerOnHelp) { Text("Got it") }
+                    TextButton(onClick = viewModel::dismissPowerOnHelp) { Text(stringResource(R.string.action_got_it)) }
                 }
             }
             // ErrorsAndHelp: Offline. The chip turns red and the keys go disabled; this says why and
@@ -190,11 +200,11 @@ private fun RemoteContent(
                 Banner(
                     kind = BannerKind.Error,
                     icon = Icons.Rounded.WifiOff,
-                    title = "Can't reach ${device?.name ?: "the TV"}",
-                    body = "Check that the TV is on and on the same Wi-Fi as this phone.",
+                    title = stringResource(R.string.remote_cant_reach, device?.name ?: stringResource(R.string.remote_the_tv)),
+                    body = stringResource(R.string.tv_unreachable_body),
                 ) {
-                    TextButton(onClick = viewModel::retry) { Text("Retry") }
-                    TextButton(onClick = onChooseTv) { Text("Switch TV") }
+                    TextButton(onClick = viewModel::retry) { Text(stringResource(R.string.action_retry)) }
+                    TextButton(onClick = onChooseTv) { Text(stringResource(R.string.remote_switch_tv)) }
                 }
             }
             layout?.let { RemoteCanvas(it, actions, modifier = Modifier.weight(1f)) }
@@ -223,7 +233,7 @@ private fun TextInputOverlay(
             value = text,
             onValueChange = { text = it },
             onSend = { onSend(text) },
-            status = if (tvKeyboard) "TV keyboard open · sends when you tap Send" else "Open a search field on your TV first",
+            status = stringResource(if (tvKeyboard) R.string.text_input_tv_keyboard_open else R.string.text_input_open_field_first),
             modifier = Modifier.align(Alignment.BottomCenter).imePadding(),
         )
     }
@@ -250,10 +260,11 @@ private fun chipState(
     }
 }
 
-private fun ConnectionChipState.label(): String =
+@StringRes
+private fun ConnectionChipState.label(): Int =
     when (this) {
-        ConnectionChipState.Connected -> "Connected"
-        ConnectionChipState.Connecting -> "Connecting"
-        ConnectionChipState.Offline -> "Not found"
-        ConnectionChipState.TvOff -> "TV off"
+        ConnectionChipState.Connected -> R.string.tv_status_connected
+        ConnectionChipState.Connecting -> R.string.tv_status_connecting
+        ConnectionChipState.Offline -> R.string.tv_status_not_found
+        ConnectionChipState.TvOff -> R.string.tv_status_off
     }

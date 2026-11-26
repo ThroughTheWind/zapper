@@ -92,6 +92,14 @@ android {
         compose = true
     }
 
+    // The languages Zapper ships (docs/translations.md). The locale config lets Android 13+ offer
+    // them under the system's per-app language setting; the filter keeps library strings in other
+    // languages out, so a screen never mixes Zapper's English with a library's Italian.
+    androidResources {
+        generateLocaleConfig = true
+        localeFilters += listOf("en", "fr", "es", "de", "pl")
+    }
+
     // F-Droid and reproducible builds: no Google-signed dependency metadata blob in the APK (ADR-0003).
     dependenciesInfo {
         includeInApk = false

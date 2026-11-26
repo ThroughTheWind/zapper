@@ -20,10 +20,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import io.github.throughthewind.zapper.core.designsystem.R
 
 /**
  * The scanning indicator (docs/design/components/DiscoveryScan): three primary rings pulse out of a
@@ -44,7 +46,8 @@ fun DiscoveryScanIndicator(
         animationSpec = infiniteRepeatable(tween(LOOP_MS, easing = LinearEasing), RepeatMode.Restart),
         label = "rings",
     )
-    Box(modifier.size(size).semantics { contentDescription = "Looking for TVs" }, contentAlignment = Alignment.Center) {
+    val description = stringResource(R.string.ds_looking_for_tvs)
+    Box(modifier.size(size).semantics { contentDescription = description }, contentAlignment = Alignment.Center) {
         Canvas(Modifier.fillMaxSize()) {
             val maxRadius = this.size.minDimension / 2
             val minRadius = maxRadius * 0.35f

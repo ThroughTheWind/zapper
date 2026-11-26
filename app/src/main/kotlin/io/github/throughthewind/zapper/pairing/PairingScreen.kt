@@ -26,8 +26,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import io.github.throughthewind.zapper.R
+import io.github.throughthewind.zapper.UiText
+import io.github.throughthewind.zapper.asString
 import io.github.throughthewind.zapper.core.designsystem.components.Banner
 import io.github.throughthewind.zapper.core.designsystem.components.BannerKind
 import io.github.throughthewind.zapper.core.designsystem.components.PairingHero
@@ -42,6 +47,7 @@ import io.github.throughthewind.zapper.core.remote.PairingRequest
 import io.github.throughthewind.zapper.core.remote.RepairReason
 import io.github.throughthewind.zapper.core.remote.TvError
 import io.github.throughthewind.zapper.core.remote.TvException
+import io.github.throughthewind.zapper.describe
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -63,7 +69,7 @@ fun PairingScreen(
     onChooseAnotherTv: () -> Unit,
 ) {
     val haptics = rememberRemoteHaptics()
-    val name = device?.name ?: "your TV"
+    val name = device?.name ?: stringResource(R.string.pairing_your_tv)
 
     LaunchedEffect(state) {
         when (state) {
@@ -94,11 +100,11 @@ fun PairingScreen(
             verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
             repairReason?.let {
-                Banner(kind = BannerKind.Info, icon = Icons.Rounded.Info, title = it.explain())
+                Banner(kind = BannerKind.Info, icon = Icons.Rounded.Info, title = stringResource(it.explain()))
             }
             when (state) {
                 ConnectionState.Disconnected, ConnectionState.Connecting -> {
-                    Progress("Connecting to $name…")
+                    Progress(stringResource(R.string.pairing_connecting_to, name))
                 }
 
                 is ConnectionState.AwaitingPairing -> {
@@ -109,7 +115,11 @@ fun PairingScreen(
                 }
 
                 ConnectionState.Connected -> {
-                    Outcome(success = true, title = "Paired with $name", body = "Opening the remote…")
+                    Outcome(
+                        success = true,
+                        title = stringResource(R.string.pairing_paired_with, name),
+                        body = stringResource(R.string.pairing_opening_remote),
+                    )
                 }
 
                 is ConnectionState.Failed -> {
@@ -120,26 +130,29 @@ fun PairingScreen(
     }
 }
 
-private val confirmSteps = listOf("Connect to the TV", "Allow Zapper on the TV", "Paired")
-private val codeSteps = listOf("Connect to the TV", "Type the code shown on the TV", "Paired")
+private val confirmSteps = listOf(R.string.pairing_step_connect, R.string.pairing_step_allow, R.string.pairing_step_paired)
+private val codeSteps = listOf(R.string.pairing_step_connect, R.string.pairing_step_type_code, R.string.pairing_step_paired)
+
+@Composable
+private fun List<Int>.strings(): List<String> = map { stringResource(it) }
 
 @Composable
 private fun Progress(title: String) {
     Text(title, style = MaterialTheme.typography.headlineSmall, textAlign = TextAlign.Center)
-    PairingSteps(confirmSteps, current = 0, modifier = Modifier.fillMaxWidth())
+    PairingSteps(confirmSteps.strings(), current = 0, modifier = Modifier.fillMaxWidth())
 }
 
 @Composable
 private fun ConfirmOnTv(name: String) {
-    PairingHero(prompt = "Allow \"Zapper\" to connect?")
-    Text("Look at $name", style = MaterialTheme.typography.headlineSmall, textAlign = TextAlign.Center)
+    PairingHero(prompt = stringResource(R.string.pairing_tv_prompt))
+    Text(stringResource(R.string.pairing_look_at, name), style = MaterialTheme.typography.headlineSmall, textAlign = TextAlign.Center)
     Text(
-        "Choose Allow with your TV's remote. The prompt closes by itself after about 30 seconds.",
+        stringResource(R.string.pairing_choose_allow),
         style = MaterialTheme.typography.bodyLarge,
         textAlign = TextAlign.Center,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
     )
-    PairingSteps(confirmSteps, current = 1, modifier = Modifier.fillMaxWidth())
+    PairingSteps(confirmSteps.strings(), current = 1, modifier = Modifier.fillMaxWidth())
 }
 
 @Composable
@@ -152,7 +165,7 @@ private fun EnterCode(
     var checking by remember(request) { mutableStateOf(false) }
     var wrong by remember(request) { mutableStateOf(false) }
 
-    Text("Type the code on $name", style = MaterialTheme.typography.headlineSmall, textAlign = TextAlign.Center)
+    Text(stringResource(R.string.pairing_type_code_on, name), style = MaterialTheme.typography.headlineSmall, textAlign = TextAlign.Center)
     PinEntry(
         value = code,
         length = request.length,
@@ -178,14 +191,14 @@ private fun EnterCode(
     )
     Text(
         when {
-            checking -> "Checking…"
-            wrong -> "That code did not match. Try the one on the TV now."
-            else -> "${request.length} characters, shown on the TV screen"
+            checking -> stringResource(R.string.pairing_checking)
+            wrong -> stringResource(R.string.pairing_code_wrong)
+            else -> pluralStringResource(R.plurals.pairing_code_length, request.length, request.length)
         },
         style = MaterialTheme.typography.bodyMedium,
         color = if (wrong) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
     )
-    PairingSteps(codeSteps, current = 1, modifier = Modifier.fillMaxWidth())
+    PairingSteps(codeSteps.strings(), current = 1, modifier = Modifier.fillMaxWidth())
 }
 
 @Composable
@@ -195,14 +208,14 @@ private fun Failed(
     onPairAgain: () -> Unit,
     onChooseAnotherTv: () -> Unit,
 ) {
-    val (title, body) = error.explain()
+    val (title, body) = error.explain().let { (t, b) -> stringResource(t) to b.asString() }
     Outcome(success = false, title = title, body = body)
     if (error == TvError.CertificateChanged) {
-        Button(onClick = onPairAgain, modifier = Modifier.fillMaxWidth()) { Text("Pair again") }
+        Button(onClick = onPairAgain, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.pairing_pair_again)) }
     } else {
-        Button(onClick = onRetry, modifier = Modifier.fillMaxWidth()) { Text("Try again") }
+        Button(onClick = onRetry, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.action_try_again)) }
     }
-    TextButton(onClick = onChooseAnotherTv) { Text("Choose another TV") }
+    TextButton(onClick = onChooseAnotherTv) { Text(stringResource(R.string.pairing_choose_another_tv)) }
 }
 
 @Composable
@@ -217,37 +230,32 @@ private fun Outcome(
     Text(body, style = MaterialTheme.typography.bodyLarge, textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.onSurfaceVariant)
 }
 
-private fun RepairReason.explain(): String =
+private fun RepairReason.explain(): Int =
     when (this) {
-        RepairReason.TokenRejected -> "Your TV asked to approve Zapper again"
-        RepairReason.IdentityChanged -> "Pairing again with a TV whose identity changed"
+        RepairReason.TokenRejected -> R.string.pairing_repair_token_rejected
+        RepairReason.IdentityChanged -> R.string.pairing_repair_identity_changed
     }
 
 /** Title and explanation for each failure, in plain words (docs/design/components/ErrorsAndHelp). */
-private fun TvError.explain(): Pair<String, String> =
+private fun TvError.explain(): Pair<Int, UiText> =
     when (this) {
         TvError.PairingRefused -> {
-            "The TV said no" to
-                "If you chose Deny by mistake, allow Zapper again on the TV under " +
-                "Settings › General › External Device Manager › Device Connection Manager, then try again."
+            R.string.pairing_refused_title to UiText.Res(R.string.pairing_refused_body)
         }
 
         TvError.PairingTimedOut -> {
-            "Nobody answered on the TV" to "The prompt closed before anyone chose Allow. Try again and keep an eye on the TV."
+            R.string.pairing_timed_out_title to UiText.Res(R.string.pairing_timed_out_body)
         }
 
         TvError.CertificateChanged -> {
-            "This TV's identity changed" to
-                "The TV at this address is not presenting the same identity as when you paired it. " +
-                "That happens after a factory reset, but it can also mean another device is pretending to be your TV. " +
-                "Pair again only if you trust your network."
+            R.string.pairing_identity_changed_title to UiText.Res(R.string.pairing_identity_changed_body)
         }
 
         is TvError.Unreachable -> {
-            "Can't reach the TV" to "Check that the TV is on and on the same Wi-Fi as this phone."
+            R.string.pairing_unreachable_title to UiText.Res(R.string.tv_unreachable_body)
         }
 
         else -> {
-            "Couldn't connect" to message
+            R.string.pairing_failed_title to describe()
         }
     }

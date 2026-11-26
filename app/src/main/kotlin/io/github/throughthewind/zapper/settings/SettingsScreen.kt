@@ -1,9 +1,12 @@
 package io.github.throughthewind.zapper.settings
 
+import android.app.LocaleManager
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
+import android.provider.Settings
 import androidx.activity.compose.BackHandler
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -35,6 +38,7 @@ import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.IosShare
+import androidx.compose.material.icons.rounded.Language
 import androidx.compose.material.icons.rounded.Palette
 import androidx.compose.material.icons.rounded.PowerSettingsNew
 import androidx.compose.material.icons.rounded.RestartAlt
@@ -60,6 +64,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -75,12 +80,14 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import io.github.throughthewind.zapper.R
 import io.github.throughthewind.zapper.core.designsystem.components.KeyEmphasis
 import io.github.throughthewind.zapper.core.designsystem.components.RemoteKey
 import io.github.throughthewind.zapper.core.designsystem.theme.shape
@@ -97,15 +104,15 @@ import kotlinx.coroutines.launch
 
 /** The settings pages (docs/design/components/SettingsScreens). */
 enum class SettingsPage(
-    val title: String,
+    @param:StringRes val title: Int,
 ) {
-    Root("Settings"),
-    Tvs("TVs"),
-    Layout("Layout"),
-    Appearance("Appearance"),
-    Feedback("Feedback"),
-    Controls("Controls"),
-    About("About"),
+    Root(R.string.settings_title),
+    Tvs(R.string.settings_tvs),
+    Layout(R.string.settings_layout),
+    Appearance(R.string.settings_appearance),
+    Feedback(R.string.settings_feedback),
+    Controls(R.string.settings_controls),
+    About(R.string.settings_about),
 }
 
 /**
@@ -124,16 +131,17 @@ fun SettingsScreen(
     var page by rememberSaveable { mutableStateOf(SettingsPage.Root) }
     val snackbar = remember { SnackbarHostState() }
     BackHandler { if (page == SettingsPage.Root) onBack() else page = SettingsPage.Root }
-    LaunchedEffect(viewModel) { viewModel.messages.collect { snackbar.showSnackbar(it) } }
+    val resources = LocalContext.current.resources
+    LaunchedEffect(viewModel) { viewModel.messages.collect { snackbar.showSnackbar(it.resolve(resources)) } }
 
     Surface(Modifier.fillMaxSize()) {
         Box(Modifier.safeDrawingPadding()) {
             Column(Modifier.fillMaxSize()) {
                 Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(4.dp)) {
                     IconButton(onClick = { if (page == SettingsPage.Root) onBack() else page = SettingsPage.Root }) {
-                        Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
-                    Text(page.title, style = MaterialTheme.typography.titleLarge)
+                    Text(stringResource(page.title), style = MaterialTheme.typography.titleLarge)
                 }
                 Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
                     when (page) {
@@ -160,30 +168,91 @@ private fun RootPage(
     val devices by viewModel.devices.collectAsStateWithLifecycle()
     val appearance by viewModel.appearance.collectAsStateWithLifecycle()
     val volumeKeys by viewModel.volumeKeys.collectAsStateWithLifecycle()
-    NavItem(Icons.Rounded.Tv, "TVs", devices.joinToString { it.name }.ifEmpty { "No saved TVs" }) { open(SettingsPage.Tvs) }
-    NavItem(Icons.Rounded.DashboardCustomize, "Layout", "Edit, reset, import and export") { open(SettingsPage.Layout) }
-    NavItem(Icons.Rounded.Palette, "Appearance", appearance.appearanceSummary()) { open(SettingsPage.Appearance) }
-    NavItem(Icons.Rounded.Vibration, "Feedback", appearance.feedbackSummary()) { open(SettingsPage.Feedback) }
+    NavItem(
+        Icons.Rounded.Tv,
+        stringResource(R.string.settings_tvs),
+        devices.joinToString { it.name }.ifEmpty { stringResource(R.string.settings_no_saved_tvs) },
+    ) { open(SettingsPage.Tvs) }
+    NavItem(Icons.Rounded.DashboardCustomize, stringResource(R.string.settings_layout), stringResource(R.string.settings_layout_summary)) {
+        open(SettingsPage.Layout)
+    }
+    NavItem(Icons.Rounded.Palette, stringResource(R.string.settings_appearance), appearance.appearanceSummary()) {
+        open(SettingsPage.Appearance)
+    }
+    NavItem(
+        Icons.Rounded.Vibration,
+        stringResource(R.string.settings_feedback),
+        appearance.feedbackSummary(),
+    ) { open(SettingsPage.Feedback) }
     NavItem(
         Icons.Rounded.Tune,
-        "Controls",
-        "Volume keys ${if (volumeKeys) "on" else "off"}, ${appearance.repeatSummary()} repeat",
+        stringResource(R.string.settings_controls),
+        listOf(
+            stringResource(if (volumeKeys) R.string.settings_volume_keys_on else R.string.settings_volume_keys_off),
+            appearance.repeatSummary(),
+        ).joinToString(", "),
     ) { open(SettingsPage.Controls) }
-    NavItem(Icons.Rounded.Info, "About", "Version ${versionName()} · GPL-3.0") { open(SettingsPage.About) }
+    LanguageItem()
+    NavItem(Icons.Rounded.Info, stringResource(R.string.settings_about), stringResource(R.string.settings_about_summary, versionName())) {
+        open(SettingsPage.About)
+    }
 }
 
-private fun AppearanceSettings.appearanceSummary(): String =
-    listOfNotNull(theme.title, "OLED black".takeIf { oledBlack }, "${color.title} colour").joinToString(" · ")
-
-private fun AppearanceSettings.feedbackSummary(): String =
-    "Haptics ${haptics.title.lowercase()}, ${if (clickSound) "click sound" else "no sound"}"
-
-private fun AppearanceSettings.repeatSummary(): String =
-    when {
-        repeatSpeed < AppearanceSettings.DEFAULT_REPEAT_SPEED -> "slow"
-        repeatSpeed > AppearanceSettings.DEFAULT_REPEAT_SPEED -> "fast"
-        else -> "normal"
+/**
+ * The app's language (Android 13+): opens the system's per-app language page, which lists the
+ * languages Zapper ships. Older Android versions follow the phone's language only.
+ */
+@Composable
+private fun LanguageItem() {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
+    val context = LocalContext.current
+    val chosen = remember(context) { context.getSystemService(LocaleManager::class.java)?.applicationLocales?.get(0) }
+    NavItem(
+        Icons.Rounded.Language,
+        stringResource(R.string.settings_language),
+        chosen?.let {
+            it.getDisplayName(it).replaceFirstChar { c ->
+                c.titlecase(it)
+            }
+        } ?: stringResource(R.string.settings_language_system),
+    ) {
+        context.startActivity(Intent(Settings.ACTION_APP_LOCALE_SETTINGS, Uri.fromParts("package", context.packageName, null)))
     }
+}
+
+@Composable
+@ReadOnlyComposable
+private fun AppearanceSettings.appearanceSummary(): String =
+    listOfNotNull(
+        theme.title(),
+        stringResource(R.string.settings_oled_black).takeIf { oledBlack },
+        stringResource(R.string.settings_colour_summary, color.title()),
+    ).joinToString(" · ")
+
+@Composable
+@ReadOnlyComposable
+private fun AppearanceSettings.feedbackSummary(): String =
+    listOf(
+        stringResource(
+            when (haptics) {
+                HapticStrength.OFF -> R.string.settings_haptics_summary_off
+                HapticStrength.LIGHT -> R.string.settings_haptics_summary_light
+                HapticStrength.STRONG -> R.string.settings_haptics_summary_strong
+            },
+        ),
+        stringResource(if (clickSound) R.string.settings_click_sound_summary_on else R.string.settings_click_sound_summary_off),
+    ).joinToString(", ")
+
+@Composable
+@ReadOnlyComposable
+private fun AppearanceSettings.repeatSummary(): String =
+    stringResource(
+        when {
+            repeatSpeed < AppearanceSettings.DEFAULT_REPEAT_SPEED -> R.string.settings_repeat_summary_slow
+            repeatSpeed > AppearanceSettings.DEFAULT_REPEAT_SPEED -> R.string.settings_repeat_summary_fast
+            else -> R.string.settings_repeat_summary_normal
+        },
+    )
 
 @Composable
 private fun TvsPage(
@@ -202,8 +271,8 @@ private fun TvsPage(
             active = active,
             status =
                 listOfNotNull(
-                    if (active) "Current" else "Saved",
-                    "Default".takeIf { tv.id == defaultId },
+                    stringResource(if (active) R.string.tv_status_current else R.string.tv_status_saved),
+                    stringResource(R.string.tv_status_default).takeIf { tv.id == defaultId },
                     brandName(tv.adapterId),
                 ).joinToString(" · "),
             brand = brandName(tv.adapterId),
@@ -211,7 +280,7 @@ private fun TvsPage(
             onAction = { viewModel.act(tv, it, onCurrentForgotten = onNoTvLeft) },
         )
     }
-    NavItem(Icons.Rounded.Add, "Add a TV", null, onClick = onAddTv)
+    NavItem(Icons.Rounded.Add, stringResource(R.string.add_a_tv), null, onClick = onAddTv)
 }
 
 @Composable
@@ -226,22 +295,44 @@ private fun LayoutPage(
     var confirmReset by remember { mutableStateOf(false) }
     var pickSource by remember { mutableStateOf(false) }
     val pickFile = rememberLayoutFilePicker(onText = viewModel::importLayout, onError = viewModel::report)
-    val tvName = device?.name ?: "this TV"
+    val tvName = device?.name ?: stringResource(R.string.settings_this_tv)
 
-    NavItem(Icons.Rounded.Edit, "Edit layout", "Opens edit mode on the remote", onClick = onEditLayout)
-    NavItem(Icons.Rounded.RestartAlt, "Reset to default", "Restore the default layout for $tvName") { confirmReset = true }
+    NavItem(
+        Icons.Rounded.Edit,
+        stringResource(R.string.edit_layout),
+        stringResource(R.string.settings_edit_layout_summary),
+        onClick = onEditLayout,
+    )
+    NavItem(
+        Icons.Rounded.RestartAlt,
+        stringResource(R.string.layout_reset_to_default),
+        stringResource(R.string.settings_reset_summary, tvName),
+    ) {
+        confirmReset = true
+    }
     NavItem(
         Icons.Rounded.ContentCopy,
-        "Copy layout from another TV",
-        if (others.isEmpty()) "No other saved TV" else "Replaces the layout of $tvName",
+        stringResource(R.string.layout_copy_from_other),
+        if (others.isEmpty()) {
+            stringResource(
+                R.string.settings_no_other_tv,
+            )
+        } else {
+            stringResource(R.string.settings_replaces_layout_of, tvName)
+        },
         enabled = others.isNotEmpty(),
     ) { pickSource = true }
-    NavItem(Icons.Rounded.IosShare, "Export layout", "Share as a .json file") {
+    NavItem(Icons.Rounded.IosShare, stringResource(R.string.export_layout), stringResource(R.string.settings_export_summary)) {
         scope.launch { shareLayout(context, viewModel.currentLayout()) }
     }
-    NavItem(Icons.Rounded.Download, "Import layout", "From a .json file. Replaces the layout of $tvName", onClick = pickFile)
+    NavItem(
+        Icons.Rounded.Download,
+        stringResource(R.string.import_layout),
+        stringResource(R.string.settings_import_summary, tvName),
+        onClick = pickFile,
+    )
     Text(
-        "Imported buttons this version of Zapper can't run are kept as placeholders, so nothing is lost.",
+        stringResource(R.string.settings_import_placeholders_note),
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp),
@@ -249,9 +340,9 @@ private fun LayoutPage(
 
     if (confirmReset) {
         ConfirmDialog(
-            title = "Reset the layout?",
-            body = "Every change to the layout of $tvName will be lost: its pages and buttons go back to the default.",
-            confirm = "Reset",
+            title = stringResource(R.string.settings_reset_title),
+            body = stringResource(R.string.settings_reset_body, tvName),
+            confirm = stringResource(R.string.action_reset),
             onConfirm = {
                 confirmReset = false
                 viewModel.resetLayout()
@@ -279,7 +370,7 @@ internal fun CopyFromDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Copy layout from") },
+        title = { Text(stringResource(R.string.copy_layout_from_title)) },
         text = {
             Column {
                 devices.forEach { tv ->
@@ -292,7 +383,7 @@ internal fun CopyFromDialog(
             }
         },
         confirmButton = {},
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_cancel)) } },
     )
 }
 
@@ -310,7 +401,7 @@ internal fun ConfirmDialog(
         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
         title = { Text(title) },
         text = { Text(body) },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_cancel)) } },
         confirmButton = {
             TextButton(onClick = onConfirm) { Text(confirm, color = MaterialTheme.colorScheme.error) }
         },
@@ -321,13 +412,17 @@ internal fun ConfirmDialog(
 @Composable
 private fun AppearancePage(viewModel: SettingsViewModel) {
     val settings by viewModel.appearance.collectAsStateWithLifecycle()
-    SectionHeader("Theme")
-    Segmented(ThemeChoice.entries, settings.theme, { it.title }) { choice -> viewModel.updateAppearance { it.copy(theme = choice) } }
-    SwitchItem("OLED black", "Pure black background in dark theme", settings.oledBlack) { on ->
+    SectionHeader(stringResource(R.string.settings_theme))
+    Segmented(ThemeChoice.entries, settings.theme, { it.title() }) { choice -> viewModel.updateAppearance { it.copy(theme = choice) } }
+    SwitchItem(
+        stringResource(R.string.settings_oled_black),
+        stringResource(R.string.settings_oled_black_summary),
+        settings.oledBlack,
+    ) { on ->
         viewModel.updateAppearance { it.copy(oledBlack = on) }
     }
 
-    SectionHeader("Colour")
+    SectionHeader(stringResource(R.string.settings_colour))
     val dynamicAvailable = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
     val colors = ColorChoice.entries.filter { it != ColorChoice.DYNAMIC || dynamicAvailable }
     // Without dynamic colour, the theme falls back to Indigo, so Indigo reads as chosen.
@@ -342,26 +437,26 @@ private fun AppearancePage(viewModel: SettingsViewModel) {
     }
     if (dynamicAvailable) {
         Text(
-            "Dynamic uses your wallpaper colours.",
+            stringResource(R.string.settings_dynamic_note),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(horizontal = 24.dp),
         )
     }
 
-    SectionHeader("Key style")
+    SectionHeader(stringResource(R.string.settings_key_style))
     Row(horizontalArrangement = Arrangement.spacedBy(16.dp), modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp)) {
         KeyShapeChoice.entries.forEach { choice ->
             ShapeOption(choice, selected = choice == settings.keyShape) { viewModel.updateAppearance { it.copy(keyShape = choice) } }
         }
     }
 
-    SectionHeader("Preview")
+    SectionHeader(stringResource(R.string.settings_preview))
     Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp)) {
-        PreviewKey("Power", Icons.Rounded.PowerSettingsNew, KeyEmphasis.Power)
-        PreviewKey("Home", Icons.Rounded.Home, KeyEmphasis.Standard)
-        PreviewKey("OK", null, KeyEmphasis.Primary)
-        PreviewKey("TV", Icons.Rounded.Tv, KeyEmphasis.Tertiary)
+        PreviewKey(stringResource(R.string.key_power), Icons.Rounded.PowerSettingsNew, KeyEmphasis.Power)
+        PreviewKey(stringResource(R.string.key_home), Icons.Rounded.Home, KeyEmphasis.Standard)
+        PreviewKey(stringResource(R.string.key_ok), null, KeyEmphasis.Primary)
+        PreviewKey(stringResource(R.string.settings_preview_tv), Icons.Rounded.Tv, KeyEmphasis.Tertiary)
     }
 }
 
@@ -391,6 +486,7 @@ private fun ColorSwatch(
             listOf(choice.seed()?.seed ?: Color.Gray)
         }
     val ring = MaterialTheme.colorScheme.primary
+    val description = stringResource(R.string.settings_colour_summary, choice.title())
     Box(
         Modifier
             .size(58.dp)
@@ -408,7 +504,7 @@ private fun ColorSwatch(
                     drawRect(fills[3], Offset(half.width, half.height), half)
                 }
             }.selectable(selected = selected, role = Role.RadioButton, onClick = onClick)
-            .semantics { contentDescription = "${choice.title} colour" },
+            .semantics { contentDescription = description },
     )
 }
 
@@ -433,20 +529,28 @@ private fun ShapeOption(
                 .clip(shape)
                 .background(if (selected) colors.secondaryContainer else colors.surfaceContainerHigh),
         )
-        Text(choice.title, style = MaterialTheme.typography.labelMedium)
+        Text(choice.title(), style = MaterialTheme.typography.labelMedium)
     }
 }
 
 @Composable
 private fun FeedbackPage(viewModel: SettingsViewModel) {
     val settings by viewModel.appearance.collectAsStateWithLifecycle()
-    SectionHeader("Haptics on press")
-    Segmented(HapticStrength.entries, settings.haptics, { it.title }) { choice -> viewModel.updateAppearance { it.copy(haptics = choice) } }
-    SwitchItem("Click sound", "A click on every key press, if touch sounds are on for the phone", settings.clickSound) { on ->
+    SectionHeader(stringResource(R.string.settings_haptics))
+    Segmented(
+        HapticStrength.entries,
+        settings.haptics,
+        { it.title() },
+    ) { choice -> viewModel.updateAppearance { it.copy(haptics = choice) } }
+    SwitchItem(
+        stringResource(R.string.settings_click_sound),
+        stringResource(R.string.settings_click_sound_summary),
+        settings.clickSound,
+    ) { on ->
         viewModel.updateAppearance { it.copy(clickSound = on) }
     }
     Text(
-        "Keys always show when they are pressed.",
+        stringResource(R.string.settings_keys_always_show),
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp),
@@ -457,35 +561,37 @@ private fun FeedbackPage(viewModel: SettingsViewModel) {
 private fun ControlsPage(viewModel: SettingsViewModel) {
     val settings by viewModel.appearance.collectAsStateWithLifecycle()
     val volumeKeys by viewModel.volumeKeys.collectAsStateWithLifecycle()
-    SwitchItem("Phone volume keys control the TV", "While a TV is connected and Zapper is open", volumeKeys, viewModel::setVolumeKeys)
-    SectionHeader("Repeat speed when holding a key")
+    SwitchItem(
+        stringResource(R.string.settings_volume_keys),
+        stringResource(R.string.settings_volume_keys_summary),
+        volumeKeys,
+        viewModel::setVolumeKeys,
+    )
+    SectionHeader(stringResource(R.string.settings_repeat_speed_header))
+    val repeatDescription = stringResource(R.string.settings_repeat_speed)
     Slider(
         value = settings.repeatSpeed.toFloat(),
         onValueChange = { value -> viewModel.updateAppearance { it.copy(repeatSpeed = Math.round(value)) } },
         valueRange = 1f..AppearanceSettings.REPEAT_INTERVALS_MS.size.toFloat(),
         steps = AppearanceSettings.REPEAT_INTERVALS_MS.size - 2,
-        modifier = Modifier.padding(horizontal = 24.dp).semantics { contentDescription = "Repeat speed" },
+        modifier = Modifier.padding(horizontal = 24.dp).semantics { contentDescription = repeatDescription },
     )
     Row(Modifier.fillMaxWidth().padding(horizontal = 24.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-        Text("Slow", style = MaterialTheme.typography.labelMedium)
-        Text("Fast", style = MaterialTheme.typography.labelMedium)
+        Text(stringResource(R.string.settings_slow), style = MaterialTheme.typography.labelMedium)
+        Text(stringResource(R.string.settings_fast), style = MaterialTheme.typography.labelMedium)
     }
 }
 
 @Composable
 private fun AboutPage() {
     val context = LocalContext.current
-    InfoItem("Version", versionName())
-    InfoItem("License", "GNU General Public License v3.0. Free and open source.")
-    NavItem(null, "Source code", SOURCE_URL) {
+    InfoItem(stringResource(R.string.about_version), versionName())
+    InfoItem(stringResource(R.string.about_license), stringResource(R.string.about_license_body))
+    NavItem(null, stringResource(R.string.about_source_code), SOURCE_URL) {
         context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(SOURCE_URL)))
     }
-    InfoItem("Privacy", "Zapper talks only to TVs on your network. No account, no ads, no tracking.")
-    InfoItem(
-        "Open source licences",
-        "Built with Kotlin, kotlinx.coroutines, kotlinx.serialization, AndroidX, Jetpack Compose and OkHttp, " +
-            "all under the Apache License 2.0.",
-    )
+    InfoItem(stringResource(R.string.about_privacy), stringResource(R.string.about_privacy_body))
+    InfoItem(stringResource(R.string.about_licences), stringResource(R.string.about_licences_body))
 }
 
 @Composable
@@ -567,7 +673,7 @@ private fun SwitchItem(
 private fun <T> Segmented(
     options: List<T>,
     selected: T,
-    label: (T) -> String,
+    label: @Composable (T) -> String,
     onSelect: (T) -> Unit,
 ) {
     SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 8.dp)) {

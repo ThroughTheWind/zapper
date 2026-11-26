@@ -84,7 +84,7 @@ A free, open-source, ad-free Android remote that controls any smart TV on the lo
 | HDMI-CEC device control (soundbar, console) | Later |
 | Wear OS companion | Later |
 | Cloud sync of layouts | Not planned (export/import covers it) |
-| Localization beyond English | Later (community) |
+| Languages beyond English, French, Spanish, German and Polish | Later (community, see `docs/translations.md`) |
 
 ---
 
@@ -218,7 +218,7 @@ TVs (manage saved TVs), Layout (edit, reset, import/export), Appearance (theme, 
 | NFR-7 | Compatibility | Android 8.0 (API 26)+ as a proposed minimum **[DEP: stack]**. Phones in portrait; landscape not required for MVP. |
 | NFR-8 | Samsung coverage | Tizen-based Samsung TVs, model year 2016+ (2016–17 on `ws://:8001`, 2018+ on `wss://:8002` with token). Older (Orsay, pre-2016) out of scope. Reference test device: 2019 RU7020. |
 | NFR-9 | Accessibility | All buttons have content descriptions; touch targets ≥ 48 dp; supports font scaling; WCAG AA contrast in all themes; TalkBack usable for the default layout. |
-| NFR-10 | Localization | English only at launch; all strings externalized so community translations can be added later. |
+| NFR-10 | Localization | English, French, Spanish, German and Polish. The app follows the phone's language, and on Android 13+ the system's per-app language setting. All strings are externalized, with proper plurals, so community translations can be added (`docs/translations.md`). |
 | NFR-11 | App size | APK/AAB download < 15 MB. |
 | NFR-12 | Battery | No background work when app is not in foreground. |
 | NFR-13 | Code quality | Adapter contract and core covered by unit tests; Samsung adapter tested against a recorded/mocked protocol; UI smoke tests on the fake adapter. CI runs on every PR. **[DEP: stack]** |
@@ -295,7 +295,7 @@ Status after the protocol research ([research/tv-remote-protocols.md](research/t
 1. ~~**License**~~ — **Decided: GPL-3.0.**
 2. ~~**App name**~~ — **Decided:** Zapper, package `io.github.throughthewind.zapper`.
 3. ~~**Your TV's model/year**~~ — **Answered:** UE75RU7020KXXU (2019, Tizen, EU).
-4. ~~**Languages**~~ — **Decided:** English only at launch.
+4. ~~**Languages**~~ — **Decided:** English only at launch; French, Spanish, German and Polish added after 1.1.0 (WI-027).
 5. ~~**Crash reporting**~~ — **Decided:** omitted for MVP.
 6. ~~**Distribution**~~ — **Decided:** GitHub Releases for MVP; F-Droid / Play Store later.
 

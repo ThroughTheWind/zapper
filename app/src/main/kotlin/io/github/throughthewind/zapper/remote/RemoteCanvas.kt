@@ -1,5 +1,6 @@
 package io.github.throughthewind.zapper.remote
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -49,6 +50,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,11 +58,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import io.github.throughthewind.zapper.R
 import io.github.throughthewind.zapper.core.designsystem.components.AppShortcut
 import io.github.throughthewind.zapper.core.designsystem.components.AppShortcutColor
 import io.github.throughthewind.zapper.core.designsystem.components.DPad
@@ -93,6 +97,7 @@ import io.github.throughthewind.zapper.core.model.RockerKind
 import io.github.throughthewind.zapper.core.model.RockerWidget
 import io.github.throughthewind.zapper.core.model.SpacerWidget
 import io.github.throughthewind.zapper.core.model.UnsupportedWidget
+import io.github.throughthewind.zapper.layout.displayName
 import io.github.throughthewind.zapper.core.designsystem.components.RemoteKey as KeyButton
 
 /** What the canvas needs from the connection: send a key, run a button, and whether either works. */
@@ -152,7 +157,7 @@ private fun RemotePages(
             RemotePageGrid(layout.pages[index], layout.columns, actions)
         }
         if (layout.pages.size > 1) {
-            PageDots(count = layout.pages.size, current = pager.currentPage, names = layout.pages.map { it.name })
+            PageDots(count = layout.pages.size, current = pager.currentPage, names = layout.pages.map { it.displayName() })
         }
     }
 }
@@ -163,13 +168,14 @@ internal fun PageDots(
     current: Int,
     names: List<String>,
 ) {
+    val description = stringResource(R.string.remote_page_of, current + 1, count, names[current])
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
         modifier =
             Modifier
                 .fillMaxWidth()
                 .padding(vertical = 12.dp)
-                .semantics { contentDescription = "Page ${current + 1} of $count, ${names[current]}" },
+                .semantics { contentDescription = description },
     ) {
         repeat(count) { index ->
             val color = if (index == current) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant
@@ -309,6 +315,8 @@ private fun UnsupportedKey(
 ) {
     val outline = MaterialTheme.colorScheme.outline
     val hatch = MaterialTheme.colorScheme.outlineVariant
+    val why = stringResource(R.string.remote_unsupported_why)
+    val description = stringResource(R.string.error_unsupported)
     Box(
         modifier
             .clip(keyShape)
@@ -320,8 +328,8 @@ private fun UnsupportedKey(
                     drawLine(hatch, Offset(x, size.height), Offset(x + size.height, 0f), strokeWidth = 1.dp.toPx())
                     x += step
                 }
-            }.clickable(onClickLabel = "Why", onClick = onPress)
-            .semantics { contentDescription = "Not supported on this TV" },
+            }.clickable(onClickLabel = why, onClick = onPress)
+            .semantics { contentDescription = description },
         contentAlignment = Alignment.Center,
     ) {
         Icon(Icons.AutoMirrored.Rounded.HelpOutline, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -383,6 +391,8 @@ private fun ButtonWidget(
 }
 
 /** The name a button shows and is announced by: its label, else its key or app name. */
+@Composable
+@ReadOnlyComposable
 internal fun LayoutButton.title(): String {
     label?.let { return it }
     return when (val a = action) {
@@ -481,32 +491,102 @@ internal fun RemoteKey.icon(): ImageVector? =
     }
 
 /** The accessibility label and text of a key with no icon. */
-internal fun RemoteKey.title(): String =
+@Composable
+@ReadOnlyComposable
+internal fun RemoteKey.title(): String = digit()?.toString() ?: stringResource(titleRes())
+
+/** The digit a `DIGIT_n` key sends, or null for any other key. */
+internal fun RemoteKey.digit(): Int? = name.removePrefix("DIGIT_").takeIf { name.startsWith("DIGIT_") }?.toIntOrNull()
+
+/** The name of every key but the digits, which [title] shows as the digit itself. */
+@StringRes
+private fun RemoteKey.titleRes(): Int =
     when (this) {
-        RemoteKey.POWER -> "Power"
-        RemoteKey.HOME -> "Home"
-        RemoteKey.BACK -> "Back"
-        RemoteKey.EXIT -> "Exit"
-        RemoteKey.MENU -> "Menu"
-        RemoteKey.SOURCE -> "Source"
-        RemoteKey.SETTINGS -> "Settings"
-        RemoteKey.MUTE -> "Mute"
-        RemoteKey.INFO -> "Info"
-        RemoteKey.GUIDE -> "Guide"
-        RemoteKey.HDMI_1 -> "HDMI 1"
-        RemoteKey.HDMI_2 -> "HDMI 2"
-        RemoteKey.HDMI_3 -> "HDMI 3"
-        RemoteKey.HDMI_4 -> "HDMI 4"
-        RemoteKey.HDMI_NEXT -> "HDMI"
-        else -> name.lowercase().replace('_', ' ').replaceFirstChar { it.uppercase() }
+        RemoteKey.POWER -> R.string.key_power
+
+        RemoteKey.HOME -> R.string.key_home
+
+        RemoteKey.BACK -> R.string.key_back
+
+        RemoteKey.EXIT -> R.string.key_exit
+
+        RemoteKey.MENU -> R.string.key_menu
+
+        RemoteKey.SOURCE -> R.string.key_source
+
+        RemoteKey.SETTINGS -> R.string.key_settings
+
+        RemoteKey.MUTE -> R.string.key_mute
+
+        RemoteKey.INFO -> R.string.key_info
+
+        RemoteKey.GUIDE -> R.string.key_guide
+
+        RemoteKey.HDMI_1 -> R.string.key_hdmi_1
+
+        RemoteKey.HDMI_2 -> R.string.key_hdmi_2
+
+        RemoteKey.HDMI_3 -> R.string.key_hdmi_3
+
+        RemoteKey.HDMI_4 -> R.string.key_hdmi_4
+
+        RemoteKey.HDMI_NEXT -> R.string.key_hdmi_next
+
+        RemoteKey.UP -> R.string.key_up
+
+        RemoteKey.DOWN -> R.string.key_down
+
+        RemoteKey.LEFT -> R.string.key_left
+
+        RemoteKey.RIGHT -> R.string.key_right
+
+        RemoteKey.OK -> R.string.key_ok
+
+        RemoteKey.VOLUME_UP -> R.string.key_volume_up
+
+        RemoteKey.VOLUME_DOWN -> R.string.key_volume_down
+
+        RemoteKey.CHANNEL_UP -> R.string.key_channel_up
+
+        RemoteKey.CHANNEL_DOWN -> R.string.key_channel_down
+
+        RemoteKey.CHANNEL_LIST -> R.string.key_channel_list
+
+        RemoteKey.PREVIOUS_CHANNEL -> R.string.key_previous_channel
+
+        RemoteKey.PLAY -> R.string.key_play
+
+        RemoteKey.PAUSE -> R.string.key_pause
+
+        RemoteKey.PLAY_PAUSE -> R.string.key_play_pause
+
+        RemoteKey.STOP -> R.string.key_stop
+
+        RemoteKey.REWIND -> R.string.key_rewind
+
+        RemoteKey.FAST_FORWARD -> R.string.key_fast_forward
+
+        RemoteKey.RED -> R.string.key_red
+
+        RemoteKey.GREEN -> R.string.key_green
+
+        RemoteKey.YELLOW -> R.string.key_yellow
+
+        RemoteKey.BLUE -> R.string.key_blue
+
+        RemoteKey.DIGIT_0, RemoteKey.DIGIT_1, RemoteKey.DIGIT_2, RemoteKey.DIGIT_3, RemoteKey.DIGIT_4,
+        RemoteKey.DIGIT_5, RemoteKey.DIGIT_6, RemoteKey.DIGIT_7, RemoteKey.DIGIT_8, RemoteKey.DIGIT_9,
+        -> error("$this is shown as its digit")
     }
 
+@Composable
+@ReadOnlyComposable
 private fun ButtonAction.fallbackTitle(): String =
     when (this) {
         is ButtonAction.Key -> key.name
         is ButtonAction.LaunchApp -> appId
         is ButtonAction.Macro -> keys.joinToString(" ")
-        ButtonAction.OpenKeyboard -> "Keyboard"
+        ButtonAction.OpenKeyboard -> stringResource(R.string.keyboard)
     }
 
 internal fun ButtonAction.icon(): ImageVector? =

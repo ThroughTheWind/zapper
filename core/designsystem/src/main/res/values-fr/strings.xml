@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Translation of ../values/strings.xml. Keep the keys and placeholders in step with it. -->
+<resources>
+    <string name="ds_up">Haut</string>
+    <string name="ds_down">Bas</string>
+    <string name="ds_left">Gauche</string>
+    <string name="ds_right">Droite</string>
+    <string name="ds_ok">OK</string>
+    <string name="ds_channel_list">Liste des chaînes</string>
+    <string name="ds_previous_channel">Chaîne précédente</string>
+    <string name="ds_rewind">Retour rapide</string>
+    <string name="ds_play_or_pause">Lecture ou pause</string>
+    <string name="ds_fast_forward">Avance rapide</string>
+    <string name="ds_rocker_volume_caption">VOL</string>
+    <string name="ds_rocker_channel_caption">CH</string>
+    <string name="ds_volume_up">Volume plus</string>
+    <string name="ds_volume_down">Volume moins</string>
+    <string name="ds_channel_up">Chaîne suivante</string>
+    <string name="ds_channel_down">Chaîne précédente</string>
+    <string name="ds_device_card_description">%1$s, %2$s, se connecter</string>
+    <string name="ds_default">Par défaut</string>
+    <string name="ds_open_app">Ouvrir %1$s</string>
+    <string name="ds_connected">Connectée</string>
+    <string name="ds_connecting">Connexion</string>
+    <string name="ds_offline_description">Hors ligne, touchez pour réessayer</string>
+    <string name="ds_tv_off_description">TV éteinte, touchez pour l’allumer</string>
+    <string name="ds_offline_retry">Hors ligne · Réessayer</string>
+    <string name="ds_tv_off_power_on">TV éteinte · Allumer</string>
+    <string name="ds_text_for_tv">Texte pour la TV</string>
+    <string name="ds_send_to_tv">Envoyer à la TV</string>
+    <string name="ds_looking_for_tvs">Recherche de TV</string>
+    <string name="ds_your_tv_shows">Votre TV affiche : %1$s</string>
+    <string name="ds_deny">Refuser</string>
+    <string name="ds_allow">Autoriser</string>
+    <string name="ds_step_done">Terminé</string>
+    <string name="ds_paired">Associée</string>
+    <string name="ds_not_paired">Non associée</string>
+    <plurals name="ds_code_description">
+        <item quantity="one">Code affiché sur la TV, %d caractère</item>
+        <item quantity="many">Code affiché sur la TV, %d caractères</item>
+        <item quantity="other">Code affiché sur la TV, %d caractères</item>
+    </plurals>
+</resources>

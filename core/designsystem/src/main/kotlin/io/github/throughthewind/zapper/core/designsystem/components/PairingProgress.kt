@@ -24,11 +24,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import io.github.throughthewind.zapper.core.designsystem.R
 import io.github.throughthewind.zapper.core.designsystem.theme.KeyType
 
 /**
@@ -41,6 +44,7 @@ fun PairingHero(
     modifier: Modifier = Modifier,
 ) {
     val colors = MaterialTheme.colorScheme
+    val shows = stringResource(R.string.ds_your_tv_shows, prompt)
     Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         Surface(
             color = colors.surfaceContainerHighest,
@@ -50,7 +54,7 @@ fun PairingHero(
                     .width(240.dp)
                     .aspectRatio(16f / 9f)
                     .border(6.dp, colors.surfaceContainerHigh, MaterialTheme.shapes.medium)
-                    .semantics { contentDescription = "Your TV shows: $prompt" },
+                    .semantics { contentDescription = shows },
         ) {
             Box(contentAlignment = Alignment.Center) {
                 Surface(color = colors.surface, shape = MaterialTheme.shapes.small, shadowElevation = 2.dp) {
@@ -59,14 +63,14 @@ fun PairingHero(
                         Row(horizontalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.padding(top = 6.dp)) {
                             Surface(color = colors.surfaceContainerHigh, shape = CircleShape) {
                                 Text(
-                                    "Deny",
+                                    stringResource(R.string.ds_deny),
                                     style = MaterialTheme.typography.labelSmall,
                                     modifier = Modifier.padding(horizontal = 10.dp, vertical = 2.dp),
                                 )
                             }
                             Surface(color = colors.primary, contentColor = colors.onPrimary, shape = CircleShape) {
                                 Text(
-                                    "Allow",
+                                    stringResource(R.string.ds_allow),
                                     style = MaterialTheme.typography.labelSmall,
                                     modifier = Modifier.padding(horizontal = 10.dp, vertical = 2.dp),
                                 )
@@ -121,9 +125,21 @@ private fun PairingStep(
         Surface(color = container, contentColor = content, shape = CircleShape, modifier = Modifier.size(28.dp)) {
             Box(contentAlignment = Alignment.Center) {
                 when (state) {
-                    PairingStepState.Done -> Icon(Icons.Rounded.Check, contentDescription = "Done", modifier = Modifier.size(18.dp))
-                    PairingStepState.Current -> CircularProgressIndicator(Modifier.size(16.dp), strokeWidth = 2.dp, color = content)
-                    PairingStepState.Upcoming -> Text("$number", style = MaterialTheme.typography.labelMedium)
+                    PairingStepState.Done -> {
+                        Icon(
+                            Icons.Rounded.Check,
+                            contentDescription = stringResource(R.string.ds_step_done),
+                            modifier = Modifier.size(18.dp),
+                        )
+                    }
+
+                    PairingStepState.Current -> {
+                        CircularProgressIndicator(Modifier.size(16.dp), strokeWidth = 2.dp, color = content)
+                    }
+
+                    PairingStepState.Upcoming -> {
+                        Text("$number", style = MaterialTheme.typography.labelMedium)
+                    }
                 }
             }
         }
@@ -151,6 +167,7 @@ fun PinEntry(
     enabled: Boolean = true,
 ) {
     val colors = MaterialTheme.colorScheme
+    val codeDescription = pluralStringResource(R.plurals.ds_code_description, length, length)
     BasicTextField(
         value = value,
         onValueChange = { text ->
@@ -164,7 +181,7 @@ fun PinEntry(
         },
         enabled = enabled,
         keyboardOptions = KeyboardOptions(keyboardType = if (hex) KeyboardType.Ascii else KeyboardType.NumberPassword),
-        modifier = modifier.semantics { contentDescription = "Code shown on the TV, $length characters" },
+        modifier = modifier.semantics { contentDescription = codeDescription },
         decorationBox = {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 repeat(length) { index ->
@@ -204,7 +221,7 @@ fun PairingOutcome(
         Box(contentAlignment = Alignment.Center) {
             Icon(
                 if (success) Icons.Rounded.Check else Icons.Rounded.Close,
-                contentDescription = if (success) "Paired" else "Not paired",
+                contentDescription = stringResource(if (success) R.string.ds_paired else R.string.ds_not_paired),
                 modifier = Modifier.size(36.dp),
             )
         }

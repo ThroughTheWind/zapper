@@ -8,6 +8,7 @@ import io.github.throughthewind.zapper.core.model.TvDevice
 import io.github.throughthewind.zapper.core.remote.ConnectionState
 import io.github.throughthewind.zapper.core.remote.CredentialStore
 import io.github.throughthewind.zapper.core.remote.DiscoveredTv
+import io.github.throughthewind.zapper.core.remote.LocalizedText
 import io.github.throughthewind.zapper.core.remote.PairingRequest
 import io.github.throughthewind.zapper.core.remote.PowerState
 import io.github.throughthewind.zapper.core.remote.TvAdapter
@@ -123,7 +124,7 @@ class FakeTvAdapter(
     /** On when online; a TV that is off the network says nothing. */
     override suspend fun powerState(device: TvDevice): PowerState? = if (online) PowerState.ON else null
 
-    override val powerOnHelp: String = "The simulated TV wakes up unless its behaviour says otherwise."
+    override val powerOnHelp = LocalizedText("The simulated TV wakes up unless its behaviour says otherwise.")
 
     override fun createSession(
         device: TvDevice,

@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import io.github.throughthewind.zapper.AppContainer
+import io.github.throughthewind.zapper.R
+import io.github.throughthewind.zapper.UiText
 import io.github.throughthewind.zapper.core.data.ZapperRepository
 import io.github.throughthewind.zapper.core.model.AppearanceSettings
 import io.github.throughthewind.zapper.core.model.ImportedLayout
@@ -52,10 +54,10 @@ class SettingsViewModel(
         combine(repository.devices, connection.device) { saved, current -> saved.filter { it.id != current?.id } }
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
-    private val _messages = MutableSharedFlow<String>(extraBufferCapacity = 4)
+    private val _messages = MutableSharedFlow<UiText>(extraBufferCapacity = 4)
 
     /** Short confirmations and errors for a snackbar. */
-    val messages: SharedFlow<String> = _messages.asSharedFlow()
+    val messages: SharedFlow<UiText> = _messages.asSharedFlow()
 
     fun updateAppearance(transform: (AppearanceSettings) -> AppearanceSettings) {
         viewModelScope.launch { repository.updateAppearance(transform) }
@@ -70,7 +72,7 @@ class SettingsViewModel(
         val id = connection.device.value?.id ?: return
         viewModelScope.launch {
             repository.resetLayout(id)
-            _messages.emit("Layout reset to default")
+            _messages.emit(UiText.Res(R.string.settings_layout_reset_done))
         }
     }
 
@@ -78,7 +80,7 @@ class SettingsViewModel(
         val id = connection.device.value?.id ?: return
         viewModelScope.launch {
             repository.copyLayout(fromId = tv.id, toId = id)
-            _messages.emit("Copied the layout from ${tv.name}")
+            _messages.emit(UiText.Res(R.string.settings_copied_from, listOf(tv.name)))
         }
     }
 
@@ -93,7 +95,7 @@ class SettingsViewModel(
                 try {
                     LayoutFile.decode(text)
                 } catch (e: LayoutFileException) {
-                    _messages.emit(e.message ?: "This file cannot be imported")
+                    _messages.emit(e.reason.text())
                     return@launch
                 }
             repository.saveLayout(id, imported.layout)
@@ -101,7 +103,7 @@ class SettingsViewModel(
         }
     }
 
-    fun report(message: String) {
+    fun report(message: UiText) {
         _messages.tryEmit(message)
     }
 
@@ -138,9 +140,18 @@ class SettingsViewModel(
 }
 
 /** What an import did, in a sentence for the snackbar. */
-internal fun ImportedLayout.summary(): String =
+internal fun ImportedLayout.summary(): UiText =
     when (unsupported) {
-        0 -> "Layout imported"
-        1 -> "Layout imported. 1 button this version of Zapper can't run is kept as a placeholder."
-        else -> "Layout imported. $unsupported buttons this version of Zapper can't run are kept as placeholders."
+        0 -> UiText.Res(R.string.import_done)
+        else -> UiText.Plural(R.plurals.import_done_with_placeholders, unsupported)
     }
+
+/** Why a file could not be imported, in the user's language. */
+internal fun LayoutFileException.Reason.text(): UiText =
+    UiText.Res(
+        when (this) {
+            LayoutFileException.Reason.NOT_A_LAYOUT -> R.string.import_not_a_layout
+            LayoutFileException.Reason.TOO_NEW -> R.string.import_too_new
+            LayoutFileException.Reason.DAMAGED -> R.string.import_damaged
+        },
+    )

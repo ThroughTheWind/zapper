@@ -1,7 +1,9 @@
 package io.github.throughthewind.zapper.discovery
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import io.github.throughthewind.zapper.R
 import io.github.throughthewind.zapper.connection.MulticastLock
 import io.github.throughthewind.zapper.core.remote.AdapterRegistry
 import io.github.throughthewind.zapper.core.remote.DiscoveredTv
@@ -20,7 +22,8 @@ data class DiscoveryUiState(
     val nothingFound: Boolean = false,
     val manualAddress: String = "",
     val manualChecking: Boolean = false,
-    val manualError: String? = null,
+    /** Why the typed address did not work, as a string resource. */
+    @param:StringRes val manualError: Int? = null,
 )
 
 /** Scans for TVs for [scanTimeoutMs], and probes an address the user types (SPEC F1). */
@@ -57,14 +60,14 @@ class DiscoveryViewModel(
     fun addByAddress(onFound: (DiscoveredTv) -> Unit) {
         val address = _state.value.manualAddress
         if (!isIpv4(address)) {
-            _state.update { it.copy(manualError = "Enter an address like 192.168.1.20") }
+            _state.update { it.copy(manualError = R.string.discovery_address_invalid) }
             return
         }
         _state.update { it.copy(manualChecking = true, manualError = null) }
         viewModelScope.launch {
             val tv = adapters.probe(address)
             _state.update {
-                it.copy(manualChecking = false, manualError = if (tv == null) "No supported TV answered at this address" else null)
+                it.copy(manualChecking = false, manualError = if (tv == null) R.string.discovery_address_no_tv else null)
             }
             tv?.let(onFound)
         }

@@ -3,6 +3,7 @@ package io.github.throughthewind.zapper.adapters.samsung
 import io.github.throughthewind.zapper.core.model.TvDevice
 import io.github.throughthewind.zapper.core.remote.CredentialStore
 import io.github.throughthewind.zapper.core.remote.DiscoveredTv
+import io.github.throughthewind.zapper.core.remote.LocalizedText
 import io.github.throughthewind.zapper.core.remote.PowerState
 import io.github.throughthewind.zapper.core.remote.TvAdapter
 import io.github.throughthewind.zapper.core.remote.TvError
@@ -88,9 +89,28 @@ class SamsungAdapter internal constructor(
         }
     }
 
-    override val powerOnHelp: String =
-        "On the TV, open Settings › General › Network › Expert Settings and turn on Power On with Mobile. " +
-            "Some TVs only wake when connected to the router by cable."
+    override val powerOnHelp: LocalizedText =
+        LocalizedText(
+            english =
+                "On the TV, open Settings › General › Network › Expert Settings and turn on Power On with Mobile. " +
+                    "Some TVs only wake when connected to the router by cable.",
+            translations =
+                mapOf(
+                    "fr" to
+                        "Sur le téléviseur, ouvrez Paramètres › Général › Réseau › Paramètres experts et activez " +
+                        "Allumer avec un mobile. Certains téléviseurs ne s'allument que s'ils sont reliés au routeur par câble.",
+                    "es" to
+                        "En el televisor, abre Configuración › General › Red › Configuración experta y activa " +
+                        "Encender con el móvil. Algunos televisores solo se encienden si están conectados al router por cable.",
+                    "de" to
+                        "Öffne auf dem Fernseher Einstellungen › Allgemein › Netzwerk › Experteneinstellungen und aktiviere " +
+                        "Mit Mobilgerät einschalten. Manche Fernseher wachen nur auf, wenn sie per Kabel mit dem Router verbunden sind.",
+                    "pl" to
+                        "Na telewizorze otwórz Ustawienia › Ogólne › Sieć › Ustawienia eksperckie i włącz " +
+                        "Włączanie za pomocą urządzenia mobilnego. Niektóre telewizory włączają się tylko wtedy, " +
+                        "gdy są podłączone do routera kablem.",
+                ),
+        )
 
     override fun createSession(
         device: TvDevice,

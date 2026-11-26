@@ -56,13 +56,18 @@ class LayoutFileTest {
 
         val error = assertFailsWith<LayoutFileException> { LayoutFile.decode(text) }
         assertTrue("newer version" in error.message.orEmpty())
+        assertEquals(LayoutFileException.Reason.TOO_NEW, error.reason)
     }
 
     @Test
     fun `a file that is not a layout is refused`() {
-        assertFailsWith<LayoutFileException> { LayoutFile.decode("not json") }
-        assertFailsWith<LayoutFileException> { LayoutFile.decode("""{"format":"something-else","version":1}""") }
-        assertFailsWith<LayoutFileException> { LayoutFile.decode("""{"format":"zapper-layout","version":1,"layout":{"pages":[]}}""") }
+        val notJson = assertFailsWith<LayoutFileException> { LayoutFile.decode("not json") }
+        val otherFormat = assertFailsWith<LayoutFileException> { LayoutFile.decode("""{"format":"something-else","version":1}""") }
+        val noPages =
+            assertFailsWith<LayoutFileException> { LayoutFile.decode("""{"format":"zapper-layout","version":1,"layout":{"pages":[]}}""") }
+        assertEquals(LayoutFileException.Reason.NOT_A_LAYOUT, notJson.reason)
+        assertEquals(LayoutFileException.Reason.NOT_A_LAYOUT, otherFormat.reason)
+        assertEquals(LayoutFileException.Reason.DAMAGED, noPages.reason)
     }
 
     @Test

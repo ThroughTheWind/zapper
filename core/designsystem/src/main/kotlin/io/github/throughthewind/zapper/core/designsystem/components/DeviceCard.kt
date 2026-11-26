@@ -20,9 +20,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import io.github.throughthewind.zapper.core.designsystem.R
 
 enum class DeviceCardState { Found, Connecting, Saved, Unreachable }
 
@@ -43,6 +45,7 @@ fun DeviceCard(
 ) {
     val colors = MaterialTheme.colorScheme
     val shape = MaterialTheme.shapes.large
+    val description = stringResource(R.string.ds_device_card_description, title, subtitle)
     Surface(
         onClick = onClick,
         color = colors.surfaceContainerHigh,
@@ -52,7 +55,7 @@ fun DeviceCard(
                 .fillMaxWidth()
                 .alpha(if (state == DeviceCardState.Unreachable) 0.6f else 1f)
                 .then(if (state == DeviceCardState.Connecting) Modifier.border(2.dp, colors.primary, shape) else Modifier)
-                .semantics(mergeDescendants = true) { contentDescription = "$title, $subtitle, connect" },
+                .semantics(mergeDescendants = true) { contentDescription = description },
     ) {
         Row(
             modifier = Modifier.padding(16.dp),
@@ -70,7 +73,7 @@ fun DeviceCard(
                     if (isDefault) {
                         Surface(color = colors.primaryContainer, shape = MaterialTheme.shapes.small) {
                             Text(
-                                "Default",
+                                stringResource(R.string.ds_default),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = colors.onPrimaryContainer,
                                 modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),

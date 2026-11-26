@@ -1,5 +1,6 @@
 package io.github.throughthewind.zapper.core.designsystem.components
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,17 +18,19 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.dp
+import io.github.throughthewind.zapper.core.designsystem.R
 import io.github.throughthewind.zapper.core.designsystem.theme.KeyType
 
 enum class RockerStyle(
-    val caption: String,
-    val upLabel: String,
-    val downLabel: String,
+    @StringRes val caption: Int,
+    @StringRes val upLabel: Int,
+    @StringRes val downLabel: Int,
 ) {
-    Volume("VOL", "Volume up", "Volume down"),
-    Channel("CH", "Channel up", "Channel down"),
+    Volume(R.string.ds_rocker_volume_caption, R.string.ds_volume_up, R.string.ds_volume_down),
+    Channel(R.string.ds_rocker_channel_caption, R.string.ds_channel_up, R.string.ds_channel_down),
 }
 
 /**
@@ -52,7 +55,7 @@ fun Rocker(
             verticalArrangement = Arrangement.SpaceBetween,
         ) {
             RemoteKey(
-                label = style.upLabel,
+                label = stringResource(style.upLabel),
                 onPress = onUp,
                 shape = CircleShape,
                 enabled = enabled,
@@ -61,13 +64,13 @@ fun Rocker(
             ) { Icon(up, contentDescription = null, modifier = Modifier.size(28.dp)) }
             // The halves already say "Volume up"; TalkBack skips the caption.
             KeyText(
-                style.caption,
+                stringResource(style.caption),
                 style = KeyType.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(vertical = 6.dp).clearAndSetSemantics {},
             )
             RemoteKey(
-                label = style.downLabel,
+                label = stringResource(style.downLabel),
                 onPress = onDown,
                 shape = CircleShape,
                 enabled = enabled,

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Preview builds install beside the release; the name tells them apart (docs/previews.md). -->
-    <string name="app_name">Zapper Preview</string>
+    <string name="app_name" translatable="false">Zapper Preview</string>
 </resources>

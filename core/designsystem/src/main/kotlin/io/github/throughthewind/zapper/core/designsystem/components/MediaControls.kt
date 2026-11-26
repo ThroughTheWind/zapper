@@ -11,6 +11,8 @@ import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import io.github.throughthewind.zapper.core.designsystem.R
 import io.github.throughthewind.zapper.core.designsystem.theme.RemoteGrid
 
 enum class MediaControl { Rewind, PlayPause, FastForward }
@@ -29,14 +31,14 @@ fun MediaControls(
 ) {
     Row(modifier, horizontalArrangement = Arrangement.spacedBy(RemoteGrid.gutter)) {
         RemoteKey(
-            label = "Rewind",
+            label = stringResource(R.string.ds_rewind),
             onPress = { onPress(MediaControl.Rewind) },
             enabled = enabled(MediaControl.Rewind),
             repeatOnHold = true,
             modifier = Modifier.weight(1f).fillMaxHeight(),
         ) { Icon(Icons.Rounded.FastRewind, contentDescription = null) }
         RemoteKey(
-            label = "Play or pause",
+            label = stringResource(R.string.ds_play_or_pause),
             onPress = { onPress(MediaControl.PlayPause) },
             emphasis = KeyEmphasis.Primary,
             shape = CircleShape,
@@ -44,7 +46,7 @@ fun MediaControls(
             modifier = Modifier.weight(if (compact) 1f else 2f).fillMaxHeight(),
         ) { Icon(Icons.Rounded.PlayArrow, contentDescription = null) }
         RemoteKey(
-            label = "Fast forward",
+            label = stringResource(R.string.ds_fast_forward),
             onPress = { onPress(MediaControl.FastForward) },
             enabled = enabled(MediaControl.FastForward),
             repeatOnHold = true,

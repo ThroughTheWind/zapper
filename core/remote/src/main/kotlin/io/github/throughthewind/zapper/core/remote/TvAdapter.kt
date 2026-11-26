@@ -36,8 +36,11 @@ interface TvAdapter {
     /** What [device] says about its power, without pairing. Null when it does not answer or does not say (FR-7.3). */
     suspend fun powerState(device: TvDevice): PowerState? = null
 
-    /** How to let this brand's TVs be turned on from the phone, shown once when power-on fails (FR-7.2). */
-    val powerOnHelp: String? get() = null
+    /**
+     * How to let this brand's TVs be turned on from the phone, shown once when power-on fails
+     * (FR-7.2). Give it in every language the app ships: English, French, Spanish, German, Polish.
+     */
+    val powerOnHelp: LocalizedText? get() = null
 
     /** Creates a session for [device]. Does not connect; call [TvSession.connect]. */
     fun createSession(

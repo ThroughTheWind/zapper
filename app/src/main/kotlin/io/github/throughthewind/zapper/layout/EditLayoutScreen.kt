@@ -40,8 +40,12 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import io.github.throughthewind.zapper.R
+import io.github.throughthewind.zapper.UiText
 import io.github.throughthewind.zapper.core.model.LayoutEditing
 import io.github.throughthewind.zapper.core.model.LayoutWidget
 import io.github.throughthewind.zapper.core.model.RemotePage
@@ -84,7 +88,7 @@ fun EditLayoutScreen(
     val context = LocalContext.current
     val pickFile = rememberLayoutFilePicker(onText = viewModel::import, onError = viewModel::report)
 
-    LaunchedEffect(viewModel) { viewModel.messages.collect { snackbar.showSnackbar(it) } }
+    LaunchedEffect(viewModel) { viewModel.messages.collect { snackbar.showSnackbar(it.resolve(context.resources)) } }
 
     BackHandler { if (state?.history?.changed == true) dialog = EditorDialog.Discard else onClose() }
     val editor = state ?: return
@@ -184,7 +188,7 @@ fun EditLayoutScreen(
                 ) {
                     Icon(Icons.Rounded.Add, contentDescription = null)
                     Spacer(Modifier.width(8.dp))
-                    Text("Add a button")
+                    Text(stringResource(R.string.catalog_add_button))
                 }
             }
             SnackbarHost(snackbar, Modifier.align(Alignment.BottomCenter))
@@ -230,13 +234,13 @@ private fun optionsActions(
 
     override fun resize(span: LayoutEditing.Span) =
         viewModel.resize(widget.id, span).also {
-            if (!it) viewModel.report("Not enough room for $span here")
+            if (!it) viewModel.report(UiText.Res(R.string.editor_no_room_for_size, listOf(span.toString())))
         }
 
     override fun nudge(
         columns: Int,
         rows: Int,
-    ) = viewModel.nudge(widget.id, columns, rows).also { if (!it) viewModel.report("Can't move there") }
+    ) = viewModel.nudge(widget.id, columns, rows).also { if (!it) viewModel.report(UiText.Res(R.string.editor_cant_move)) }
 
     override fun remove() = viewModel.remove(widget.id)
 }
@@ -254,30 +258,34 @@ private fun TopBar(
 ) {
     var menu by remember { mutableStateOf(false) }
     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-        IconButton(onClick = onUndo, enabled = canUndo) { Icon(Icons.AutoMirrored.Rounded.Undo, contentDescription = "Undo") }
-        Text("Edit layout", style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f))
+        IconButton(onClick = onUndo, enabled = canUndo) {
+            Icon(Icons.AutoMirrored.Rounded.Undo, contentDescription = stringResource(R.string.action_undo))
+        }
+        Text(stringResource(R.string.edit_layout), style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f))
         Box {
-            IconButton(onClick = { menu = true }) { Icon(Icons.Rounded.MoreVert, contentDescription = "More options") }
+            IconButton(
+                onClick = { menu = true },
+            ) { Icon(Icons.Rounded.MoreVert, contentDescription = stringResource(R.string.more_options)) }
             DropdownMenu(expanded = menu, onDismissRequest = { menu = false }) {
-                DropdownMenuItem(text = { Text("Reset to default") }, onClick = {
+                DropdownMenuItem(text = { Text(stringResource(R.string.layout_reset_to_default)) }, onClick = {
                     menu = false
                     onReset()
                 })
-                DropdownMenuItem(text = { Text("Copy layout from another TV") }, enabled = canCopy, onClick = {
+                DropdownMenuItem(text = { Text(stringResource(R.string.layout_copy_from_other)) }, enabled = canCopy, onClick = {
                     menu = false
                     onCopy()
                 })
-                DropdownMenuItem(text = { Text("Export layout") }, onClick = {
+                DropdownMenuItem(text = { Text(stringResource(R.string.export_layout)) }, onClick = {
                     menu = false
                     onExport()
                 })
-                DropdownMenuItem(text = { Text("Import layout") }, onClick = {
+                DropdownMenuItem(text = { Text(stringResource(R.string.import_layout)) }, onClick = {
                     menu = false
                     onImport()
                 })
             }
         }
-        Button(onClick = onDone) { Text("Done") }
+        Button(onClick = onDone) { Text(stringResource(R.string.action_done)) }
     }
 }
 
@@ -297,9 +305,9 @@ private fun EditorDialogs(
 
         EditorDialog.Discard -> {
             ConfirmDialog(
-                title = "Discard your changes?",
-                body = "The layout goes back to how it was before you started editing.",
-                confirm = "Discard",
+                title = stringResource(R.string.editor_discard_title),
+                body = stringResource(R.string.editor_discard_body),
+                confirm = stringResource(R.string.action_discard),
                 onConfirm = {
                     dismiss()
                     onClose()
@@ -310,9 +318,9 @@ private fun EditorDialogs(
 
         EditorDialog.Reset -> {
             ConfirmDialog(
-                title = "Reset to the default layout?",
-                body = "Every page and button goes back to the default. Undo brings your layout back until you tap Done.",
-                confirm = "Reset",
+                title = stringResource(R.string.editor_reset_title),
+                body = stringResource(R.string.editor_reset_body),
+                confirm = stringResource(R.string.action_reset),
                 onConfirm = {
                     dismiss()
                     viewModel.resetToDefault()
@@ -333,20 +341,32 @@ private fun EditorDialogs(
         }
 
         EditorDialog.NewPage -> {
-            PageNameDialog(title = "New page", initial = "", confirm = "Add", onConfirm = {
-                dismiss()
-                viewModel.addPage(it)
-            }, onDismiss = dismiss)
+            PageNameDialog(
+                title = stringResource(R.string.page_new_title),
+                initial = "",
+                confirm = stringResource(R.string.action_add),
+                onConfirm = {
+                    dismiss()
+                    viewModel.addPage(it)
+                },
+                onDismiss = dismiss,
+            )
         }
 
         EditorDialog.RenamePage -> {
             if (page == null) {
                 LaunchedEffect(Unit) { dismiss() }
             } else {
-                PageNameDialog(title = "Rename page", initial = page.name, confirm = "Save", onConfirm = {
-                    dismiss()
-                    viewModel.renamePage(page.id, it)
-                }, onDismiss = dismiss)
+                PageNameDialog(
+                    title = stringResource(R.string.page_rename_title),
+                    initial = page.displayName(),
+                    confirm = stringResource(R.string.action_save),
+                    onConfirm = {
+                        dismiss()
+                        viewModel.renamePage(page.id, it)
+                    },
+                    onDismiss = dismiss,
+                )
             }
         }
 
@@ -355,9 +375,9 @@ private fun EditorDialogs(
                 LaunchedEffect(Unit) { dismiss() }
             } else {
                 ConfirmDialog(
-                    title = "Delete ${page.name}?",
-                    body = "Its ${page.widgets.size} buttons go with it. Undo brings the page back until you tap Done.",
-                    confirm = "Delete",
+                    title = stringResource(R.string.page_delete_title, page.displayName()),
+                    body = pluralStringResource(R.plurals.page_delete_body, page.widgets.size, page.widgets.size),
+                    confirm = stringResource(R.string.action_delete),
                     onConfirm = {
                         dismiss()
                         viewModel.deletePage(page.id)

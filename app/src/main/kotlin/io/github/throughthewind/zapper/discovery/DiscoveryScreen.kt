@@ -30,6 +30,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
@@ -38,6 +39,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import io.github.throughthewind.zapper.R
 import io.github.throughthewind.zapper.core.designsystem.components.Banner
 import io.github.throughthewind.zapper.core.designsystem.components.BannerKind
 import io.github.throughthewind.zapper.core.designsystem.components.DeviceCard
@@ -72,7 +74,7 @@ fun DiscoveryScreen(
                 ) {
                     DiscoveryScanIndicator(animate = state.scanning)
                     Text(
-                        if (state.scanning) "Looking for TVs on your Wi-Fi…" else "Choose your TV",
+                        stringResource(if (state.scanning) R.string.discovery_scanning else R.string.discovery_choose),
                         style = MaterialTheme.typography.titleLarge,
                         // A heading TalkBack reads again when the scan ends and the title changes.
                         modifier =
@@ -98,12 +100,10 @@ fun DiscoveryScreen(
                     Banner(
                         kind = BannerKind.Neutral,
                         icon = Icons.Rounded.Lightbulb,
-                        title = "No TV found",
-                        body =
-                            "Check that the TV is on and on the same Wi-Fi as this phone, not a guest network. " +
-                                "If you denied Zapper before, allow it again on the TV under Device Connection Manager.",
+                        title = stringResource(R.string.discovery_nothing_found_title),
+                        body = stringResource(R.string.discovery_nothing_found_body),
                     ) {
-                        TextButton(onClick = viewModel::scan) { Text("Scan again") }
+                        TextButton(onClick = viewModel::scan) { Text(stringResource(R.string.discovery_scan_again)) }
                     }
                 }
             }
@@ -111,7 +111,9 @@ fun DiscoveryScreen(
                 if (showManual || state.nothingFound) {
                     ManualAddress(state, viewModel::onAddressChange) { viewModel.addByAddress(onSelect) }
                 } else {
-                    TextButton(onClick = { showManual = true }, modifier = Modifier.fillMaxWidth()) { Text("Not found? Add by IP address") }
+                    TextButton(onClick = {
+                        showManual = true
+                    }, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.discovery_not_found_add_by_ip)) }
                 }
             }
         }
@@ -128,15 +130,15 @@ private fun ManualAddress(
         OutlinedTextField(
             value = state.manualAddress,
             onValueChange = onChange,
-            label = { Text("TV IP address") },
+            label = { Text(stringResource(R.string.discovery_ip_label)) },
             singleLine = true,
             isError = state.manualError != null,
             supportingText = {
                 Text(
                     when {
-                        state.manualChecking -> "Checking ${state.manualAddress}…"
-                        state.manualError != null -> state.manualError
-                        else -> "Find it on the TV under Settings › General › Network › Network Status"
+                        state.manualChecking -> stringResource(R.string.discovery_checking_address, state.manualAddress)
+                        state.manualError != null -> stringResource(state.manualError)
+                        else -> stringResource(R.string.discovery_ip_hint)
                     },
                 )
             },
@@ -151,7 +153,7 @@ private fun ManualAddress(
             modifier = Modifier.fillMaxWidth(),
         )
         FilledTonalButton(onClick = onSubmit, enabled = !state.manualChecking, modifier = Modifier.fillMaxWidth()) {
-            Text("Add by IP address")
+            Text(stringResource(R.string.discovery_add_by_ip))
         }
     }
 }

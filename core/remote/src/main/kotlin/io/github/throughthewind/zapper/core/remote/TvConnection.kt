@@ -116,7 +116,7 @@ class TvConnection(
     fun canPowerOn(): Boolean = _device.value?.let { adapters.adapterFor(it).canPowerOn(it) } ?: false
 
     /** How to enable power-on on the current TV's brand, if the adapter knows (FR-7.2). */
-    fun powerOnHelp(): String? = _device.value?.let { adapters.adapterFor(it).powerOnHelp }
+    fun powerOnHelp(): LocalizedText? = _device.value?.let { adapters.adapterFor(it).powerOnHelp }
 
     /**
      * Wakes the current TV and waits for it to say it is on, sending the wake-up again every few

@@ -76,6 +76,13 @@ class SamsungPowerTest {
 
     @Test
     fun `the help names the TV setting`() {
-        assertTrue("Power On with Mobile" in adapter.powerOnHelp)
+        assertTrue("Power On with Mobile" in adapter.powerOnHelp.english)
+    }
+
+    @Test
+    fun `the help is translated into every language the app ships`() {
+        assertEquals(setOf("fr", "es", "de", "pl"), adapter.powerOnHelp.translations.keys)
+        adapter.powerOnHelp.translations.values
+            .forEach { assertTrue(it.isNotBlank() && it != adapter.powerOnHelp.english) }
     }
 }

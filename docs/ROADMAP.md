@@ -62,5 +62,5 @@ Phases 2 and 3 ship together as 0.2.0 (decided by Antoine on 2026-11-15), and Ph
 ## After 1.0
 
 From the spec's out-of-scope list: other brands one adapter at a time (Android TV / Google TV, LG
-webOS and Roku first, per the [research](research/tv-remote-protocols.md#0-tldr-and-recommendations)),
+webOS and Roku first; Android TV / Google TV ships in **1.2.0**, per the [research](research/tv-remote-protocols.md#0-tldr-and-recommendations)),
 touchpad mode, home screen widget and Quick Settings tile, macros.

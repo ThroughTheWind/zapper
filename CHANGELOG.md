@@ -6,6 +6,8 @@ All notable changes to Zapper are listed here. The format follows
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-11-26
+
 ### Added
 
 - Android TV and Google TV support (Sony, TCL, Hisense, Philips, Chromecast with Google TV, Nvidia
@@ -110,7 +112,8 @@ All notable changes to Zapper are listed here. The format follows
 - Project scaffold: Kotlin and Jetpack Compose app, brand adapter contract, and a first Samsung
   Tizen adapter that pairs and sends keys.
 
-[Unreleased]: https://github.com/ThroughTheWind/zapper/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/ThroughTheWind/zapper/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/ThroughTheWind/zapper/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/ThroughTheWind/zapper/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/ThroughTheWind/zapper/compare/v0.2.0...v1.0.0
 [0.2.0]: https://github.com/ThroughTheWind/zapper/compare/v0.1.0...v0.2.0

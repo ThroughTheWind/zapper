@@ -1,5 +1,9 @@
 package io.github.throughthewind.zapper.settings
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.ui.res.stringResource
+import io.github.throughthewind.zapper.R
 import io.github.throughthewind.zapper.core.designsystem.theme.AppearancePrefs
 import io.github.throughthewind.zapper.core.designsystem.theme.DarkModePref
 import io.github.throughthewind.zapper.core.designsystem.theme.HapticsLevel
@@ -53,19 +57,51 @@ internal fun KeyShapeChoice.style(): KeyStyle =
         KeyShapeChoice.SQUARE -> KeyStyle.Square
     }
 
-internal val ThemeChoice.title: String
-    get() =
+@Composable
+@ReadOnlyComposable
+internal fun ThemeChoice.title(): String =
+    stringResource(
         when (this) {
-            ThemeChoice.SYSTEM -> "System"
-            ThemeChoice.LIGHT -> "Light"
-            ThemeChoice.DARK -> "Dark"
-        }
+            ThemeChoice.SYSTEM -> R.string.theme_system
+            ThemeChoice.LIGHT -> R.string.theme_light
+            ThemeChoice.DARK -> R.string.theme_dark
+        },
+    )
 
-internal val ColorChoice.title: String
-    get() = if (this == ColorChoice.DYNAMIC) "Dynamic" else name.lowercase().replaceFirstChar { it.uppercase() }
+@Composable
+@ReadOnlyComposable
+internal fun ColorChoice.title(): String =
+    stringResource(
+        when (this) {
+            ColorChoice.DYNAMIC -> R.string.color_dynamic
+            ColorChoice.INDIGO -> R.string.color_indigo
+            ColorChoice.TEAL -> R.string.color_teal
+            ColorChoice.AMBER -> R.string.color_amber
+            ColorChoice.ROSE -> R.string.color_rose
+            ColorChoice.GREEN -> R.string.color_green
+            ColorChoice.GRAPHITE -> R.string.color_graphite
+        },
+    )
 
-internal val KeyShapeChoice.title: String
-    get() = name.lowercase().replaceFirstChar { it.uppercase() }
+@Composable
+@ReadOnlyComposable
+internal fun KeyShapeChoice.title(): String =
+    stringResource(
+        when (this) {
+            KeyShapeChoice.ROUNDED -> R.string.shape_rounded
+            KeyShapeChoice.SQUIRCLE -> R.string.shape_squircle
+            KeyShapeChoice.CIRCLE -> R.string.shape_circle
+            KeyShapeChoice.SQUARE -> R.string.shape_square
+        },
+    )
 
-internal val HapticStrength.title: String
-    get() = name.lowercase().replaceFirstChar { it.uppercase() }
+@Composable
+@ReadOnlyComposable
+internal fun HapticStrength.title(): String =
+    stringResource(
+        when (this) {
+            HapticStrength.OFF -> R.string.haptics_off
+            HapticStrength.LIGHT -> R.string.haptics_light
+            HapticStrength.STRONG -> R.string.haptics_strong
+        },
+    )

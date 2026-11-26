@@ -2,10 +2,10 @@
 id: WI-023
 title: Add the Android TV / Google TV adapter
 type: feature
-status: review
+status: done
 branch: claude/project-thread-s72b34
 created: 2026-11-15
-updated: 2026-11-15
+updated: 2026-11-26
 related: [ADR-0002, ADR-0003, SPEC-F1, SPEC-F2]
 epic:
 children: []
@@ -85,3 +85,7 @@ Branch `claude/project-thread-s72b34` (the session's branch, not `feature/WI-023
 All 30 module tests pass locally (JVM modules built outside the Android build, since Google's Maven
 repository is unreachable from the build machine); the app build is CI's. Real-device testing is
 open: see the pull request for the checklist.
+
+2026-11-26: a Reddit user reported the preview build working on their Android TV; how much of the
+checklist they covered is not known. Antoine asked to merge on that report (PR #44). The keys left
+`null` stay so until someone confirms them.

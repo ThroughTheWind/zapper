@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import io.github.throughthewind.zapper.AppContainer
+import io.github.throughthewind.zapper.R
+import io.github.throughthewind.zapper.UiText
 import io.github.throughthewind.zapper.core.data.ZapperRepository
 import io.github.throughthewind.zapper.core.model.ButtonCatalog
 import io.github.throughthewind.zapper.core.model.CatalogApp
@@ -31,6 +33,7 @@ import io.github.throughthewind.zapper.core.model.TvDevice
 import io.github.throughthewind.zapper.core.remote.ConnectionState
 import io.github.throughthewind.zapper.core.remote.TvConnection
 import io.github.throughthewind.zapper.settings.summary
+import io.github.throughthewind.zapper.settings.text
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -81,10 +84,10 @@ class LayoutEditorViewModel(
             .map { saved -> saved.filter { it.id != deviceId } }
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
-    private val _messages = MutableSharedFlow<String>(extraBufferCapacity = 4)
+    private val _messages = MutableSharedFlow<UiText>(extraBufferCapacity = 4)
 
     /** Short confirmations and refusals for a snackbar. */
-    val messages: SharedFlow<String> = _messages.asSharedFlow()
+    val messages: SharedFlow<UiText> = _messages.asSharedFlow()
 
     private var deviceId: String? = connection.device.value?.id
 
@@ -170,7 +173,7 @@ class LayoutEditorViewModel(
     /** Places a catalog item in the first free cell of the current page (ButtonCatalog). */
     fun add(item: CatalogItem): Boolean {
         val added = edit { it.addWidget(pageId, item.widget) }
-        if (!added) _messages.tryEmit("No room for ${item.title} on this page")
+        if (!added) _messages.tryEmit(UiText.Res(R.string.editor_no_room, listOf(item.title)))
         return added
     }
 
@@ -215,14 +218,14 @@ class LayoutEditorViewModel(
 
     /** Puts the default layout back (FR-8.6). Undo brings the edited one back; Done saves it. */
     fun resetToDefault() {
-        if (edit { DefaultLayouts.standard }) _messages.tryEmit("Default layout restored. Tap Done to keep it.")
+        if (edit { DefaultLayouts.standard }) _messages.tryEmit(UiText.Res(R.string.editor_default_restored))
     }
 
     /** Takes the layout of another saved TV (FR-8.7). */
     fun copyFrom(tv: TvDevice) {
         viewModelScope.launch {
             val layout = repository.layoutFor(tv.id).first()
-            if (edit { layout }) _messages.emit("Copied the layout from ${tv.name}. Tap Done to keep it.")
+            if (edit { layout }) _messages.emit(UiText.Res(R.string.editor_copied_from, listOf(tv.name)))
         }
     }
 
@@ -232,14 +235,14 @@ class LayoutEditorViewModel(
             try {
                 LayoutFile.decode(text)
             } catch (e: LayoutFileException) {
-                _messages.tryEmit(e.message ?: "This file cannot be imported")
+                _messages.tryEmit(e.reason.text())
                 return
             }
         edit { imported.layout }
-        _messages.tryEmit(imported.summary() + " Tap Done to keep it.")
+        _messages.tryEmit(UiText.Joined(listOf(imported.summary(), UiText.Res(R.string.editor_tap_done))))
     }
 
-    fun report(message: String) {
+    fun report(message: UiText) {
         _messages.tryEmit(message)
     }
 

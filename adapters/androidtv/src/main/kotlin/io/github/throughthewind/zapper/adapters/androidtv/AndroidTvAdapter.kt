@@ -3,6 +3,7 @@ package io.github.throughthewind.zapper.adapters.androidtv
 import io.github.throughthewind.zapper.core.model.TvDevice
 import io.github.throughthewind.zapper.core.remote.CredentialStore
 import io.github.throughthewind.zapper.core.remote.DiscoveredTv
+import io.github.throughthewind.zapper.core.remote.LocalizedText
 import io.github.throughthewind.zapper.core.remote.TvAdapter
 import io.github.throughthewind.zapper.core.remote.TvError
 import io.github.throughthewind.zapper.core.remote.TvException
@@ -70,8 +71,27 @@ class AndroidTvAdapter internal constructor(
         wake(mac, device.host)
     }
 
-    override val powerOnHelp: String =
-        "On the TV, look under Settings › Network for an option such as Remote start, Wake on LAN or Networked standby, and turn it on."
+    override val powerOnHelp: LocalizedText =
+        LocalizedText(
+            english =
+                "On the TV, look under Settings › Network for an option such as Remote start, " +
+                    "Wake on LAN or Networked standby, and turn it on.",
+            translations =
+                mapOf(
+                    "fr" to
+                        "Sur la TV, cherchez dans Paramètres › Réseau une option comme Démarrage à distance, " +
+                        "Wake on LAN ou Veille en réseau, et activez-la.",
+                    "es" to
+                        "En la TV, busca en Ajustes › Red una opción como Encendido remoto, " +
+                        "Wake on LAN o Modo de espera en red, y actívala.",
+                    "de" to
+                        "Suche auf dem Fernseher unter Einstellungen › Netzwerk eine Option wie Fernstart, " +
+                        "Wake on LAN oder Netzwerk-Standby und aktiviere sie.",
+                    "pl" to
+                        "Na telewizorze poszukaj w Ustawienia › Sieć opcji takiej jak Zdalne uruchamianie, " +
+                        "Wake on LAN lub Czuwanie sieciowe i ją włącz.",
+                ),
+        )
 
     override fun createSession(
         device: TvDevice,

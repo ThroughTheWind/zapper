@@ -58,6 +58,13 @@ class AndroidTvSessionTest : TvSessionContract() {
         }
 
     @Test
+    fun `the power-on help is translated into every language the app ships`() {
+        assertEquals(setOf("fr", "es", "de", "pl"), adapter.powerOnHelp.translations.keys)
+        adapter.powerOnHelp.translations.values
+            .forEach { assertTrue(it.isNotBlank() && it != adapter.powerOnHelp.english) }
+    }
+
+    @Test
     fun `probing an address without the service finds nothing`() =
         runBlocking {
             // A port nothing listens on. Closing the fake TV is not enough: its listening socket stays

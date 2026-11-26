@@ -37,6 +37,13 @@ command = "node site/tools/tokens.mjs --check"
 why     = "The landing page's tokens.css is generated from docs/design/web/tokens.json; a hand edit there drifts from the design system silently."
 
 [[gates]]
+id      = "translations"
+kind    = "command"
+tier    = "fast"
+command = "node scripts/check-translations.mjs --self-test && node scripts/check-translations.mjs"
+why     = "Copy typed into Compose code stays English in every language, and a string added in English but not in French, Spanish, German or Polish shows English mid-screen; Android lint catches the second only in a build with the SDK."
+
+[[gates]]
 id      = "site-icons"
 kind    = "command"
 tier    = "fast"

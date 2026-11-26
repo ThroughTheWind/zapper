@@ -8,6 +8,7 @@ import io.github.throughthewind.zapper.core.model.TvDevice
 import io.github.throughthewind.zapper.core.remote.ConnectionState
 import io.github.throughthewind.zapper.core.remote.CredentialStore
 import io.github.throughthewind.zapper.core.remote.DiscoveredTv
+import io.github.throughthewind.zapper.core.remote.LocalizedText
 import io.github.throughthewind.zapper.core.remote.PairingRequest
 import io.github.throughthewind.zapper.core.remote.PowerState
 import io.github.throughthewind.zapper.core.remote.TvAdapter
@@ -31,6 +32,8 @@ data class FakeTvBehaviour(
     val discoveryDelayMs: Long = 800,
     val pairingDelayMs: Long = 1_500,
     val refusePairing: Boolean = false,
+    /** How long connecting to a TV that is off takes to fail, as a real socket's timeout does. */
+    val unreachableDelayMs: Long = 0,
     val unsupportedKeys: Set<RemoteKey> = setOf(RemoteKey.GUIDE),
     /** Whether Wake-on-LAN brings the TV back online. */
     val wakesOnLan: Boolean = true,
@@ -121,7 +124,7 @@ class FakeTvAdapter(
     /** On when online; a TV that is off the network says nothing. */
     override suspend fun powerState(device: TvDevice): PowerState? = if (online) PowerState.ON else null
 
-    override val powerOnHelp: String = "The simulated TV wakes up unless its behaviour says otherwise."
+    override val powerOnHelp = LocalizedText("The simulated TV wakes up unless its behaviour says otherwise.")
 
     override fun createSession(
         device: TvDevice,
@@ -149,6 +152,7 @@ class FakeTvAdapter(
             connectAttempts++
             _state.value = ConnectionState.Connecting
             if (!online) {
+                delay(behaviour.unreachableDelayMs)
                 val error = TvError.Unreachable()
                 _state.value = ConnectionState.Failed(error)
                 throw TvException(error)

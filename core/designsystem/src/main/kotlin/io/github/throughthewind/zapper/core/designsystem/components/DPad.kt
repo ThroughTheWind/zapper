@@ -36,6 +36,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
@@ -43,6 +44,7 @@ import androidx.compose.ui.semantics.disabled
 import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.unit.dp
+import io.github.throughthewind.zapper.core.designsystem.R
 import io.github.throughthewind.zapper.core.designsystem.theme.KeyType
 import io.github.throughthewind.zapper.core.designsystem.theme.LocalRemoteMotion
 import io.github.throughthewind.zapper.core.designsystem.theme.RemoteHaptic
@@ -158,23 +160,32 @@ fun DPad(
                 drawArc(pressedLayer, start, 90f, useCenter = true, topLeft = Offset.Zero, size = Size(size.width, size.height))
             }
         }
-        Chevron(Icons.Rounded.KeyboardArrowUp, "Up", Alignment.TopCenter, content, enabled) { onPress(DPadDirection.Up) }
-        Chevron(Icons.Rounded.KeyboardArrowDown, "Down", Alignment.BottomCenter, content, enabled) { onPress(DPadDirection.Down) }
+        Chevron(
+            Icons.Rounded.KeyboardArrowUp,
+            stringResource(R.string.ds_up),
+            Alignment.TopCenter,
+            content,
+            enabled,
+        ) { onPress(DPadDirection.Up) }
+        Chevron(Icons.Rounded.KeyboardArrowDown, stringResource(R.string.ds_down), Alignment.BottomCenter, content, enabled) {
+            onPress(DPadDirection.Down)
+        }
         Chevron(
             Icons.AutoMirrored.Rounded.KeyboardArrowLeft,
-            "Left",
+            stringResource(R.string.ds_left),
             Alignment.CenterStart,
             content,
             enabled,
         ) { onPress(DPadDirection.Left) }
         Chevron(
             Icons.AutoMirrored.Rounded.KeyboardArrowRight,
-            "Right",
+            stringResource(R.string.ds_right),
             Alignment.CenterEnd,
             content,
             enabled,
         ) { onPress(DPadDirection.Right) }
         // OK: 40% of the diameter, an 8 dp ring of body colour around it.
+        val ok = stringResource(R.string.ds_ok)
         Box(
             Modifier
                 .align(Alignment.Center)
@@ -182,7 +193,7 @@ fun DPad(
                 .aspectRatio(1f)
                 .scale(okScale)
                 .clearAndSetSemantics {
-                    contentDescription = "OK"
+                    contentDescription = ok
                     role = Role.Button
                     if (enabled) {
                         onClick {
@@ -199,7 +210,7 @@ fun DPad(
                 drawCircle(body, size.minDimension / 2f)
                 drawCircle(if (enabled) colors.primary else colors.onSurface.copy(alpha = 0.12f), size.minDimension / 2f - 8.dp.toPx())
             }
-            KeyText("OK", style = KeyType.label, color = if (enabled) colors.onPrimary else content)
+            KeyText(ok, style = KeyType.label, color = if (enabled) colors.onPrimary else content)
         }
     }
 }

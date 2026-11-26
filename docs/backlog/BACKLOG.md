@@ -6,21 +6,21 @@
 The board. One row per live work item, grouped by status. Items live in
 [`items/`](items/); finished work moves to [`archive/`](archive/).
 
-<!-- NEXT-ID: WI-026 -->
+<!-- NEXT-ID: WI-028 -->
 <!-- Claim from this marker and bump it on your own branch. `node .ai/rungs.mjs check` refuses a duplicate. -->
 
 ## In progress
 
 | Id | Title | Type | Branch |
 | --- | --- | --- | --- |
-| — | *nothing in flight* | | |
+| [WI-026](items/WI-026-samsung-hdmi-next-input.md) | Switch HDMI inputs on Samsung TVs that ignore the direct HDMI keys | feature | `claude/project-thread-ylideg` |
 
 ## Review
 
 | Id | Title | Type | Branch |
 | --- | --- | --- | --- |
-| [WI-023](items/WI-023-android-tv-adapter.md) | Add the Android TV / Google TV adapter | feature | `claude/project-thread-s72b34` |
 | [WI-025](items/WI-025-preview-builds-for-testers.md) | Ship preview builds of unmerged branches to testers | chore | `claude/project-thread-2itz49` |
+| [WI-027](items/WI-027-app-translations.md) | Ship the app in French, Spanish, German and Polish | feature | `claude/project-thread-9d5emg` |
 
 ## Planned
 

@@ -45,7 +45,7 @@ Copy `ExampleAdapter` from the example and rename it. The members, from
 | `createSession(device, credentials)` | yes | A session for one TV. It must not connect yet. |
 | `probe(host)` | yes, in practice | Asks one address whether it is your brand's TV. "Add by IP address" calls it on every adapter; return `null` fast when it is not yours. |
 | `discover()` | recommended | Emits your TVs as they answer (SSDP, mDNS). Without it, users add the TV by IP. Fill `uniqueId` (a UPnP UUID) or `macAddress` so the same TV seen twice is merged. |
-| `canPowerOn`, `powerOn`, `powerOnHelp` | optional | Wake-on-LAN or the brand's own wake call. `powerOnHelp` is the one-line TV setting to enable, shown once when waking fails. |
+| `canPowerOn`, `powerOn`, `powerOnHelp` | optional | Wake-on-LAN or the brand's own wake call. `powerOnHelp` is the one-line TV setting to enable, shown once when waking fails. It is a `LocalizedText`: English plus French, Spanish, German and Polish, because adapters have no Android resources. |
 | `powerState(device)` | optional | On or standby without pairing, so the chip can say "TV off". |
 
 ## 3. Implement `TvSession`

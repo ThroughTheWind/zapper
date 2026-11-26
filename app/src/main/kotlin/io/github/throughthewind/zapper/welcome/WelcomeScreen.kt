@@ -23,11 +23,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import io.github.throughthewind.zapper.R
 
 /** First launch (docs/design/components/OnboardingFlow step 1): no sign-up, no permission wall. */
 @Composable
@@ -68,15 +70,22 @@ private fun WelcomeContent(
             )
         }
         Spacer(Modifier.height(24.dp))
-        Text("Zapper", style = MaterialTheme.typography.displaySmall, modifier = Modifier.semantics { heading() })
+        Text(
+            stringResource(R.string.app_name_plain),
+            style = MaterialTheme.typography.displaySmall,
+            modifier = Modifier.semantics { heading() },
+        )
         Spacer(Modifier.height(8.dp))
         Text(
-            "Your TV remote, on your phone. Free, private, no account.",
+            stringResource(R.string.welcome_tagline),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
         )
         Spacer(Modifier.height(48.dp))
-        Button(onClick = onFindTv, modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp)) { Text("Find my TV") }
+        Button(
+            onClick = onFindTv,
+            modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp),
+        ) { Text(stringResource(R.string.welcome_find_tv)) }
     }
 }

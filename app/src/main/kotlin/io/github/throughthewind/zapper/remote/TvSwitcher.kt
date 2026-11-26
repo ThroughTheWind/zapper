@@ -33,7 +33,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import io.github.throughthewind.zapper.R
 import io.github.throughthewind.zapper.core.model.TvDevice
 
 /** What the user asked to do with a saved TV from the switcher. */
@@ -69,7 +71,7 @@ fun TvSwitcher(
     ModalBottomSheet(onDismissRequest = onDismiss, containerColor = MaterialTheme.colorScheme.surfaceContainerLow) {
         Column(Modifier.navigationBarsPadding().padding(bottom = 16.dp)) {
             Text(
-                "Your TVs",
+                stringResource(R.string.switcher_your_tvs),
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp),
             )
@@ -80,8 +82,8 @@ fun TvSwitcher(
                     active = active,
                     status =
                         listOfNotNull(
-                            if (active) activeStatus else "Saved",
-                            "Default".takeIf { tv.id == defaultId },
+                            if (active) activeStatus else stringResource(R.string.tv_status_saved),
+                            stringResource(R.string.tv_status_default).takeIf { tv.id == defaultId },
                         ).joinToString(" · "),
                     brand = brandName(tv.adapterId),
                     onClick = { if (!active) onSelect(tv) },
@@ -89,15 +91,15 @@ fun TvSwitcher(
                 )
             }
             ListItem(
-                headlineContent = { Text("Add a TV", color = MaterialTheme.colorScheme.primary) },
+                headlineContent = { Text(stringResource(R.string.add_a_tv), color = MaterialTheme.colorScheme.primary) },
                 leadingContent = { Icon(Icons.Rounded.Add, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
                 colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
                 modifier = Modifier.clickable(onClick = onAddTv),
             )
             HorizontalDivider(Modifier.padding(vertical = 8.dp))
             ListItem(
-                headlineContent = { Text("Settings") },
-                supportingContent = { Text("Layout, appearance, feedback and controls") },
+                headlineContent = { Text(stringResource(R.string.settings_title)) },
+                supportingContent = { Text(stringResource(R.string.switcher_settings_summary)) },
                 leadingContent = { Icon(Icons.Rounded.Settings, contentDescription = null) },
                 colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
                 modifier = Modifier.clickable(onClick = onSettings),
@@ -128,26 +130,28 @@ internal fun SavedTvRow(
         leadingContent = {
             Icon(
                 if (active) Icons.Rounded.Check else Icons.Rounded.Tv,
-                contentDescription = if (active) "Current TV" else null,
+                contentDescription = if (active) stringResource(R.string.switcher_current_tv) else null,
             )
         },
         trailingContent = {
             Box {
-                IconButton(onClick = { menu = true }) { Icon(Icons.Rounded.MoreVert, contentDescription = "Options for ${tv.name}") }
+                IconButton(onClick = {
+                    menu = true
+                }) { Icon(Icons.Rounded.MoreVert, contentDescription = stringResource(R.string.switcher_options_for, tv.name)) }
                 DropdownMenu(expanded = menu, onDismissRequest = { menu = false }) {
-                    DropdownMenuItem(text = { Text("Rename") }, onClick = {
+                    DropdownMenuItem(text = { Text(stringResource(R.string.action_rename)) }, onClick = {
                         menu = false
                         dialog = Dialog.Rename
                     })
-                    DropdownMenuItem(text = { Text("Open on this TV") }, onClick = {
+                    DropdownMenuItem(text = { Text(stringResource(R.string.switcher_make_default)) }, onClick = {
                         menu = false
                         onAction(SavedTvAction.MakeDefault)
                     })
-                    DropdownMenuItem(text = { Text("TV info") }, onClick = {
+                    DropdownMenuItem(text = { Text(stringResource(R.string.switcher_tv_info)) }, onClick = {
                         menu = false
                         dialog = Dialog.Info
                     })
-                    DropdownMenuItem(text = { Text("Forget") }, onClick = {
+                    DropdownMenuItem(text = { Text(stringResource(R.string.action_forget)) }, onClick = {
                         menu = false
                         dialog = Dialog.Forget
                     })
@@ -179,28 +183,28 @@ internal fun SavedTvRow(
                 title = { Text(tv.name) },
                 text = {
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        InfoLine("Brand", brand)
-                        tv.model?.let { InfoLine("Model", it) }
-                        InfoLine("IP address", tv.host)
-                        tv.macAddress?.let { InfoLine("MAC address", it) }
+                        InfoLine(stringResource(R.string.tv_info_brand), brand)
+                        tv.model?.let { InfoLine(stringResource(R.string.tv_info_model), it) }
+                        InfoLine(stringResource(R.string.tv_info_ip), tv.host)
+                        tv.macAddress?.let { InfoLine(stringResource(R.string.tv_info_mac), it) }
                     }
                 },
-                confirmButton = { TextButton(onClick = { dialog = Dialog.None }) { Text("Close") } },
+                confirmButton = { TextButton(onClick = { dialog = Dialog.None }) { Text(stringResource(R.string.action_close)) } },
             )
         }
 
         Dialog.Forget -> {
             AlertDialog(
                 onDismissRequest = { dialog = Dialog.None },
-                title = { Text("Forget ${tv.name}?") },
-                text = { Text("Zapper will need to be allowed on this TV again to control it.") },
+                title = { Text(stringResource(R.string.forget_tv_title, tv.name)) },
+                text = { Text(stringResource(R.string.forget_tv_body)) },
                 confirmButton = {
                     TextButton(onClick = {
                         dialog = Dialog.None
                         onAction(SavedTvAction.Forget)
-                    }) { Text("Forget") }
+                    }) { Text(stringResource(R.string.action_forget)) }
                 },
-                dismissButton = { TextButton(onClick = { dialog = Dialog.None }) { Text("Cancel") } },
+                dismissButton = { TextButton(onClick = { dialog = Dialog.None }) { Text(stringResource(R.string.action_cancel)) } },
             )
         }
     }
@@ -226,18 +230,20 @@ private fun RenameDialog(
     var name by remember { mutableStateOf(current) }
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Rename TV") },
+        title = { Text(stringResource(R.string.rename_tv_title)) },
         text = {
             OutlinedTextField(
                 value = name,
                 onValueChange = { name = it.take(MAX_NAME_LENGTH) },
-                label = { Text("Name") },
+                label = { Text(stringResource(R.string.name_label)) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
             )
         },
-        confirmButton = { TextButton(onClick = { onRename(name.trim()) }, enabled = name.isNotBlank()) { Text("Save") } },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        confirmButton = {
+            TextButton(onClick = { onRename(name.trim()) }, enabled = name.isNotBlank()) { Text(stringResource(R.string.action_save)) }
+        },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_cancel)) } },
     )
 }
 

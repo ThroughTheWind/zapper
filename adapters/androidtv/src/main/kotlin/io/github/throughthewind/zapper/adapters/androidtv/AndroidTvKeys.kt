@@ -5,7 +5,7 @@ import io.github.throughthewind.zapper.core.model.RemoteKey
 /**
  * Android `KeyEvent` codes, which the protocol carries unchanged (research §3). They are Android's
  * public constants rather than reverse-engineered values, but none has been tried on a real TV yet:
- * the keys a box or TV may not handle (HDMI ports, the channel list, Exit, the previous channel)
+ * the keys a box or TV may not handle (HDMI ports and Next HDMI, the channel list, Exit, the previous channel)
  * stay `null` until someone confirms them on a device.
  */
 internal fun RemoteKey.androidTvCode(): Int? =
@@ -16,7 +16,7 @@ internal fun RemoteKey.androidTvCode(): Int? =
         RemoteKey.EXIT -> null
         RemoteKey.MENU -> KEYCODE_MENU
         RemoteKey.SOURCE -> KEYCODE_TV_INPUT
-        RemoteKey.HDMI_1, RemoteKey.HDMI_2, RemoteKey.HDMI_3, RemoteKey.HDMI_4 -> null
+        RemoteKey.HDMI_1, RemoteKey.HDMI_2, RemoteKey.HDMI_3, RemoteKey.HDMI_4, RemoteKey.HDMI_NEXT -> null
         RemoteKey.SETTINGS -> KEYCODE_SETTINGS
         RemoteKey.UP -> KEYCODE_DPAD_UP
         RemoteKey.DOWN -> KEYCODE_DPAD_DOWN

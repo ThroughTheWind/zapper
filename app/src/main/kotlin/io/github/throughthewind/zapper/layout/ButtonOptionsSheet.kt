@@ -1,5 +1,6 @@
 package io.github.throughthewind.zapper.layout
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -38,6 +39,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -46,10 +48,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import io.github.throughthewind.zapper.R
 import io.github.throughthewind.zapper.core.designsystem.components.colors
 import io.github.throughthewind.zapper.core.model.ButtonAction
 import io.github.throughthewind.zapper.core.model.KeyColor
@@ -121,15 +126,15 @@ fun ButtonOptionsSheet(
                 OutlinedTextField(
                     value = text,
                     onValueChange = { text = it.take(maxLength) },
-                    label = { Text(if (label != null) "Text" else "Label (optional)") },
-                    supportingText = { Text("${text.length} / $maxLength") },
+                    label = { Text(stringResource(if (label != null) R.string.options_text else R.string.options_label_optional)) },
+                    supportingText = { Text(stringResource(R.string.options_length, text.length, maxLength)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
 
             if (button != null && button.action !is ButtonAction.LaunchApp) {
-                Heading("Icon")
+                Heading(stringResource(R.string.options_icon))
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     IconChoice(name = null, selected = button.icon == null) { pick(actions, null) }
                     KeyIcons.names.forEach { name ->
@@ -139,7 +144,7 @@ fun ButtonOptionsSheet(
             }
 
             if (button != null) {
-                Heading("Colour")
+                Heading(stringResource(R.string.options_colour))
                 val chosen = button.color ?: defaultColor(button)
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     colorChoices(button).forEach { color ->
@@ -156,7 +161,11 @@ fun ButtonOptionsSheet(
                                 actions.update { (it as LayoutButton).copy(repeat = on) }
                             },
                     ) {
-                        Text("Repeat while held", style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
+                        Text(
+                            stringResource(R.string.options_repeat),
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.weight(1f),
+                        )
                         Switch(checked = button.repeats, onCheckedChange = null)
                     }
                 }
@@ -164,7 +173,7 @@ fun ButtonOptionsSheet(
 
             val spans = LayoutEditing.allowedSpans(widget)
             if (spans.size > 1) {
-                Heading("Size")
+                Heading(stringResource(R.string.options_size))
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     spans.forEach { span ->
                         FilterChip(
@@ -176,12 +185,12 @@ fun ButtonOptionsSheet(
                 }
             }
 
-            Heading("Move")
+            Heading(stringResource(R.string.options_move))
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                MoveButton(Icons.AutoMirrored.Rounded.ArrowBack, "Move left") { actions.nudge(-1, 0) }
-                MoveButton(Icons.Rounded.ArrowUpward, "Move up") { actions.nudge(0, -1) }
-                MoveButton(Icons.Rounded.ArrowDownward, "Move down") { actions.nudge(0, 1) }
-                MoveButton(Icons.AutoMirrored.Rounded.ArrowForward, "Move right") { actions.nudge(1, 0) }
+                MoveButton(Icons.AutoMirrored.Rounded.ArrowBack, stringResource(R.string.action_move_left)) { actions.nudge(-1, 0) }
+                MoveButton(Icons.Rounded.ArrowUpward, stringResource(R.string.action_move_up)) { actions.nudge(0, -1) }
+                MoveButton(Icons.Rounded.ArrowDownward, stringResource(R.string.action_move_down)) { actions.nudge(0, 1) }
+                MoveButton(Icons.AutoMirrored.Rounded.ArrowForward, stringResource(R.string.action_move_right)) { actions.nudge(1, 0) }
             }
 
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 8.dp)) {
@@ -191,10 +200,10 @@ fun ButtonOptionsSheet(
                 }) {
                     Icon(Icons.Rounded.Delete, contentDescription = null, tint = MaterialTheme.colorScheme.error)
                     Spacer(Modifier.width(8.dp))
-                    Text("Remove", color = MaterialTheme.colorScheme.error)
+                    Text(stringResource(R.string.action_remove), color = MaterialTheme.colorScheme.error)
                 }
                 Spacer(Modifier.weight(1f))
-                Button(onClick = close) { Text("Done") }
+                Button(onClick = close) { Text(stringResource(R.string.action_done)) }
             }
         }
     }
@@ -233,23 +242,25 @@ private fun pick(
 }
 
 /** What the widget does, under its name. */
+@Composable
+@ReadOnlyComposable
 private fun describe(widget: LayoutWidget): String =
     when (widget) {
         is LayoutButton -> {
             when (val action = widget.action) {
-                is ButtonAction.Key -> "Sends ${action.key.title()}"
-                is ButtonAction.LaunchApp -> "Opens ${widget.title()} on the TV"
-                is ButtonAction.Macro -> "Sends ${action.keys.size} keys in a row"
-                ButtonAction.OpenKeyboard -> "Types on the TV with the phone keyboard"
+                is ButtonAction.Key -> stringResource(R.string.options_sends_key, action.key.title())
+                is ButtonAction.LaunchApp -> stringResource(R.string.options_opens_app, widget.title())
+                is ButtonAction.Macro -> pluralStringResource(R.plurals.options_sends_keys, action.keys.size, action.keys.size)
+                ButtonAction.OpenKeyboard -> stringResource(R.string.options_keyboard)
             }
         }
 
         is LabelWidget -> {
-            "A caption for the keys below it"
+            stringResource(R.string.options_caption)
         }
 
         else -> {
-            "${widget.columnSpan}x${widget.rowSpan}"
+            stringResource(R.string.options_span, widget.columnSpan, widget.rowSpan)
         }
     }
 
@@ -285,6 +296,7 @@ private fun ColorOption(
 ) {
     val fill = color.emphasis().colors()
     val ring = MaterialTheme.colorScheme.primary
+    val description = stringResource(color.nameRes())
     Box(
         Modifier
             .size(48.dp)
@@ -294,7 +306,7 @@ private fun ColorOption(
             .background(fill.container)
             .border(1.dp, MaterialTheme.colorScheme.outlineVariant, CircleShape)
             .selectable(selected = selected, role = Role.RadioButton, onClick = onClick)
-            .semantics { contentDescription = color.name.lowercase().replaceFirstChar { it.uppercase() } },
+            .semantics { contentDescription = description },
     )
 }
 
@@ -305,6 +317,9 @@ private fun IconChoice(
     onClick: () -> Unit,
 ) {
     val colors = MaterialTheme.colorScheme
+    val description =
+        name?.let { stringResource(R.string.options_icon_named, stringResource(iconNameRes(it))) }
+            ?: stringResource(R.string.options_icon_default)
     Box(
         Modifier
             .size(44.dp)
@@ -312,14 +327,14 @@ private fun IconChoice(
             .background(if (selected) colors.secondaryContainer else colors.surfaceContainerHigh)
             .then(if (selected) Modifier.border(2.dp, colors.primary, CircleShape) else Modifier)
             .selectable(selected = selected, role = Role.RadioButton, onClick = onClick)
-            .semantics { contentDescription = name?.let { "$it icon" } ?: "Default icon" },
+            .semantics { contentDescription = description },
         contentAlignment = Alignment.Center,
     ) {
         val icon = name?.let(::keyIcon)
         if (icon != null) {
             Icon(icon, contentDescription = null)
         } else {
-            Text("Auto", style = MaterialTheme.typography.labelSmall)
+            Text(stringResource(R.string.options_icon_auto), style = MaterialTheme.typography.labelSmall)
         }
     }
 }
@@ -334,6 +349,46 @@ private fun MoveButton(
         Icon(icon, contentDescription = null)
     }
 }
+
+@StringRes
+private fun KeyColor.nameRes(): Int =
+    when (this) {
+        KeyColor.STANDARD -> R.string.key_color_standard
+        KeyColor.PRIMARY -> R.string.key_color_primary
+        KeyColor.SECONDARY -> R.string.key_color_secondary
+        KeyColor.TERTIARY -> R.string.key_color_tertiary
+        KeyColor.GHOST -> R.string.key_color_ghost
+        KeyColor.POWER -> R.string.key_color_power
+    }
+
+/** The spoken name of a [KeyIcons] icon. */
+@StringRes
+private fun iconNameRes(name: String): Int =
+    when (name) {
+        "power" -> R.string.icon_power
+        "home" -> R.string.icon_home
+        "back" -> R.string.icon_back
+        "exit" -> R.string.icon_exit
+        "menu" -> R.string.icon_menu
+        "source" -> R.string.icon_source
+        "settings" -> R.string.icon_settings
+        "mute" -> R.string.icon_mute
+        "info" -> R.string.icon_info
+        "keyboard" -> R.string.icon_keyboard
+        "guide" -> R.string.icon_guide
+        "list" -> R.string.icon_list
+        "search" -> R.string.icon_search
+        "star" -> R.string.icon_star
+        "favorite" -> R.string.icon_favorite
+        "tv" -> R.string.icon_tv
+        "movie" -> R.string.icon_movie
+        "music" -> R.string.icon_music
+        "sports" -> R.string.icon_sports
+        "subtitles" -> R.string.icon_subtitles
+        "replay" -> R.string.icon_replay
+        "stop" -> R.string.icon_stop
+        else -> R.string.icon_unknown
+    }
 
 /** ButtonConfig: six characters on a 1x1 key, so the label fits. */
 private const val MAX_LABEL_1X1 = 6

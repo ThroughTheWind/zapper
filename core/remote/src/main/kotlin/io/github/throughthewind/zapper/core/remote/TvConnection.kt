@@ -23,6 +23,9 @@ import kotlinx.coroutines.withTimeoutOrNull
  * - [connect] opens a session, re-pairing once if the TV rejects the saved token.
  * - A TV that cannot be reached, or a connection that drops, is retried with [retryDelaysMs]
  *   backoff while the app is in the foreground. Pairing outcomes are never retried on their own.
+ * - Those background retries are quiet: [state] stays on the failure instead of flickering through
+ *   Connecting on every attempt, so a TV that is off reads as off. Only a connect the user asked
+ *   for (a TV picked, Retry, a key pressed) shows Connecting again.
  * - [pause] drops the connection when the app leaves the foreground, [resume] restores it, and
  *   [networkAvailable] retries at once when the phone's network returns (FR-3.4, AC-12).
  * - A press while not connected starts a reconnect and is dropped, never queued (FR-3.5).
@@ -67,6 +70,9 @@ class TvConnection(
     private var runJob: Job? = null
     private var foreground = true
 
+    /** True while retrying in the background after a failure: the session's Connecting is not shown. */
+    @Volatile private var retrying = false
+
     /** Switches to [device] and connects, pairing if the TV asks. */
     fun connect(device: TvDevice) = start(device, reason = null, forget = false)
 
@@ -100,7 +106,7 @@ class TvConnection(
     fun networkAvailable() {
         val current = _device.value ?: return
         if (foreground && _state.value is ConnectionState.Failed && retryable((_state.value as ConnectionState.Failed).error)) {
-            connect(current)
+            start(current, reason = null, forget = false, quiet = true)
         }
     }
 
@@ -110,7 +116,7 @@ class TvConnection(
     fun canPowerOn(): Boolean = _device.value?.let { adapters.adapterFor(it).canPowerOn(it) } ?: false
 
     /** How to enable power-on on the current TV's brand, if the adapter knows (FR-7.2). */
-    fun powerOnHelp(): String? = _device.value?.let { adapters.adapterFor(it).powerOnHelp }
+    fun powerOnHelp(): LocalizedText? = _device.value?.let { adapters.adapterFor(it).powerOnHelp }
 
     /**
      * Wakes the current TV and waits for it to say it is on, sending the wake-up again every few
@@ -229,15 +235,18 @@ class TvConnection(
         device: TvDevice,
         reason: RepairReason?,
         forget: Boolean,
+        quiet: Boolean = false,
     ) {
         runJob?.cancel()
         stateJob?.cancel()
         val previous = session
         session = null
         val sameTv = _device.value?.id == device.id
+        // A quiet retry of the same TV keeps showing why it failed until it connects.
+        retrying = quiet && sameTv && _state.value is ConnectionState.Failed
         // Set synchronously, so no screen sees the previous TV's state as this one's.
         _device.value = device
-        _state.value = ConnectionState.Connecting
+        if (!retrying) _state.value = ConnectionState.Connecting
         _repairReason.value = reason
         _capabilities.value = emptySet()
         _tvKeyboard.value = false
@@ -277,6 +286,7 @@ class TvConnection(
 
             if (error == null) {
                 failures = 0
+                retrying = false
                 _repairReason.value = null
                 onConnected(device)
                 refreshPower()
@@ -284,6 +294,7 @@ class TvConnection(
                 val current = session ?: return
                 current.state.first { it !is ConnectionState.Connected }
                 _state.value = ConnectionState.Failed(TvError.ConnectionLost())
+                retrying = true
                 delay(retryDelaysMs.first())
                 continue
             }
@@ -291,6 +302,7 @@ class TvConnection(
             _state.value = ConnectionState.Failed(error)
             refreshPower()
             if (!retryable(error)) return
+            retrying = true
             delay(retryDelaysMs[minOf(failures, retryDelaysMs.lastIndex)])
             failures++
         }
@@ -302,7 +314,13 @@ class TvConnection(
         session = newSession
         stateJob =
             scope.launch {
-                launch { newSession.state.collect { if (it !is ConnectionState.Failed) _state.value = it } }
+                launch {
+                    newSession.state.collect {
+                        // Failures are set by [run]; a background retry's Connecting would only flicker.
+                        val hidden = it is ConnectionState.Failed || (retrying && it == ConnectionState.Connecting)
+                        if (!hidden) _state.value = it
+                    }
+                }
                 launch { newSession.capabilities.collect { _capabilities.value = it } }
                 launch { newSession.tvKeyboard.collect { _tvKeyboard.value = it } }
             }

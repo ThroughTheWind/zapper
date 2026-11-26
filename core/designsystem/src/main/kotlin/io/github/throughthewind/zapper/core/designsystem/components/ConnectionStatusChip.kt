@@ -20,12 +20,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import io.github.throughthewind.zapper.core.designsystem.R
 import io.github.throughthewind.zapper.core.designsystem.theme.RemoteHaptic
 import io.github.throughthewind.zapper.core.designsystem.theme.rememberRemoteHaptics
 import kotlinx.coroutines.delay
@@ -81,10 +83,10 @@ fun ConnectionStatusChip(
         }
     val description =
         when (state) {
-            ConnectionChipState.Connected -> "Connected"
-            ConnectionChipState.Connecting -> "Connecting"
-            ConnectionChipState.Offline -> "Offline, tap to retry"
-            ConnectionChipState.TvOff -> "TV off, tap to turn it on"
+            ConnectionChipState.Connected -> stringResource(R.string.ds_connected)
+            ConnectionChipState.Connecting -> stringResource(R.string.ds_connecting)
+            ConnectionChipState.Offline -> stringResource(R.string.ds_offline_description)
+            ConnectionChipState.TvOff -> stringResource(R.string.ds_tv_off_description)
         }
     Surface(
         color = container,
@@ -126,20 +128,22 @@ fun ConnectionStatusChip(
             when (state) {
                 ConnectionChipState.Connected -> {
                     Surface(color = colors.tertiary, shape = CircleShape, modifier = Modifier.size(8.dp)) {}
-                    AnimatedVisibility(showConnectedLabel) { Text("Connected", style = MaterialTheme.typography.labelMedium) }
+                    AnimatedVisibility(
+                        showConnectedLabel,
+                    ) { Text(stringResource(R.string.ds_connected), style = MaterialTheme.typography.labelMedium) }
                 }
 
                 ConnectionChipState.Connecting -> {
                     CircularProgressIndicator(Modifier.size(12.dp), strokeWidth = 2.dp, color = content)
-                    Text("Connecting", style = MaterialTheme.typography.labelMedium)
+                    Text(stringResource(R.string.ds_connecting), style = MaterialTheme.typography.labelMedium)
                 }
 
                 ConnectionChipState.Offline -> {
-                    Text("Offline · Retry", style = MaterialTheme.typography.labelMedium)
+                    Text(stringResource(R.string.ds_offline_retry), style = MaterialTheme.typography.labelMedium)
                 }
 
                 ConnectionChipState.TvOff -> {
-                    Text("TV off · Power on", style = MaterialTheme.typography.labelMedium)
+                    Text(stringResource(R.string.ds_tv_off_power_on), style = MaterialTheme.typography.labelMedium)
                 }
             }
         }

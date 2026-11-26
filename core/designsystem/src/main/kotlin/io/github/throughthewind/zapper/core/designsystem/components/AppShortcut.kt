@@ -14,10 +14,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import io.github.throughthewind.zapper.core.designsystem.R
 
 /** The colour roles an app shortcut may take; tertiary by default (docs/design/components/AppShortcut). */
 enum class AppShortcutColor(
@@ -45,7 +47,7 @@ fun AppShortcut(
 ) {
     val container = color.emphasis.colors().container
     RemoteKey(
-        label = "Open $name",
+        label = stringResource(R.string.ds_open_app, name),
         onPress = onPress,
         emphasis = color.emphasis,
         shape = MaterialTheme.shapes.large,

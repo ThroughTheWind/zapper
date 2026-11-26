@@ -11,7 +11,32 @@ All notable changes to Zapper are listed here. The format follows
 - Android TV and Google TV support (Sony, TCL, Hisense, Philips, Chromecast with Google TV, Nvidia
   Shield and others), over the Android TV Remote protocol v2: found on the network or added by IP
   address, paired once with the 6-character code the TV shows, then keys with long press, typing
-  into the TV and app shortcuts. Not yet tried on a real device (#24).
+  into the TV and app shortcuts (#24).
+- Zapper speaks French, Spanish, German and Polish as well as English. It follows the phone's
+  language, and on Android 13 and later Settings > Language opens the system's per-app language
+  choice.
+
+### Fixed
+
+- A single digit key from the catalog showed "DIGIT 1" on the remote and "DIG" in the catalog;
+  it now shows the digit.
+
+## [1.1.0] - 2026-11-20
+
+### Added
+
+- A Next HDMI key in the edit mode catalog (System group), labelled "HDMI" on the remote. On
+  Samsung TVs it switches to the next HDMI input.
+
+### Changed
+
+- Samsung TVs no longer offer the HDMI 1 to 4 keys, because TVs from 2018 on ignore them. Keys
+  already placed stay in the layout, greyed out with the reason; Next HDMI replaces them.
+
+### Fixed
+
+- With the TV off, the status no longer flickers between "TV off" and "Connecting" while the
+  app keeps checking for it in the background. It connects as soon as the TV answers.
 
 ## [1.0.0] - 2026-11-15
 
@@ -85,7 +110,8 @@ All notable changes to Zapper are listed here. The format follows
 - Project scaffold: Kotlin and Jetpack Compose app, brand adapter contract, and a first Samsung
   Tizen adapter that pairs and sends keys.
 
-[Unreleased]: https://github.com/ThroughTheWind/zapper/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/ThroughTheWind/zapper/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/ThroughTheWind/zapper/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/ThroughTheWind/zapper/compare/v0.2.0...v1.0.0
 [0.2.0]: https://github.com/ThroughTheWind/zapper/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/ThroughTheWind/zapper/releases/tag/v0.1.0

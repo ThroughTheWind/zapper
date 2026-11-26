@@ -8,11 +8,11 @@ Keep it short. This document is read at the start of every session, and a long o
 
 ## Current objective
 
-All four roadmap phases are merged and shipped: Phases 2 and 3 as 0.2.0, Phase 4 (PR #22) as 1.0.0. Next is the [After 1.0](../docs/ROADMAP.md#after-10) list: the Android TV / Google TV adapter is built and in review.
+All four roadmap phases are merged and shipped: Phases 2 and 3 as 0.2.0, Phase 4 (PR #22) as 1.0.0. Next is the [After 1.0](../docs/ROADMAP.md#after-10) list: the Android TV / Google TV adapter is merged (WI-023).
 
 ## In progress
 
-[WI-023](../docs/backlog/items/WI-023-android-tv-adapter.md), the Android TV / Google TV adapter, is in review on `claude/project-thread-s72b34` (issue #24). Its tests pass against a fake TV; nobody has tried it on a real Android TV yet. Every item that was in `review` (WI-008 to WI-016, WI-018, WI-022) was closed as `done` and archived on 2026-11-15 at Antoine's request; the on-device checks recorded as open in their Review sections were not run separately. WI-001 (reference TV spike) is the only open item. WI-025 (preview builds for testers) is in review; once merged, the preview key secrets in `docs/previews.md` must be added before the first preview run.
+WI-023, the Android TV / Google TV adapter, merged on 2026-11-26 after a Reddit user reported the preview working; the full device checklist in PR #44 has not been run. Every item that was in `review` (WI-008 to WI-016, WI-018, WI-022) was closed as `done` and archived on 2026-11-15 at Antoine's request; the on-device checks recorded as open in their Review sections were not run separately. WI-001 (reference TV spike) is the only open item. WI-025 (preview builds for testers) is in review; once merged, the preview key secrets in `docs/previews.md` must be added before the first preview run.
 
 ## Resume from
 
@@ -21,7 +21,7 @@ The [After 1.0](../docs/ROADMAP.md#after-10) list. Report anything Antoine finds
 ## Up next
 
 1. F-003: Compose UI tests in `app` (Robolectric), now that edit mode exists.
-2. Someone with an Android TV or Google TV tries WI-023 on a real device (checklist in its pull request).
+2. Someone with an Android TV or Google TV runs the device checklist in PR #44 (WI-023).
 
 ## Active constraints — do not reopen
 
@@ -35,7 +35,7 @@ The [After 1.0](../docs/ROADMAP.md#after-10) list. Report anything Antoine finds
 - The stack is native Kotlin, Compose and a multi-module Gradle build, fixed by [ADR-0001](../docs/decisions/ADR-0001-kotlin-compose-multi-module.md).
 - Brands are adapters behind capabilities, fixed by [ADR-0002](../docs/decisions/ADR-0002-brand-adapters.md).
 - GPL-3.0, no proprietary dependencies, local network only, fixed by [ADR-0003](../docs/decisions/ADR-0003-gpl-no-proprietary-dependencies.md).
-- The app is named Zapper, package `io.github.throughthewind.zapper`. English only, no crash reporting, distributed through GitHub Releases.
+- The app is named Zapper, package `io.github.throughthewind.zapper`. Ships in English, French, Spanish, German and Polish (WI-027, [`docs/translations.md`](../docs/translations.md)); no crash reporting; distributed through GitHub Releases.
 - Delivery order is basics first, customization later ([roadmap](../docs/ROADMAP.md)), decided by Antoine on 2026-11-13. Every screen follows the design system's component specs in `docs/design/components/`.
 - rungs is development tooling installed into this repo. It is not a runtime dependency and is not shipped in the app.
 
@@ -49,7 +49,7 @@ The [After 1.0](../docs/ROADMAP.md#after-10) list. Report anything Antoine finds
 - Samsung `SendInputString` is sent once on Send, then `SendInputEnd`, because whether each send appends or replaces the field is unconfirmed (WI-008). If it replaces, live typing is a small change.
 - The 2019 set lists its apps with `ed.installedApp.get`; if it does not, Netflix opens under the newest id `3201907018807`, which may not be the one a 2019 TV has (WI-009).
 
-- The Android TV key codes are Android's public `KeyEvent` constants and the app links are the ones Home Assistant documents; none has been tried on a real device (WI-023).
+- The Android TV key codes are Android's public `KeyEvent` constants and the app links are the ones Home Assistant documents; one Reddit user reported the adapter working, without saying which keys (WI-023).
 
 ## Open questions
 

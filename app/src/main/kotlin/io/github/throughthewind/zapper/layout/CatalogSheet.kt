@@ -1,5 +1,6 @@
 package io.github.throughthewind.zapper.layout
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -34,6 +35,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -42,12 +44,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import io.github.throughthewind.zapper.R
 import io.github.throughthewind.zapper.core.designsystem.components.KeyEmphasis
 import io.github.throughthewind.zapper.core.designsystem.components.colors
 import io.github.throughthewind.zapper.core.designsystem.theme.KeyType
@@ -61,6 +65,7 @@ import io.github.throughthewind.zapper.core.model.LayoutButton
 import io.github.throughthewind.zapper.core.model.LayoutWidget
 import io.github.throughthewind.zapper.core.model.MediaBarWidget
 import io.github.throughthewind.zapper.core.model.NumberPadWidget
+import io.github.throughthewind.zapper.core.model.RemoteKey
 import io.github.throughthewind.zapper.core.model.RockerKind
 import io.github.throughthewind.zapper.core.model.RockerWidget
 import io.github.throughthewind.zapper.core.model.SpacerWidget
@@ -84,25 +89,32 @@ fun CatalogSheet(
 ) {
     var query by rememberSaveable { mutableStateOf("") }
     var group by rememberSaveable { mutableStateOf<CatalogGroup?>(null) }
+    // Searched and shown in the app's language; the label a new caption starts with too.
+    val localized = items.map { it.copy(title = it.localizedTitle()) }
+    val newLabel = stringResource(R.string.widget_label)
     val shown =
-        items.filter { item ->
+        localized.filter { item ->
             if (query.isNotBlank()) item.title.contains(query.trim(), ignoreCase = true) else group == null || item.group == group
         }
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
         Column(Modifier.navigationBarsPadding().padding(horizontal = 16.dp)) {
-            Text("Add a button", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(horizontal = 8.dp))
+            Text(
+                stringResource(R.string.catalog_add_button),
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(horizontal = 8.dp),
+            )
             OutlinedTextField(
                 value = query,
                 onValueChange = { query = it },
-                placeholder = { Text("Search buttons") },
+                placeholder = { Text(stringResource(R.string.catalog_search)) },
                 leadingIcon = { Icon(Icons.Rounded.Search, contentDescription = null) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
             )
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.horizontalScroll(rememberScrollState())) {
-                FilterChip(selected = group == null, onClick = { group = null }, label = { Text("All") })
+                FilterChip(selected = group == null, onClick = { group = null }, label = { Text(stringResource(R.string.catalog_all)) })
                 CatalogGroup.entries.filter { g -> items.any { it.group == g } }.forEach { g ->
-                    FilterChip(selected = group == g, onClick = { group = g }, label = { Text(g.title) })
+                    FilterChip(selected = group == g, onClick = { group = g }, label = { Text(stringResource(g.titleRes())) })
                 }
             }
             LazyVerticalGrid(
@@ -111,11 +123,13 @@ fun CatalogSheet(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.fillMaxWidth().heightIn(max = 440.dp).padding(vertical = 12.dp),
             ) {
-                items(shown, key = { "${it.group}/${it.title}/${it.widget.id}" }) { item -> CatalogTile(item, onClick = { onPick(item) }) }
+                items(shown, key = { "${it.group}/${it.widget.id}/${it.title}" }) { item ->
+                    CatalogTile(item, onClick = { onPick(item.withLabelText(newLabel)) })
+                }
             }
             if (shown.isEmpty()) {
                 Text(
-                    "Nothing matches. This TV may not support it.",
+                    stringResource(R.string.catalog_nothing_matches),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(8.dp),
@@ -130,13 +144,14 @@ private fun CatalogTile(
     item: CatalogItem,
     onClick: () -> Unit,
 ) {
+    val description = stringResource(R.string.catalog_add_item, item.title)
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(6.dp),
         modifier =
             Modifier
-                .clickable(role = Role.Button, onClickLabel = "Add", onClick = onClick)
-                .semantics { contentDescription = "Add ${item.title}" },
+                .clickable(role = Role.Button, onClickLabel = stringResource(R.string.action_add), onClick = onClick)
+                .semantics { contentDescription = description },
     ) {
         WidgetPreview(item.widget, Modifier.size(56.dp))
         Text(
@@ -193,6 +208,35 @@ internal fun WidgetPreview(
         }
     }
 }
+
+/** A catalog item's name in the app's language. Apps keep the name the TV or the bundled list gives them. */
+@Composable
+@ReadOnlyComposable
+private fun CatalogItem.localizedTitle(): String {
+    val action = (widget as? LayoutButton)?.action
+    return when {
+        action is ButtonAction.LaunchApp -> title
+        action == ButtonAction.Key(RemoteKey.HDMI_NEXT) -> stringResource(R.string.catalog_next_hdmi)
+        widget is LabelWidget -> stringResource(R.string.widget_label)
+        else -> widgetTitle(widget)
+    }
+}
+
+/** A new caption starts with the word for "Label" in the app's language. */
+private fun CatalogItem.withLabelText(text: String): CatalogItem =
+    (widget as? LabelWidget)?.let { copy(widget = it.copy(text = text)) } ?: this
+
+@StringRes
+private fun CatalogGroup.titleRes(): Int =
+    when (this) {
+        CatalogGroup.NAVIGATION -> R.string.catalog_group_navigation
+        CatalogGroup.VOLUME_CHANNEL -> R.string.catalog_group_volume_channel
+        CatalogGroup.MEDIA -> R.string.catalog_group_media
+        CatalogGroup.NUMBERS -> R.string.catalog_group_numbers
+        CatalogGroup.APPS -> R.string.catalog_group_apps
+        CatalogGroup.SYSTEM -> R.string.catalog_group_system
+        CatalogGroup.SPACER_LABEL -> R.string.catalog_group_spacer_label
+    }
 
 private fun previewIcon(widget: LayoutWidget): ImageVector? =
     when (widget) {

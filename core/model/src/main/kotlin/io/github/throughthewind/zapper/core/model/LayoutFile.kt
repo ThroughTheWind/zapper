@@ -12,11 +12,22 @@ import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.intOrNull
 import kotlinx.serialization.json.put
 
-/** Why a file could not be imported, in words for the user. */
+/**
+ * Why a file could not be imported. [reason] is what the app explains, in the user's language;
+ * the English message is for logs.
+ */
 class LayoutFileException(
-    message: String,
+    val reason: Reason,
     cause: Throwable? = null,
-) : Exception(message, cause)
+) : Exception(reason.message, cause) {
+    enum class Reason(
+        val message: String,
+    ) {
+        NOT_A_LAYOUT("This file is not a Zapper layout."),
+        TOO_NEW("This layout was made by a newer version of Zapper. Update Zapper to import it."),
+        DAMAGED("This layout file is damaged and cannot be imported."),
+    }
+}
 
 /** A layout read from a file, and how many of its widgets this version cannot run. */
 data class ImportedLayout(
@@ -63,17 +74,17 @@ object LayoutFile {
             try {
                 json.parseToJsonElement(text) as? JsonObject
             } catch (e: SerializationException) {
-                throw LayoutFileException(NOT_A_LAYOUT, e)
-            } ?: throw LayoutFileException(NOT_A_LAYOUT)
-        if (root.string("format") != FORMAT) throw LayoutFileException(NOT_A_LAYOUT)
-        val version = (root["version"] as? JsonPrimitive)?.intOrNull ?: throw LayoutFileException(DAMAGED)
-        if (version > VERSION) throw LayoutFileException("This layout was made by a newer version of Zapper. Update Zapper to import it.")
-        if (version < 1) throw LayoutFileException(DAMAGED)
-        val body = root["layout"] as? JsonObject ?: throw LayoutFileException(DAMAGED)
+                throw LayoutFileException(LayoutFileException.Reason.NOT_A_LAYOUT, e)
+            } ?: throw LayoutFileException(LayoutFileException.Reason.NOT_A_LAYOUT)
+        if (root.string("format") != FORMAT) throw LayoutFileException(LayoutFileException.Reason.NOT_A_LAYOUT)
+        val version = (root["version"] as? JsonPrimitive)?.intOrNull ?: throw LayoutFileException(LayoutFileException.Reason.DAMAGED)
+        if (version > VERSION) throw LayoutFileException(LayoutFileException.Reason.TOO_NEW)
+        if (version < 1) throw LayoutFileException(LayoutFileException.Reason.DAMAGED)
+        val body = root["layout"] as? JsonObject ?: throw LayoutFileException(LayoutFileException.Reason.DAMAGED)
         return try {
             readLayout(body)
         } catch (e: IllegalArgumentException) {
-            throw LayoutFileException(DAMAGED, e)
+            throw LayoutFileException(LayoutFileException.Reason.DAMAGED, e)
         }
     }
 
@@ -161,6 +172,4 @@ object LayoutFile {
     private fun JsonArray?.orEmpty(): List<JsonElement> = this ?: emptyList()
 
     private const val MAX_COLUMNS = 6
-    private const val NOT_A_LAYOUT = "This file is not a Zapper layout."
-    private const val DAMAGED = "This layout file is damaged and cannot be imported."
 }

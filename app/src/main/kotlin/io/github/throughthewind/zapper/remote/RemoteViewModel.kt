@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import io.github.throughthewind.zapper.AppContainer
+import io.github.throughthewind.zapper.R
+import io.github.throughthewind.zapper.UiText
 import io.github.throughthewind.zapper.core.data.ZapperRepository
 import io.github.throughthewind.zapper.core.model.ButtonAction
 import io.github.throughthewind.zapper.core.model.Capability
@@ -13,9 +15,11 @@ import io.github.throughthewind.zapper.core.model.RemoteLayout
 import io.github.throughthewind.zapper.core.model.TvDevice
 import io.github.throughthewind.zapper.core.model.requiredCapability
 import io.github.throughthewind.zapper.core.remote.ConnectionState
+import io.github.throughthewind.zapper.core.remote.LocalizedText
 import io.github.throughthewind.zapper.core.remote.PowerState
 import io.github.throughthewind.zapper.core.remote.TvConnection
 import io.github.throughthewind.zapper.core.remote.TvError
+import io.github.throughthewind.zapper.describe
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -78,10 +82,10 @@ class RemoteViewModel(
     /** True while waiting for the TV to wake. */
     val poweringOn: StateFlow<Boolean> = _poweringOn.asStateFlow()
 
-    private val _powerOnHelp = MutableStateFlow<String?>(null)
+    private val _powerOnHelp = MutableStateFlow<LocalizedText?>(null)
 
     /** The one-time explanation of how to let the phone turn the TV on, while it shows (FR-7.2). */
-    val powerOnHelp: StateFlow<String?> = _powerOnHelp.asStateFlow()
+    val powerOnHelp: StateFlow<LocalizedText?> = _powerOnHelp.asStateFlow()
 
     private val _feedback = MutableSharedFlow<RemoteFeedback>(extraBufferCapacity = 4)
 
@@ -138,7 +142,7 @@ class RemoteViewModel(
             when {
                 on -> _feedback.emit(RemoteFeedback.Success)
                 help != null && !repository.powerOnHelpSeen.first() -> _powerOnHelp.value = help
-                else -> _feedback.emit(RemoteFeedback.Failure("The TV did not turn on"))
+                else -> _feedback.emit(RemoteFeedback.Failure(UiText.Res(R.string.remote_power_on_failed)))
             }
         }
     }
@@ -159,7 +163,7 @@ class RemoteViewModel(
     }
 
     private suspend fun report(error: TvError?) {
-        _feedback.emit(if (error == null) RemoteFeedback.Success else RemoteFeedback.Failure(error.message))
+        _feedback.emit(if (error == null) RemoteFeedback.Success else RemoteFeedback.Failure(error.describe()))
     }
 
     /** Not known, so the first press of a toggle-less TV pauses: people reach for it mid-show. */
@@ -200,11 +204,13 @@ class RemoteViewModel(
                 }
 
             override fun disabledPressed() {
-                _feedback.tryEmit(if (connected) RemoteFeedback.Failure("Not supported on this TV") else RemoteFeedback.NotConnected)
+                _feedback.tryEmit(
+                    if (connected) RemoteFeedback.Failure(UiText.Res(R.string.error_unsupported)) else RemoteFeedback.NotConnected,
+                )
             }
 
             override fun notSupported() {
-                _feedback.tryEmit(RemoteFeedback.Failure("Not supported on this TV"))
+                _feedback.tryEmit(RemoteFeedback.Failure(UiText.Res(R.string.error_unsupported)))
             }
 
             override fun isEnabled(key: RemoteKey): Boolean {
@@ -261,6 +267,6 @@ sealed interface RemoteFeedback {
     data object NotConnected : RemoteFeedback
 
     data class Failure(
-        val message: String,
+        val message: UiText,
     ) : RemoteFeedback
 }

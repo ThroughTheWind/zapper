@@ -10,6 +10,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.FileProvider
+import io.github.throughthewind.zapper.R
+import io.github.throughthewind.zapper.UiText
 import io.github.throughthewind.zapper.core.model.LayoutFile
 import io.github.throughthewind.zapper.core.model.RemoteLayout
 import kotlinx.coroutines.Dispatchers
@@ -37,10 +39,10 @@ fun shareLayout(
         Intent(Intent.ACTION_SEND)
             .setType(LayoutFile.MIME_TYPE)
             .putExtra(Intent.EXTRA_STREAM, uri)
-            .putExtra(Intent.EXTRA_SUBJECT, "Zapper layout: ${layout.name}")
+            .putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.export_subject, layout.name))
             .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
     send.clipData = ClipData.newRawUri(file.name, uri)
-    context.startActivity(Intent.createChooser(send, "Export layout"))
+    context.startActivity(Intent.createChooser(send, context.getString(R.string.export_layout)))
 }
 
 /** `Living room` → `zapper-living-room.json`. */
@@ -61,7 +63,7 @@ internal fun fileName(name: String): String {
 @Composable
 fun rememberLayoutFilePicker(
     onText: (String) -> Unit,
-    onError: (String) -> Unit,
+    onError: (UiText) -> Unit,
 ): () -> Unit {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -70,7 +72,7 @@ fun rememberLayoutFilePicker(
             if (uri == null) return@rememberLauncherForActivityResult
             scope.launch {
                 val text = withContext(Dispatchers.IO) { readText(context, uri) }
-                if (text == null) onError("This file could not be read") else onText(text)
+                if (text == null) onError(UiText.Res(R.string.import_unreadable)) else onText(text)
             }
         }
     // Many file managers label .json files as plain text or as unknown binary data.

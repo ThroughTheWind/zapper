@@ -28,10 +28,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import io.github.throughthewind.zapper.core.designsystem.R
 
 /**
  * The bar above the phone keyboard that sends typed text to the TV
@@ -49,6 +51,7 @@ fun TextInputBar(
     val colors = MaterialTheme.colorScheme
     val focus = remember { FocusRequester() }
     val canSend = value.isNotEmpty()
+    val fieldDescription = stringResource(R.string.ds_text_for_tv)
     LaunchedEffect(Unit) { focus.requestFocus() }
 
     Surface(
@@ -74,7 +77,7 @@ fun TextInputBar(
                         Modifier
                             .weight(1f)
                             .focusRequester(focus)
-                            .semantics { contentDescription = "Text for the TV" },
+                            .semantics { contentDescription = fieldDescription },
                     decorationBox = { field ->
                         Box(
                             Modifier
@@ -84,7 +87,7 @@ fun TextInputBar(
                     },
                 )
                 FilledIconButton(onClick = onSend, enabled = canSend) {
-                    Icon(Icons.AutoMirrored.Rounded.Send, contentDescription = "Send to the TV")
+                    Icon(Icons.AutoMirrored.Rounded.Send, contentDescription = stringResource(R.string.ds_send_to_tv))
                 }
             }
             Text(status, style = MaterialTheme.typography.labelMedium, color = colors.onSurfaceVariant)

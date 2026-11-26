@@ -123,10 +123,11 @@ class SamsungProtocolTest {
     }
 
     @Test
-    fun `source and HDMI keys map to the Samsung input codes`() {
+    fun `source and next HDMI map to the Samsung input codes, direct HDMI keys are not sent`() {
         assertEquals("KEY_SOURCE", RemoteKey.SOURCE.samsungCode())
+        assertEquals("KEY_HDMI", RemoteKey.HDMI_NEXT.samsungCode())
         assertEquals(
-            listOf("KEY_HDMI1", "KEY_HDMI2", "KEY_HDMI3", "KEY_HDMI4"),
+            listOf(null, null, null, null),
             listOf(RemoteKey.HDMI_1, RemoteKey.HDMI_2, RemoteKey.HDMI_3, RemoteKey.HDMI_4).map { it.samsungCode() },
         )
     }

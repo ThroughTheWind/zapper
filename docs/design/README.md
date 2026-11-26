@@ -2,7 +2,7 @@
 
 The design system for Zapper, a free, open-source Android remote for smart TVs (Samsung first, any brand through adapters). Material 3 underneath, Jetpack Compose first, with a remote-specific layer on top: big forgiving keys, a grid users rearrange themselves, and haptics that let you keep your eyes on the TV.
 
-> Package `io.github.throughthewind.zapper`. English only. Product scope: the [MVP spec](../SPEC.md). The Compose implementation lives in `core/designsystem/` (package `io.github.throughthewind.zapper.core.designsystem`); the `compose/…` paths below refer to it.
+> Package `io.github.throughthewind.zapper`. Copy is written in English and translated into French, Spanish, German and Polish ([translations](../translations.md)). Product scope: the [MVP spec](../SPEC.md). The Compose implementation lives in `core/designsystem/` (package `io.github.throughthewind.zapper.core.designsystem`); the `compose/…` paths below refer to it.
 
 ## Principles
 
@@ -86,7 +86,7 @@ See the *Motion & haptics* section. In short: press = scale 0.92 on a bouncy spr
 
 ## Voice
 
-English only. Short, plain sentences in second person ("Look at your TV"). Name the TV the way the user named it ("Living room"), never by protocol or IP unless they're adding one. Errors say what happened and what to do next; destructive buttons use the verb ("Reset", "Forget"), never "OK".
+Write the English first; translations keep the same voice. Short, plain sentences in second person ("Look at your TV"). Name the TV the way the user named it ("Living room"), never by protocol or IP unless they're adding one. Errors say what happened and what to do next; destructive buttons use the verb ("Reset", "Forget"), never "OK".
 
 ## Files
 

@@ -8,6 +8,10 @@ All notable changes to Zapper are listed here. The format follows
 
 ### Added
 
+- Android TV and Google TV support (Sony, TCL, Hisense, Philips, Chromecast with Google TV, Nvidia
+  Shield and others), over the Android TV Remote protocol v2: found on the network or added by IP
+  address, paired once with the 6-character code the TV shows, then keys with long press, typing
+  into the TV and app shortcuts (#24).
 - Zapper speaks French, Spanish, German and Polish as well as English. It follows the phone's
   language, and on Android 13 and later Settings > Language opens the system's per-app language
   choice.

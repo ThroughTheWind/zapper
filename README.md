@@ -4,10 +4,11 @@ A free, open-source TV remote for Android phones, with a modern design and butto
 you can arrange the way you like. Samsung smart TVs come first; other brands plug in through
 adapters.
 
-> **Status:** 1.1.0. It finds a Samsung TV (2016 or later) on the Wi-Fi, pairs once, types into
-> it, opens apps, turns it on, and lets you rearrange every key, page and colour. It works with
-> TalkBack and large text, and other TV brands can be added with the
-> [adapter guide](docs/adapters.md). More brands come next ([roadmap](docs/ROADMAP.md)).
+> **Status:** 1.2.0. It finds a Samsung TV (2016 or later) or an Android TV / Google TV on the
+> Wi-Fi, pairs once, types into it, opens apps, and lets you rearrange every key, page and colour.
+> It works with TalkBack and large text, speaks English, French, Spanish, German and Polish, and
+> other TV brands can be added with the [adapter guide](docs/adapters.md). More brands come next
+> ([roadmap](docs/ROADMAP.md)).
 
 ## Install
 
@@ -36,6 +37,7 @@ the signing certificate's fingerprint.
 | Brand | Status |
 | --- | --- |
 | Samsung (Tizen, 2016+) | Supported since 0.1.0 |
+| Android TV / Google TV (Sony, TCL, Philips, Hisense, Chromecast with Google TV, Nvidia Shield…) | Supported since 1.2.0 |
 | Others | Planned. [Vote for the next brand](https://github.com/ThroughTheWind/zapper/issues/36) with a 👍, or open a [TV support request](https://github.com/ThroughTheWind/zapper/issues/new?template=tv_support.md) |
 
 ## Building
